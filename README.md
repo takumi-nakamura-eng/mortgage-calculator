@@ -35,7 +35,7 @@
 ## プロジェクト構成
 
 ```
-mortgage-calculator/
+calcnavi/
 ├── app/
 │   ├── layout.tsx              # ルートレイアウト（Nav・グローバルmetadata）
 │   ├── page.tsx                # 計算ページ (/)
@@ -66,7 +66,7 @@ mortgage-calculator/
 ```bash
 # リポジトリをクローン
 git clone <repository-url>
-cd mortgage-calculator
+cd calcnavi
 
 # 依存関係をインストール
 npm install

@@ -1,6 +1,6 @@
 import type { HistoryEntry } from '@/lib/types';
 
-const STORAGE_KEY = 'loan_calculator_history';
+const STORAGE_KEY = 'calcnavi_history';
 
 export function loadHistory(): HistoryEntry[] {
   if (typeof window === 'undefined') return [];
