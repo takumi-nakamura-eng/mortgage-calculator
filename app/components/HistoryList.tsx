@@ -38,7 +38,7 @@ export default function HistoryList() {
     return (
       <div className="empty-state">
         <p>計算履歴がありません。</p>
-        <a href="/" className="btn-primary">
+        <a href="/loan" className="btn-primary">
           計算してみる
         </a>
       </div>
