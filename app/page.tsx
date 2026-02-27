@@ -10,25 +10,20 @@ export const metadata: Metadata = {
 
 const CATEGORIES = [
   { icon: '🏠', name: '住宅・金融', count: '1ツール', href: '/loan' },
-  { icon: '🔩', name: 'ボルト・ナット', count: '1解説', href: '/bolt/nut' },
+  { icon: '🔩', name: 'ボルト・ナット', count: '1解説', href: '/articles' },
   { icon: '📐', name: '構造・梁', count: '準備中', href: '/tools' },
   { icon: '📏', name: '単位換算', count: '準備中', href: '/tools' },
 ];
 
 const POPULAR = [
   { title: '住宅ローン計算機', desc: '月々の返済額・総返済額・総利息を試算', href: '/loan' },
-  { title: 'ナットの基礎知識', desc: 'ナットの種類・規格・選び方を解説', href: '/bolt/nut' },
   { title: '梁のたわみ計算', desc: '単純梁・片持ち梁のたわみ量を計算（準備中）', href: '/tools' },
   { title: 'アンカーボルト強度計算', desc: '引張・せん断強度を試算（準備中）', href: '/tools' },
   { title: '単位換算ツール', desc: 'mm↔inch、N↔kgf など建設・機械系単位（準備中）', href: '/tools' },
 ];
 
-const LATEST = [
-  { title: 'ナットの基礎知識', date: '2024/12', href: '/bolt/nut' },
-  { title: '住宅ローン計算機', date: '2024/11', href: '/loan' },
-  { title: '梁のたわみ計算（準備中）', date: '2025/01', href: '/tools' },
-  { title: 'アンカーボルト強度計算（準備中）', date: '2025/02', href: '/tools' },
-  { title: '単位換算ツール（準備中）', date: '2025/03', href: '/tools' },
+const ARTICLES = [
+  { title: 'ナットの基礎知識', desc: 'ナットの種類・規格・選び方を解説。JIS B 1181 の 1種・2種・3種の違いなど。', href: '/articles/nut-basics' },
 ];
 
 export default function HomePage() {
@@ -84,15 +79,16 @@ export default function HomePage() {
 
         <section className="home-section">
           <div className="home-section-head">
-            <h2 className="home-section-title">新着・更新</h2>
+            <h2 className="home-section-title">人気の記事</h2>
+            <Link href="/articles" className="home-section-link">すべて見る →</Link>
           </div>
           <div className="tool-list">
-            {LATEST.map((item) => (
-              <Link key={item.title} href={item.href} className="tool-item">
+            {ARTICLES.map((article) => (
+              <Link key={article.title} href={article.href} className="tool-item">
                 <span className="tool-item-body">
-                  <span className="tool-item-title">{item.title}</span>
+                  <span className="tool-item-title">{article.title}</span>
+                  <span className="tool-item-desc">{article.desc}</span>
                 </span>
-                <span className="tool-item-date">{item.date}</span>
                 <span className="tool-item-arrow">›</span>
               </Link>
             ))}
