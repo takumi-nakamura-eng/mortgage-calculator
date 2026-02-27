@@ -34,10 +34,10 @@ const TOOLS = [
   },
   {
     id: 'bolt-length',
-    title: 'ボルト長さ計算（3山）',
-    desc: 'ねじ山3山確保に必要なボルト長さを計算します。',
-    href: '#',
-    available: false,
+    title: 'ボルト長さ計算',
+    desc: 'ナット・座金の組み合わせから必要なボルト長さと推奨購入長さを計算します。',
+    href: '/tools/bolt',
+    available: true,
   },
 ];
 
