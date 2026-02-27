@@ -34,7 +34,7 @@ export default function Nav() {
   return (
     <nav className="nav">
       <div className="nav-inner">
-        <Link href="/home" className="nav-logo" onClick={close}>
+        <Link href="/" className="nav-logo" onClick={close}>
           <CalcIcon />
           <span className="nav-logo-texts">
             <span className="nav-logo-en">calcnavi</span>
@@ -54,10 +54,10 @@ export default function Nav() {
         </button>
 
         <div className={`nav-links${open ? ' nav-links--open' : ''}`}>
-          <Link href="/home" onClick={close}>Home</Link>
-          <Link href="/tools" onClick={close}>Tools</Link>
-          <Link href="/tools#guides" onClick={close}>Guides</Link>
-          <Link href="/contact" onClick={close}>Contact</Link>
+          <Link href="/" onClick={close}>Home</Link>
+          <Link href="/tools" onClick={close}>計算ツール</Link>
+          <Link href="/articles" onClick={close}>解説記事</Link>
+          <Link href="/contact" onClick={close}>お問い合わせ</Link>
         </div>
       </div>
     </nav>
