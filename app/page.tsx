@@ -10,9 +10,6 @@ export const metadata: Metadata = {
 
 const POPULAR = [
   { title: '住宅ローン計算機', desc: '月々の返済額・総返済額・総利息を試算', href: '/tools/loan' },
-  { title: '梁のたわみ計算', desc: '単純梁・片持ち梁のたわみ量を計算（準備中）', href: '/tools' },
-  { title: 'アンカーボルト強度計算', desc: '引張・せん断強度を試算（準備中）', href: '/tools' },
-  { title: '単位換算ツール', desc: 'mm↔inch、N↔kgf など建設・機械系単位（準備中）', href: '/tools' },
 ];
 
 const ARTICLES = [
@@ -60,8 +57,9 @@ export default function HomePage() {
             <Link href="/articles" className="home-section-link">すべて見る →</Link>
           </div>
           <div className="tool-list">
-            {ARTICLES.map((article) => (
+            {ARTICLES.map((article, i) => (
               <Link key={article.title} href={article.href} className="tool-item">
+                <span className="tool-item-rank">{i + 1}</span>
                 <span className="tool-item-body">
                   <span className="tool-item-title">{article.title}</span>
                   <span className="tool-item-desc">{article.desc}</span>

@@ -31,6 +31,7 @@ export default function ArticlesPage() {
   const [query, setQuery] = useState('');
 
   const filtered = ARTICLES.filter((a) => {
+    if (!a.available) return false;
     const q = query.trim().toLowerCase();
     return !q || a.title.toLowerCase().includes(q) || a.desc.toLowerCase().includes(q);
   });
@@ -57,19 +58,12 @@ export default function ArticlesPage() {
         {filtered.length === 0 && (
           <p className="tools-empty">「{query}」に一致する記事が見つかりませんでした。</p>
         )}
-        {filtered.map((article) =>
-          article.available ? (
-            <Link key={article.id} href={article.href} className="tools-card">
-              <span className="tools-card-title">{article.title}</span>
-              <span className="tools-card-desc">{article.desc}</span>
-            </Link>
-          ) : (
-            <div key={article.id} className="tools-card tools-card--soon">
-              <span className="tools-card-title">{article.title}</span>
-              <span className="tools-card-desc">{article.desc}</span>
-            </div>
-          )
-        )}
+        {filtered.map((article) => (
+          <Link key={article.id} href={article.href} className="tools-card">
+            <span className="tools-card-title">{article.title}</span>
+            <span className="tools-card-desc">{article.desc}</span>
+          </Link>
+        ))}
       </div>
     </div>
   );

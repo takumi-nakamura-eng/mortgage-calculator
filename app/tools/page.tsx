@@ -45,6 +45,7 @@ export default function ToolsPage() {
   const [query, setQuery] = useState('');
 
   const filtered = TOOLS.filter((t) => {
+    if (!t.available) return false;
     const q = query.trim().toLowerCase();
     return !q || t.title.toLowerCase().includes(q) || t.desc.toLowerCase().includes(q);
   });
@@ -71,19 +72,12 @@ export default function ToolsPage() {
         {filtered.length === 0 && (
           <p className="tools-empty">「{query}」に一致するツールが見つかりませんでした。</p>
         )}
-        {filtered.map((tool) =>
-          tool.available ? (
-            <Link key={tool.id} href={tool.href} className="tools-card">
-              <span className="tools-card-title">{tool.title}</span>
-              <span className="tools-card-desc">{tool.desc}</span>
-            </Link>
-          ) : (
-            <div key={tool.id} className="tools-card tools-card--soon">
-              <span className="tools-card-title">{tool.title}</span>
-              <span className="tools-card-desc">{tool.desc}</span>
-            </div>
-          )
-        )}
+        {filtered.map((tool) => (
+          <Link key={tool.id} href={tool.href} className="tools-card">
+            <span className="tools-card-title">{tool.title}</span>
+            <span className="tools-card-desc">{tool.desc}</span>
+          </Link>
+        ))}
       </div>
     </div>
   );
