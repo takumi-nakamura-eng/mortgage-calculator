@@ -5,13 +5,14 @@ export default function Footer() {
     <footer className="site-footer">
       <div className="footer-inner">
         <div className="footer-links">
-          <Link href="/">ホーム</Link>
-          <Link href="/contact">お問い合わせ</Link>
+          <Link href="/home">Home</Link>
+          <Link href="/tools">Tools</Link>
+          <Link href="/contact">Contact</Link>
           <Link href="/privacy">プライバシーポリシー</Link>
+          <Link href="/terms">利用規約</Link>
           <Link href="/disclaimer">免責事項</Link>
-          <Link href="/about">運営者情報</Link>
         </div>
-        <p className="footer-copy">© {new Date().getFullYear()} calcnavi</p>
+        <p className="footer-copy">© {new Date().getFullYear()} calcnavi（計算ナビ）</p>
       </div>
     </footer>
   );
