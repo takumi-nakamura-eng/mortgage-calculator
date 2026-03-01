@@ -23,10 +23,10 @@ export const TOOLS: ToolItem[] = [
   },
   {
     id: 'beam',
-    title: '梁のたわみ計算',
-    desc: '単純梁・片持ち梁のたわみ量を計算します。',
-    href: '#',
-    available: false,
+    title: '単純梁（単純支持）計算',
+    desc: '曲げ応力・最大たわみを計算し OK/NG 判定。中央集中荷重・等分布荷重に対応。',
+    href: '/tools/beams/simple-supported',
+    available: true,
   },
   {
     id: 'anchor',
