@@ -1,0 +1,55 @@
+{
+  "weekOf": "2026-03-02",
+  "mode": "improve",
+  "articles": [
+    {
+      "slug": "deflection-limit-l-over-n",
+      "primaryQuery": "simple beam deflection limit",
+      "intent": "既存の単純支持梁ユーザーが L/200・L/300・L/400 の使い分けを即判断したい",
+      "userProblem": "simple-beam の計算結果が出ても許容たわみ基準の選定で止まり、離脱している",
+      "differentiationNotes": [
+        "用途別に L/200・L/300・L/400 の初期推奨レンジを同一画面で提示",
+        "計算結果（delta_max）と判定基準（delta_allow）を1クリックで照合",
+        "規準優先順位（法令/契約 > 社内標準 > 初期値）を明示して判断ミスを防ぐ"
+      ],
+      "exampleInputs": [
+        "P=20 kN, L=4000 mm, E=205 GPa, I=1200 cm^4",
+        "P=12 kN, L=3000 mm, E=205 GPa, I=800 cm^4"
+      ],
+      "decisionCriteria": [
+        "OK: delta_max <= L/300（建築一般の初期基準）",
+        "NG: delta_max > 設定した許容たわみ",
+        "推奨レンジ: 迷う場合は L/300 を初期値として契約図書で最終確定"
+      ],
+      "sourcesPlan": [
+        "建築基準法施行令（公的）",
+        "AIJ 鋼構造設計規準（学協会）",
+        "AISC Design Guide（学協会/技術基準）",
+        "Engineering ToolBox beam deflection（技術資料）"
+      ]
+    }
+  ],
+  "tool": {
+    "toolId": "bolt-length",
+    "targetQuery": "bolt length calculation",
+    "differentiationNotes": [
+      "平座金/ばね座金の枚数を入力し、必要ねじ山数まで含めた推奨長さを算出",
+      "JIS規格長への切り上げ理由を表示し、選定根拠を残せる",
+      "計算根拠をPDFで保存してレビュー時の説明コストを削減"
+    ],
+    "requiredUX": [
+      "入力プリセット保存（材質・締結構成の再利用）",
+      "途中式と丸めルールの可視化",
+      "結果画面にOK/NG判定と推奨規格長を同時表示"
+    ]
+  },
+  "focusPillars": [
+    "bolt-length",
+    "simple-beam",
+    "section-properties"
+  ],
+  "conditional": {
+    "anchor": false,
+    "reason": "score=64.7 (<70)"
+  }
+}

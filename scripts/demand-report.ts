@@ -1,6 +1,6 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { calculateDemandScore, type DemandScoreInput } from '@/lib/demand/score';
+import { calculateDemandScore, type DemandScoreInput } from '../lib/demand/score.ts';
 
 interface CsvRow {
   candidateId: string;
