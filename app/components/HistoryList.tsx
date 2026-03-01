@@ -24,6 +24,7 @@ export default function HistoryList() {
   }, []);
 
   const handleDelete = (id: string) => {
+    if (!confirm('この計算履歴を削除しますか？')) return;
     deleteHistoryEntry(id);
     setHistory(loadHistory());
   };

@@ -34,6 +34,7 @@ export default function Nav() {
           <Link href="/" onClick={close}>Home</Link>
           <Link href="/tools" onClick={close}>計算ツール</Link>
           <Link href="/articles" onClick={close}>解説記事</Link>
+          <Link href="/history" onClick={close}>履歴</Link>
           <Link href="/contact" onClick={close}>お問い合わせ</Link>
         </div>
       </div>

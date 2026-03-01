@@ -29,6 +29,13 @@ export const TOOLS: ToolItem[] = [
     available: true,
   },
   {
+    id: 'section-properties',
+    title: '断面性能計算',
+    desc: 'H形鋼・角形鋼管・丸形鋼管など6断面形状の断面二次モーメント・断面係数・断面積・重量を計算します。',
+    href: '/tools/section-properties',
+    available: true,
+  },
+  {
     id: 'anchor',
     title: 'アンカーボルト強度計算',
     desc: 'アンカーボルトの引張・せん断強度を試算します。',

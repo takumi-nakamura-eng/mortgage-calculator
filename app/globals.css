@@ -1628,3 +1628,472 @@ body {
     font-size: 0.875rem;
   }
 }
+
+/* ── Section shape result preview ── */
+.beam-section-result {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.5rem;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 0.75rem;
+  padding: 0.875rem 1.125rem;
+  margin-top: 1rem;
+  align-items: center;
+}
+
+.beam-section-result-item {
+  display: flex;
+  align-items: baseline;
+  gap: 0.375rem;
+  font-size: 0.9375rem;
+}
+
+.beam-section-result-label {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.beam-conv-inline {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* ===== Section Properties Calculator ===== */
+
+.section-prop-wrap {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ── Shape tabs ── */
+.section-shape-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.section-shape-tab {
+  padding: 0.45rem 1rem;
+  border: 1.5px solid var(--border);
+  border-radius: 2rem;
+  background: var(--card);
+  color: var(--text);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+}
+
+.section-shape-tab:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.section-shape-tab--active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+  font-weight: 700;
+}
+
+/* ── Diagram + Inputs row ── */
+.section-main-row {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 2rem;
+  align-items: start;
+  margin-top: 0.75rem;
+}
+
+@media (max-width: 640px) {
+  .section-main-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.section-diagram-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.section-diagram-box svg.section-diagram {
+  width: 100%;
+  height: auto;
+  max-width: 280px;
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  padding: 4px;
+}
+
+.section-diagram-caption {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-align: center;
+  line-height: 1.5;
+}
+
+.section-inputs-box {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* ── Results grid ── */
+.section-results {
+  background: var(--primary-light);
+  border: 1.5px solid #bfdbfe;
+  border-radius: var(--radius);
+}
+
+.section-result-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+}
+
+.section-result-group {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  padding: 1rem 1.125rem;
+}
+
+.section-result-group-title {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.75rem;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 0.5rem;
+}
+
+.section-result-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding: 0.3rem 0;
+  border-bottom: 1px dashed #e5e7eb;
+}
+
+.section-result-row:last-child {
+  border-bottom: none;
+}
+
+.section-result-label {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.section-result-value {
+  display: flex;
+  align-items: baseline;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.section-result-value strong {
+  font-size: 1.0625rem;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.section-result-unit {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.section-result-sub {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* ===== Calculate button ===== */
+
+.calc-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 2.5rem;
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: #fff;
+  background: var(--primary);
+  border: none;
+  border-radius: 2rem;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s, opacity 0.15s;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
+}
+
+.calc-btn:hover:not(:disabled) {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+}
+
+.calc-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.calc-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* ===== PDF output button ===== */
+
+.pdf-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.5rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #fff;
+  background: #0f766e;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+
+.pdf-btn::before { content: '⬇ '; font-size: 0.75em; }
+
+.pdf-btn:hover { background: #0d6663; }
+
+.pdf-btn--sm {
+  padding: 0.35rem 0.85rem;
+  font-size: 0.8125rem;
+}
+
+/* ===== Section results header (result title + PDF button) ===== */
+
+.section-results-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* ===== Formula steps ===== */
+
+.formula-steps-section {
+  background: #fafbff;
+  border: 1px solid #dbeafe;
+}
+
+.formula-steps-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+
+.formula-steps-list--compact {
+  gap: 0.4rem;
+}
+
+.formula-step-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.formula-step-label {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #374151;
+}
+
+.formula-step-expr {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.875rem;
+  background: #f0f4ff;
+  border-left: 3px solid #93c5fd;
+  padding: 0.375rem 0.75rem;
+  white-space: pre-wrap;
+  word-break: break-all;
+  line-height: 1.55;
+  color: #1e3a5f;
+  border-radius: 0 0.375rem 0.375rem 0;
+}
+
+/* ===== History page sections ===== */
+
+.history-section {
+  margin-bottom: 2.5rem;
+}
+
+.history-section-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--text);
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+/* ===== Engineering history card ===== */
+
+.eng-history-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 0.875rem;
+  padding: 1rem 1.25rem;
+  margin-bottom: 0.875rem;
+}
+
+.eng-history-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.eng-history-tool-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: var(--primary);
+  color: #fff;
+  padding: 0.2rem 0.6rem;
+  border-radius: 1rem;
+  white-space: nowrap;
+}
+
+.eng-history-shape {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.eng-history-purpose {
+  font-size: 0.8125rem;
+  color: #6d28d9;
+  font-weight: 500;
+}
+
+.eng-history-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.eng-history-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.5rem;
+  margin-top: 0.625rem;
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+}
+
+.eng-history-summary span { white-space: nowrap; }
+
+.eng-history-detail {
+  margin-top: 0.875rem;
+  padding-top: 0.875rem;
+  border-top: 1px dashed var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.eng-history-detail-section {}
+
+.eng-history-detail-title {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 0.375rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.eng-history-dim-table {
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  width: 100%;
+  max-width: 360px;
+}
+
+.eng-history-dim-table td {
+  border: 1px solid var(--border);
+  padding: 3px 8px;
+}
+
+.eng-history-dim-table td:first-child {
+  background: #f0f4ff;
+  font-weight: 500;
+  width: 55%;
+}
+
+.eng-history-dim-table td.val { font-weight: 700; }
+
+.eng-history-result-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.375rem;
+}
+
+.eng-hist-result-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding: 3px 0;
+  border-bottom: 1px dashed #e5e7eb;
+  font-size: 0.875rem;
+}
+
+.eng-hist-result-row:last-child { border-bottom: none; }
+
+.eng-hist-result-label { color: var(--text-muted); white-space: nowrap; flex-shrink: 0; }
+.eng-hist-result-value { font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; }
+.eng-hist-result-sub   { font-size: 0.75rem; color: var(--text-muted); font-weight: 400; }
+
+/* ── Icon button ── */
+.btn-icon {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 0.375rem;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: background 0.1s;
+}
+.btn-icon:hover { background: var(--bg); }
+
+.eng-history-empty {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}

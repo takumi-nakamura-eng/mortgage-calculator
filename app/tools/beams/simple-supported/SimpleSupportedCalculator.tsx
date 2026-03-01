@@ -1,13 +1,11 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import {
   calcSimpleBeam,
   validateBeamInputs,
   type LoadCase,
   type BeamResult,
-  type ValidationError,
-  type ValidationWarning,
 } from '@/lib/beams/simpleBeam';
 import {
   kgToKN,
@@ -17,11 +15,17 @@ import {
   cm4ToMm4,
   fmt,
 } from '@/lib/beams/units';
+import {
+  calcSection,
+  validateSectionDims,
+  SECTION_DEFS,
+  type SectionShape,
+} from '@/lib/beams/sections';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const MATERIAL_PRESETS = [
-  { label: '炭素鋼（一般）', E_GPa: 205, sigmaAllow_MPa: 150 },
+  { label: '炭素鋼（SS400 相当）', E_GPa: 205, sigmaAllow_MPa: 150 },
   { label: 'SUS304', E_GPa: 193, sigmaAllow_MPa: 130 },
   { label: 'アルミ（参考）', E_GPa: 69, sigmaAllow_MPa: 80 },
   { label: 'カスタム', E_GPa: null, sigmaAllow_MPa: null },
@@ -32,6 +36,7 @@ const DEFLECTION_LIMITS = [200, 250, 300, 360, 400] as const;
 type LoadUnit = 'kg' | 'kN';
 type ZUnit = 'cm3' | 'mm3';
 type IUnit = 'cm4' | 'mm4';
+type SectionMode = 'direct' | 'shape';
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
@@ -49,20 +54,57 @@ export default function SimpleSupportedCalculator() {
   const [loadValue, setLoadValue] = useState<string>('');
   const [loadUnit, setLoadUnit] = useState<LoadUnit>('kg');
 
-  // ── Section ─────────────────────────────────────────────────────────────
+  // ── Section mode ─────────────────────────────────────────────────────────
+  const [sectionMode, setSectionMode] = useState<SectionMode>('direct');
+
+  // Direct input
   const [Z, setZ] = useState<string>('');
   const [ZUnit, setZUnit] = useState<ZUnit>('cm3');
   const [I, setI] = useState<string>('');
   const [IUnit, setIUnit] = useState<IUnit>('cm4');
+
+  // Shape input
+  const [selectedShape, setSelectedShape] = useState<SectionShape>('H');
+  const [shapeDims, setShapeDims] = useState<Record<string, string>>({});
 
   // ── Deflection limit ─────────────────────────────────────────────────────
   const [deflectionN, setDeflectionN] = useState<number>(300);
 
   // ── Results ──────────────────────────────────────────────────────────────
   const [result, setResult] = useState<BeamResult | null>(null);
-  const [errors, setErrors] = useState<ValidationError[]>([]);
-  const [warnings, setWarnings] = useState<ValidationWarning[]>([]);
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+  const [formWarnings, setFormWarnings] = useState<string[]>([]);
   const [loadKNNormalized, setLoadKNNormalized] = useState<number | null>(null);
+
+  // ── Derived: shape section result ─────────────────────────────────────────
+  const shapeResult = useMemo(() => {
+    if (sectionMode !== 'shape') return null;
+    const def = SECTION_DEFS.find((d) => d.shape === selectedShape);
+    if (!def) return null;
+    const nums: Record<string, number> = {};
+    for (const p of def.params) {
+      const v = parseFloat(shapeDims[p.key] ?? '');
+      if (isNaN(v) || v <= 0) return null;
+      nums[p.key] = v;
+    }
+    if (validateSectionDims(selectedShape, nums).length > 0) return null;
+    return calcSection(selectedShape, nums);
+  }, [sectionMode, selectedShape, shapeDims]);
+
+  const shapeErrors = useMemo(() => {
+    if (sectionMode !== 'shape') return [];
+    const def = SECTION_DEFS.find((d) => d.shape === selectedShape);
+    if (!def) return [];
+    const nums: Record<string, number> = {};
+    let hasAnyInput = false;
+    for (const p of def.params) {
+      const v = parseFloat(shapeDims[p.key] ?? '');
+      if (!isNaN(v)) hasAnyInput = true;
+      nums[p.key] = v;
+    }
+    if (!hasAnyInput) return [];
+    return validateSectionDims(selectedShape, nums);
+  }, [sectionMode, selectedShape, shapeDims]);
 
   // ── Material preset change ────────────────────────────────────────────────
   function handleMaterialChange(idx: number) {
@@ -72,17 +114,13 @@ export default function SimpleSupportedCalculator() {
     if (preset.sigmaAllow_MPa !== null) setSigmaAllow(String(preset.sigmaAllow_MPa));
   }
 
-  // ── Load unit toggle: convert displayed value to keep same physics ────────
+  // ── Load unit toggle ──────────────────────────────────────────────────────
   const handleLoadUnitChange = useCallback(
     (newUnit: LoadUnit) => {
       if (newUnit === loadUnit) return;
       const v = parseFloat(loadValue);
       if (!isNaN(v) && v > 0) {
-        if (loadUnit === 'kg' && newUnit === 'kN') {
-          setLoadValue(fmt(kgToKN(v), 4));
-        } else if (loadUnit === 'kN' && newUnit === 'kg') {
-          setLoadValue(fmt(kNToKg(v), 2));
-        }
+        setLoadValue(newUnit === 'kN' ? fmt(kgToKN(v), 4) : fmt(kNToKg(v), 2));
       }
       setLoadUnit(newUnit);
     },
@@ -95,11 +133,7 @@ export default function SimpleSupportedCalculator() {
       if (newUnit === ZUnit) return;
       const v = parseFloat(Z);
       if (!isNaN(v) && v > 0) {
-        if (ZUnit === 'cm3' && newUnit === 'mm3') {
-          setZ(fmt(v * 1000, 4));
-        } else if (ZUnit === 'mm3' && newUnit === 'cm3') {
-          setZ(fmt(v / 1000, 6));
-        }
+        setZ(newUnit === 'mm3' ? fmt(v * 1000, 4) : fmt(v / 1000, 6));
       }
       setZUnit(newUnit);
     },
@@ -112,43 +146,64 @@ export default function SimpleSupportedCalculator() {
       if (newUnit === IUnit) return;
       const v = parseFloat(I);
       if (!isNaN(v) && v > 0) {
-        if (IUnit === 'cm4' && newUnit === 'mm4') {
-          setI(fmt(v * 10000, 4));
-        } else if (IUnit === 'mm4' && newUnit === 'cm4') {
-          setI(fmt(v / 10000, 6));
-        }
+        setI(newUnit === 'mm4' ? fmt(v * 10000, 4) : fmt(v / 10000, 6));
       }
       setIUnit(newUnit);
     },
     [IUnit, I],
   );
 
+  // ── Section mode switch ───────────────────────────────────────────────────
+  function handleSectionModeChange(mode: SectionMode) {
+    setSectionMode(mode);
+    setResult(null);
+    setFormErrors({});
+  }
+
+  // ── Shape change ─────────────────────────────────────────────────────────
+  function handleShapeChange(shape: SectionShape) {
+    setSelectedShape(shape);
+    setShapeDims({});
+    setResult(null);
+  }
+
   // ── Calculation ───────────────────────────────────────────────────────────
   function handleCalculate(e: React.FormEvent) {
     e.preventDefault();
 
-    // Parse & normalise inputs
-    const L_mm = parseFloat(L);
+    const errors: Record<string, string> = {};
+    const warnings: string[] = [];
 
+    const L_mm = parseFloat(L);
     const loadRaw = parseFloat(loadValue);
     const loadKN = isNaN(loadRaw)
       ? null
       : loadUnit === 'kg'
       ? kgToKN(loadRaw)
       : loadRaw;
-
     const E_GPa_num = parseFloat(E_GPa);
     const E_MPa = isNaN(E_GPa_num) ? null : GPaToMPa(E_GPa_num);
-
-    const Z_raw = parseFloat(Z);
-    const Z_mm3 = isNaN(Z_raw) ? null : ZUnit === 'cm3' ? cm3ToMm3(Z_raw) : Z_raw;
-
-    const I_raw = parseFloat(I);
-    const I_mm4 = isNaN(I_raw) ? null : IUnit === 'cm4' ? cm4ToMm4(I_raw) : I_raw;
-
     const sigmaAllowNum = parseFloat(sigmaAllow);
 
-    // Validate
+    // Resolve I and Z
+    let I_mm4: number | null = null;
+    let Z_mm3: number | null = null;
+
+    if (sectionMode === 'direct') {
+      const Z_raw = parseFloat(Z);
+      Z_mm3 = isNaN(Z_raw) ? null : ZUnit === 'cm3' ? cm3ToMm3(Z_raw) : Z_raw;
+      const I_raw = parseFloat(I);
+      I_mm4 = isNaN(I_raw) ? null : IUnit === 'cm4' ? cm4ToMm4(I_raw) : I_raw;
+    } else {
+      if (!shapeResult) {
+        errors['section'] = '断面寸法を正しく入力してください。';
+      } else {
+        I_mm4 = shapeResult.I_mm4;
+        Z_mm3 = shapeResult.Z_mm3;
+      }
+    }
+
+    // Beam-level validation
     const validation = validateBeamInputs(
       isNaN(L_mm) ? null : L_mm,
       loadKN,
@@ -157,22 +212,22 @@ export default function SimpleSupportedCalculator() {
       Z_mm3,
       isNaN(sigmaAllowNum) ? null : sigmaAllowNum,
     );
+    for (const err of validation.errors) errors[err.field] = err.message;
+    for (const w of validation.warnings) warnings.push(w.message);
 
-    setErrors(validation.errors);
-    setWarnings(validation.warnings);
+    setFormErrors(errors);
+    setFormWarnings(warnings);
 
-    if (!validation.valid) {
+    if (Object.keys(errors).length > 0) {
       setResult(null);
       setLoadKNNormalized(null);
       return;
     }
 
-    // Calculate
-    const loadN = loadKN! * 1000;
     const res = calcSimpleBeam({
       L: L_mm,
       loadCase,
-      loadN,
+      loadN: loadKN! * 1000,
       E: E_MPa!,
       I: I_mm4!,
       Z: Z_mm3!,
@@ -184,12 +239,7 @@ export default function SimpleSupportedCalculator() {
     setLoadKNNormalized(loadKN!);
   }
 
-  // ── Error helper ─────────────────────────────────────────────────────────
-  function fieldError(field: string): string | undefined {
-    return errors.find((e) => e.field === field)?.message;
-  }
-
-  // ── Computed display values ───────────────────────────────────────────────
+  // ── Display helpers ───────────────────────────────────────────────────────
   const loadKNDisplay =
     loadValue && !isNaN(parseFloat(loadValue))
       ? loadUnit === 'kg'
@@ -202,16 +252,15 @@ export default function SimpleSupportedCalculator() {
       ? fmt(parseFloat(loadKNDisplay) / parseFloat(L), 6)
       : null;
 
-  const wKNperMDisplay =
-    wDisplay ? fmt(parseFloat(wDisplay) * 1000, 4) : null;
+  const wKNperMDisplay = wDisplay ? fmt(parseFloat(wDisplay) * 1000, 4) : null;
+  const currentShapeDef = SECTION_DEFS.find((d) => d.shape === selectedShape)!;
 
   // ─────────────────────────────────────────────────────────────────────────
   return (
     <div>
-      {/* ── INPUT FORM ── */}
       <form className="beam-form" onSubmit={handleCalculate} noValidate>
 
-        {/* 1. Material */}
+        {/* ① Material */}
         <section className="beam-section">
           <h2 className="beam-section-title">① 材質・ヤング率</h2>
           <div className="beam-row">
@@ -227,10 +276,9 @@ export default function SimpleSupportedCalculator() {
                 ))}
               </select>
             </div>
-            <div className="form-group" style={{ flex: '1 1 180px' }}>
+            <div className="form-group" style={{ flex: '1 1 160px' }}>
               <label htmlFor="E_GPa">
-                ヤング率 E{' '}
-                <span className="unit-label">[GPa]</span>
+                ヤング率 E <span className="unit-label">[GPa]</span>
               </label>
               <input
                 id="E_GPa"
@@ -240,14 +288,13 @@ export default function SimpleSupportedCalculator() {
                 placeholder="例: 205"
                 value={E_GPa}
                 onChange={(e) => { setE_GPa(e.target.value); setMaterialIdx(3); }}
-                className={fieldError('E') ? 'input-error' : ''}
+                className={formErrors['E'] ? 'input-error' : ''}
               />
-              {fieldError('E') && <span className="error-message">{fieldError('E')}</span>}
+              {formErrors['E'] && <span className="error-message">{formErrors['E']}</span>}
             </div>
             <div className="form-group" style={{ flex: '1 1 180px' }}>
               <label htmlFor="sigmaAllow">
-                許容曲げ応力 σ_allow{' '}
-                <span className="unit-label">[MPa]</span>
+                許容曲げ応力 σ_allow <span className="unit-label">[MPa]</span>
                 <span className="beam-note-inline">※要確認</span>
               </label>
               <input
@@ -258,9 +305,11 @@ export default function SimpleSupportedCalculator() {
                 placeholder="例: 150"
                 value={sigmaAllow}
                 onChange={(e) => setSigmaAllow(e.target.value)}
-                className={fieldError('sigmaAllow') ? 'input-error' : ''}
+                className={formErrors['sigmaAllow'] ? 'input-error' : ''}
               />
-              {fieldError('sigmaAllow') && <span className="error-message">{fieldError('sigmaAllow')}</span>}
+              {formErrors['sigmaAllow'] && (
+                <span className="error-message">{formErrors['sigmaAllow']}</span>
+              )}
             </div>
           </div>
           <p className="beam-note">
@@ -268,7 +317,7 @@ export default function SimpleSupportedCalculator() {
           </p>
         </section>
 
-        {/* 2. Span */}
+        {/* ② Span */}
         <section className="beam-section">
           <h2 className="beam-section-title">② スパン</h2>
           <div className="beam-row">
@@ -284,17 +333,16 @@ export default function SimpleSupportedCalculator() {
                 placeholder="例: 2000"
                 value={L}
                 onChange={(e) => setL(e.target.value)}
-                className={fieldError('L') ? 'input-error' : ''}
+                className={formErrors['L'] ? 'input-error' : ''}
               />
-              {fieldError('L') && <span className="error-message">{fieldError('L')}</span>}
+              {formErrors['L'] && <span className="error-message">{formErrors['L']}</span>}
             </div>
           </div>
         </section>
 
-        {/* 3. Load */}
+        {/* ③ Load */}
         <section className="beam-section">
           <h2 className="beam-section-title">③ 荷重</h2>
-          {/* Load case selector */}
           <div className="beam-row" style={{ marginBottom: '0.75rem' }}>
             <div className="beam-toggle-group">
               <button
@@ -318,8 +366,7 @@ export default function SimpleSupportedCalculator() {
             <div className="form-group" style={{ flex: '1 1 220px' }}>
               <label htmlFor="loadValue">
                 {loadCase === 'center' ? '集中荷重 P' : '総荷重 W_total'}
-                {' '}
-                <span className="unit-label">[{loadUnit}]</span>
+                {' '}<span className="unit-label">[{loadUnit}]</span>
               </label>
               <div className="input-with-unit">
                 <input
@@ -330,26 +377,20 @@ export default function SimpleSupportedCalculator() {
                   placeholder={loadUnit === 'kg' ? '例: 1000' : '例: 9.81'}
                   value={loadValue}
                   onChange={(e) => setLoadValue(e.target.value)}
-                  className={fieldError('load') ? 'input-error' : ''}
+                  className={formErrors['load'] ? 'input-error' : ''}
                 />
                 <div className="beam-toggle-group beam-toggle-group--small">
-                  <button
-                    type="button"
-                    className={`beam-toggle-btn beam-toggle-btn--small${loadUnit === 'kg' ? ' beam-toggle-btn--active' : ''}`}
-                    onClick={() => handleLoadUnitChange('kg')}
-                  >
-                    kg
-                  </button>
-                  <button
-                    type="button"
-                    className={`beam-toggle-btn beam-toggle-btn--small${loadUnit === 'kN' ? ' beam-toggle-btn--active' : ''}`}
-                    onClick={() => handleLoadUnitChange('kN')}
-                  >
-                    kN
-                  </button>
+                  {(['kg', 'kN'] as LoadUnit[]).map((u) => (
+                    <button
+                      key={u}
+                      type="button"
+                      className={`beam-toggle-btn beam-toggle-btn--small${loadUnit === u ? ' beam-toggle-btn--active' : ''}`}
+                      onClick={() => handleLoadUnitChange(u)}
+                    >{u}</button>
+                  ))}
                 </div>
               </div>
-              {fieldError('load') && <span className="error-message">{fieldError('load')}</span>}
+              {formErrors['load'] && <span className="error-message">{formErrors['load']}</span>}
               {loadKNDisplay && (
                 <span className="beam-conv">
                   → <strong>{loadKNDisplay} kN</strong>
@@ -372,95 +413,182 @@ export default function SimpleSupportedCalculator() {
           )}
         </section>
 
-        {/* 4. Section properties */}
+        {/* ④ Section */}
         <section className="beam-section">
-          <h2 className="beam-section-title">④ 断面性能（直接入力）</h2>
-          <p className="beam-note" style={{ marginBottom: '1rem' }}>
-            断面係数 Z・断面二次モーメント I をカタログや計算ツールから入力してください。
-          </p>
-          <div className="beam-row">
-            {/* Z */}
-            <div className="form-group" style={{ flex: '1 1 220px' }}>
-              <label htmlFor="Z">
-                断面係数 Z <span className="unit-label">[{ZUnit}]</span>
-              </label>
-              <div className="input-with-unit">
-                <input
-                  id="Z"
-                  type="number"
-                  min="0.001"
-                  step="any"
-                  placeholder={ZUnit === 'cm3' ? '例: 1000' : '例: 1000000'}
-                  value={Z}
-                  onChange={(e) => setZ(e.target.value)}
-                  className={fieldError('Z') ? 'input-error' : ''}
-                />
-                <div className="beam-toggle-group beam-toggle-group--small">
-                  <button
-                    type="button"
-                    className={`beam-toggle-btn beam-toggle-btn--small${ZUnit === 'cm3' ? ' beam-toggle-btn--active' : ''}`}
-                    onClick={() => handleZUnitChange('cm3')}
-                  >
-                    cm³
-                  </button>
-                  <button
-                    type="button"
-                    className={`beam-toggle-btn beam-toggle-btn--small${ZUnit === 'mm3' ? ' beam-toggle-btn--active' : ''}`}
-                    onClick={() => handleZUnitChange('mm3')}
-                  >
-                    mm³
-                  </button>
-                </div>
-              </div>
-              {fieldError('Z') && <span className="error-message">{fieldError('Z')}</span>}
-            </div>
+          <h2 className="beam-section-title">④ 断面性能</h2>
 
-            {/* I */}
-            <div className="form-group" style={{ flex: '1 1 220px' }}>
-              <label htmlFor="I">
-                断面二次モーメント I <span className="unit-label">[{IUnit}]</span>
-              </label>
-              <div className="input-with-unit">
-                <input
-                  id="I"
-                  type="number"
-                  min="0.001"
-                  step="any"
-                  placeholder={IUnit === 'cm4' ? '例: 10000' : '例: 100000000'}
-                  value={I}
-                  onChange={(e) => setI(e.target.value)}
-                  className={fieldError('I') ? 'input-error' : ''}
-                />
-                <div className="beam-toggle-group beam-toggle-group--small">
-                  <button
-                    type="button"
-                    className={`beam-toggle-btn beam-toggle-btn--small${IUnit === 'cm4' ? ' beam-toggle-btn--active' : ''}`}
-                    onClick={() => handleIUnitChange('cm4')}
+          {/* Mode tab */}
+          <div className="beam-toggle-group" style={{ marginBottom: '1.25rem', alignSelf: 'flex-start' }}>
+            <button
+              type="button"
+              className={`beam-toggle-btn${sectionMode === 'direct' ? ' beam-toggle-btn--active' : ''}`}
+              onClick={() => handleSectionModeChange('direct')}
+            >
+              直接入力
+            </button>
+            <button
+              type="button"
+              className={`beam-toggle-btn${sectionMode === 'shape' ? ' beam-toggle-btn--active' : ''}`}
+              onClick={() => handleSectionModeChange('shape')}
+            >
+              形状から計算
+            </button>
+          </div>
+
+          {sectionMode === 'direct' ? (
+            <div className="beam-row">
+              {/* Z */}
+              <div className="form-group" style={{ flex: '1 1 220px' }}>
+                <label htmlFor="Z">
+                  断面係数 Z <span className="unit-label">[{ZUnit}]</span>
+                </label>
+                <div className="input-with-unit">
+                  <input
+                    id="Z"
+                    type="number"
+                    min="0.001"
+                    step="any"
+                    placeholder={ZUnit === 'cm3' ? '例: 1000' : '例: 1000000'}
+                    value={Z}
+                    onChange={(e) => setZ(e.target.value)}
+                    className={formErrors['Z'] ? 'input-error' : ''}
+                  />
+                  <div className="beam-toggle-group beam-toggle-group--small">
+                    {(['cm3', 'mm3'] as ZUnit[]).map((u) => (
+                      <button
+                        key={u}
+                        type="button"
+                        className={`beam-toggle-btn beam-toggle-btn--small${ZUnit === u ? ' beam-toggle-btn--active' : ''}`}
+                        onClick={() => handleZUnitChange(u)}
+                      >{u === 'cm3' ? 'cm³' : 'mm³'}</button>
+                    ))}
+                  </div>
+                </div>
+                {formErrors['Z'] && <span className="error-message">{formErrors['Z']}</span>}
+              </div>
+
+              {/* I */}
+              <div className="form-group" style={{ flex: '1 1 220px' }}>
+                <label htmlFor="I">
+                  断面二次モーメント I <span className="unit-label">[{IUnit}]</span>
+                </label>
+                <div className="input-with-unit">
+                  <input
+                    id="I"
+                    type="number"
+                    min="0.001"
+                    step="any"
+                    placeholder={IUnit === 'cm4' ? '例: 10000' : '例: 100000000'}
+                    value={I}
+                    onChange={(e) => setI(e.target.value)}
+                    className={formErrors['I'] ? 'input-error' : ''}
+                  />
+                  <div className="beam-toggle-group beam-toggle-group--small">
+                    {(['cm4', 'mm4'] as IUnit[]).map((u) => (
+                      <button
+                        key={u}
+                        type="button"
+                        className={`beam-toggle-btn beam-toggle-btn--small${IUnit === u ? ' beam-toggle-btn--active' : ''}`}
+                        onClick={() => handleIUnitChange(u)}
+                      >{u === 'cm4' ? 'cm⁴' : 'mm⁴'}</button>
+                    ))}
+                  </div>
+                </div>
+                {formErrors['I'] && <span className="error-message">{formErrors['I']}</span>}
+              </div>
+            </div>
+          ) : (
+            /* ── Shape selector ── */
+            <div>
+              {/* Shape dropdown */}
+              <div className="beam-row" style={{ marginBottom: '1rem' }}>
+                <div className="form-group" style={{ flex: '1 1 240px' }}>
+                  <label htmlFor="sectionShape">断面形状</label>
+                  <select
+                    id="sectionShape"
+                    value={selectedShape}
+                    onChange={(e) => handleShapeChange(e.target.value as SectionShape)}
                   >
-                    cm⁴
-                  </button>
-                  <button
-                    type="button"
-                    className={`beam-toggle-btn beam-toggle-btn--small${IUnit === 'mm4' ? ' beam-toggle-btn--active' : ''}`}
-                    onClick={() => handleIUnitChange('mm4')}
-                  >
-                    mm⁴
-                  </button>
+                    {SECTION_DEFS.map((d) => (
+                      <option key={d.shape} value={d.shape}>{d.label}</option>
+                    ))}
+                  </select>
+                  <span className="beam-conv">{currentShapeDef.desc}</span>
                 </div>
               </div>
-              {fieldError('I') && <span className="error-message">{fieldError('I')}</span>}
+
+              {/* Dimension inputs */}
+              <div className="beam-row">
+                {currentShapeDef.params.map((p) => (
+                  <div key={p.key} className="form-group" style={{ flex: '1 1 140px' }}>
+                    <label htmlFor={`dim-${p.key}`}>
+                      {p.label} <span className="unit-label">[{p.unit}]</span>
+                    </label>
+                    <input
+                      id={`dim-${p.key}`}
+                      type="number"
+                      min="0.001"
+                      step="any"
+                      placeholder={p.placeholder}
+                      value={shapeDims[p.key] ?? ''}
+                      onChange={(e) =>
+                        setShapeDims((prev) => ({ ...prev, [p.key]: e.target.value }))
+                      }
+                    />
+                    {p.hint && <span className="beam-conv">{p.hint}</span>}
+                  </div>
+                ))}
+              </div>
+
+              {/* Shape validation errors */}
+              {shapeErrors.length > 0 && (
+                <div style={{ marginTop: '0.75rem' }}>
+                  {shapeErrors.map((err, i) => (
+                    <p key={i} className="error-message">{err}</p>
+                  ))}
+                </div>
+              )}
+
+              {/* Computed I and Z preview */}
+              {shapeResult && shapeErrors.length === 0 && (
+                <div className="beam-section-result">
+                  <span className="beam-section-result-item">
+                    <span className="beam-section-result-label">I =</span>
+                    <strong>{fmt(shapeResult.I_mm4, 0)} mm⁴</strong>
+                    <span className="beam-conv-inline">= {fmt(shapeResult.I_mm4 / 10000, 2)} cm⁴</span>
+                  </span>
+                  <span className="beam-section-result-item">
+                    <span className="beam-section-result-label">Z =</span>
+                    <strong>{fmt(shapeResult.Z_mm3, 0)} mm³</strong>
+                    <span className="beam-conv-inline">= {fmt(shapeResult.Z_mm3 / 1000, 2)} cm³</span>
+                  </span>
+                  <span className="beam-section-result-item">
+                    <span className="beam-section-result-label">断面積 A =</span>
+                    <strong>{fmt(shapeResult.area_mm2, 1)} mm²</strong>
+                    <span className="beam-conv-inline">= {fmt(shapeResult.area_mm2 / 100, 2)} cm²</span>
+                  </span>
+                </div>
+              )}
+
+              {formErrors['section'] && (
+                <span className="error-message" style={{ marginTop: '0.5rem', display: 'block' }}>
+                  {formErrors['section']}
+                </span>
+              )}
+
+              <p className="beam-note" style={{ marginTop: '0.75rem' }}>
+                ※ 角部の丸み（フィレット半径）は非考慮のため、JIS 規格品の断面性能表と若干異なる場合があります。
+              </p>
             </div>
-          </div>
+          )}
         </section>
 
-        {/* 5. Allowables */}
+        {/* ⑤ Allowables */}
         <section className="beam-section">
           <h2 className="beam-section-title">⑤ 許容値</h2>
           <div className="beam-row">
             <div className="form-group" style={{ flex: '1 1 200px' }}>
-              <label htmlFor="deflectionN">
-                許容たわみ基準
-              </label>
+              <label htmlFor="deflectionN">許容たわみ基準</label>
               <select
                 id="deflectionN"
                 value={deflectionN}
@@ -472,19 +600,16 @@ export default function SimpleSupportedCalculator() {
               </select>
               {L && !isNaN(parseFloat(L)) && parseFloat(L) > 0 && (
                 <span className="beam-conv">
-                  → δ_allow = {fmt(parseFloat(L) / deflectionN, 2)} mm
-                  （L = {L} mm）
+                  → δ_allow = {fmt(parseFloat(L) / deflectionN, 2)} mm（L = {L} mm）
                 </span>
               )}
             </div>
           </div>
 
-          {/* Deflection limit reference */}
           <div className="beam-ref-box">
             <p className="beam-ref-title">📖 許容たわみの参考</p>
             <p className="beam-ref-text">
-              許容たわみは用途・適用規準によって異なります。下記は一般的な参考情報です。
-              最終判断は設計基準・仕様書に従ってください。
+              許容たわみは用途・適用規準によって異なります。最終判断は設計基準・仕様書に従ってください。
             </p>
             <ul className="beam-ref-links">
               <li>
@@ -510,15 +635,14 @@ export default function SimpleSupportedCalculator() {
         </section>
 
         {/* Warnings */}
-        {warnings.length > 0 && (
+        {formWarnings.length > 0 && (
           <div className="beam-warnings">
-            {warnings.map((w, i) => (
-              <p key={i} className="beam-warning-item">⚠ {w.message}</p>
+            {formWarnings.map((w, i) => (
+              <p key={i} className="beam-warning-item">⚠ {w}</p>
             ))}
           </div>
         )}
 
-        {/* Submit */}
         <div className="form-submit-row">
           <button type="submit" className="btn-primary">計算する</button>
         </div>
@@ -530,15 +654,13 @@ export default function SimpleSupportedCalculator() {
           <h2>計算結果</h2>
           <p className="result-meta">
             {loadCase === 'center' ? '中央集中荷重' : '等分布荷重（総荷重入力）'}
-            {' / '}
-            {loadKNNormalized !== null && `荷重 ${fmt(loadKNNormalized, 2)} kN`}
+            {loadKNNormalized !== null && ` / 荷重 ${fmt(loadKNNormalized, 2)} kN`}
             {loadUnit === 'kg' && loadValue && ` (${loadValue} kg)`}
-            {' / '}
-            スパン L = {L} mm
+            {` / スパン L = ${L} mm`}
+            {sectionMode === 'shape' && ` / ${currentShapeDef.label}`}
           </p>
 
           <div className="result-cards">
-            {/* Bending moment */}
             <div className="result-card">
               <p className="result-label">最大曲げモーメント M_max</p>
               <p className="result-value" style={{ fontSize: '1.25rem' }}>
@@ -549,10 +671,7 @@ export default function SimpleSupportedCalculator() {
               </p>
             </div>
 
-            {/* Stress */}
-            <div
-              className={`result-card${result.stressOK ? ' result-card--ok' : ' result-card--ng'}`}
-            >
+            <div className={`result-card${result.stressOK ? ' result-card--ok' : ' result-card--ng'}`}>
               <p className="result-label">曲げ応力 σ_max</p>
               <p className="result-value" style={{ fontSize: '1.25rem' }}>
                 {fmt(result.sigmaMax, 1)} MPa
@@ -565,10 +684,7 @@ export default function SimpleSupportedCalculator() {
               </p>
             </div>
 
-            {/* Deflection */}
-            <div
-              className={`result-card${result.deflectionOK ? ' result-card--ok' : ' result-card--ng'}`}
-            >
+            <div className={`result-card${result.deflectionOK ? ' result-card--ok' : ' result-card--ng'}`}>
               <p className="result-label">最大たわみ δ_max</p>
               <p className="result-value" style={{ fontSize: '1.25rem' }}>
                 {fmt(result.deltaMax, 2)} mm
@@ -582,9 +698,8 @@ export default function SimpleSupportedCalculator() {
             </div>
           </div>
 
-          {/* Distributed load detail */}
           {loadCase === 'uniform' && result.w_kN_per_m !== undefined && (
-            <div className="beam-formula-box" style={{ marginTop: '0' }}>
+            <div className="beam-formula-box" style={{ marginTop: 0 }}>
               <span className="beam-formula-label">線荷重 w（内部値）</span>
               <span className="beam-formula-value">
                 w = {fmt(result.w_N_per_mm!, 6)} N/mm
@@ -595,26 +710,19 @@ export default function SimpleSupportedCalculator() {
             </div>
           )}
 
-          {/* Formulas reference */}
-          <div
-            style={{
-              background: 'var(--card)',
-              border: '1px solid var(--border)',
-              borderRadius: 'var(--radius)',
-              padding: '1.5rem',
-              marginTop: '1.5rem',
-            }}
-          >
-            <h3
-              style={{
-                fontSize: '0.875rem',
-                fontWeight: 700,
-                color: 'var(--text-muted)',
-                textTransform: 'uppercase',
-                letterSpacing: '0.06em',
-                marginBottom: '0.75rem',
-              }}
-            >
+          {sectionMode === 'shape' && shapeResult && (
+            <div className="beam-formula-box">
+              <span className="beam-formula-label">使用断面値</span>
+              <span className="beam-formula-value">
+                I = {fmt(shapeResult.I_mm4, 0)} mm⁴
+                &nbsp;/&nbsp;
+                Z = {fmt(shapeResult.Z_mm3, 0)} mm³
+              </span>
+            </div>
+          )}
+
+          <div style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '1.5rem', marginTop: '1.5rem' }}>
+            <h3 style={{ fontSize: '0.875rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.75rem' }}>
               使用した計算式（N–mm–MPa 系）
             </h3>
             {loadCase === 'center' ? (
@@ -639,6 +747,7 @@ export default function SimpleSupportedCalculator() {
         <h3>注記</h3>
         <ul>
           <li>梁の自重（等分布荷重相当）は本ツールでは考慮していません（将来追加予定）。</li>
+          <li>断面形状から計算する場合、角部の丸み（フィレット半径）は非考慮のため、JIS 規格品の断面性能表と若干異なる場合があります。</li>
           <li>許容応力・許容たわみは用途・適用規準によって異なります。ここでは入力値・選択値に基づく簡易判定です。</li>
           <li>計算結果は参考値です。最終判断は設計基準・仕様書・専門家にご確認ください。</li>
         </ul>
