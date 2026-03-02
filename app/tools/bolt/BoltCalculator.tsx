@@ -4,19 +4,27 @@ import { useState } from 'react';
 import { addEngHistoryEntry, type EngHistoryEntry, type FormulaStep } from '@/lib/engHistory';
 import { printEngReport } from '@/lib/printReport';
 import { trackToolCalculate } from '@/lib/analytics/events';
+import { BOLT_CALC_SPECS, type Diameter } from '@/lib/bolts/specs';
+import BoltDimensionDiagram from './BoltDimensionDiagram';
 
-type Diameter = 'M6' | 'M8' | 'M10' | 'M12' | 'M16' | 'M20' | 'M24';
-
-const SPECS: Record<Diameter, { p: number; Hnut: number; Hpw: number; Hsw: number }> = {
-  M6: { p: 1.0, Hnut: 5.2, Hpw: 1.6, Hsw: 1.6 },
-  M8: { p: 1.25, Hnut: 6.8, Hpw: 1.6, Hsw: 2.0 },
-  M10: { p: 1.5, Hnut: 8.4, Hpw: 2.0, Hsw: 2.5 },
-  M12: { p: 1.75, Hnut: 10.8, Hpw: 2.5, Hsw: 3.0 },
-  M16: { p: 2.0, Hnut: 14.8, Hpw: 3.0, Hsw: 4.0 },
-  M20: { p: 2.5, Hnut: 18.0, Hpw: 3.0, Hsw: 5.1 },
-  M24: { p: 3.0, Hnut: 21.5, Hpw: 4.0, Hsw: 5.6 },
-};
-
+function parseIntegerInRange(
+  value: string,
+  fieldLabel: string,
+  min: number,
+  max: number,
+): { ok: true; value: number } | { ok: false; error: string } {
+  if (value.trim() === '') {
+    return { ok: false, error: `${fieldLabel}を入力してください。` };
+  }
+  if (!/^\d+$/.test(value.trim())) {
+    return { ok: false, error: `${fieldLabel}は整数で入力してください。` };
+  }
+  const num = Number(value);
+  if (num < min || num > max) {
+    return { ok: false, error: `${fieldLabel}は${min}〜${max}の範囲で入力してください。` };
+  }
+  return { ok: true, value: num };
+}
 
 function ceilToBuyLength(mm: number): number {
   const step = mm <= 100 ? 5 : mm <= 200 ? 10 : 25;
@@ -36,10 +44,13 @@ export default function BoltCalculator() {
   const [diam, setDiam] = useState<Diameter>('M12');
   const [n, setN] = useState('1');
   const [pw, setPw] = useState('1');
-  const [sw, setSw] = useState('1');
-  const [t, setT] = useState('20');
+  const [sw, setSw] = useState('0');
+  const [t, setT] = useState('12');
   const [purpose, setPurpose] = useState('');
   const [tError, setTError] = useState('');
+  const [nError, setNError] = useState('');
+  const [pwError, setPwError] = useState('');
+  const [swError, setSwError] = useState('');
   const [result, setResult] = useState<Result | null>(null);
   const [lastEntry, setLastEntry] = useState<EngHistoryEntry | null>(null);
 
@@ -53,10 +64,18 @@ export default function BoltCalculator() {
     }
     setTError('');
 
-    const spec = SPECS[diam];
-    const nv = Math.max(0, parseInt(n, 10) || 0);
-    const pwv = Math.max(0, parseInt(pw, 10) || 0);
-    const swv = Math.max(0, parseInt(sw, 10) || 0);
+    const parsedN = parseIntegerInRange(n, '六角ナット N', 0, 10);
+    const parsedPw = parseIntegerInRange(pw, '平座金 PW', 0, 10);
+    const parsedSw = parseIntegerInRange(sw, 'ばね座金 SW', 0, 10);
+    setNError(parsedN.ok ? '' : parsedN.error);
+    setPwError(parsedPw.ok ? '' : parsedPw.error);
+    setSwError(parsedSw.ok ? '' : parsedSw.error);
+    if (!parsedN.ok || !parsedPw.ok || !parsedSw.ok) return;
+
+    const spec = BOLT_CALC_SPECS[diam];
+    const nv = parsedN.value;
+    const pwv = parsedPw.value;
+    const swv = parsedSw.value;
 
     const nutTerm = nv * spec.Hnut;
     const pwTerm = pwv * spec.Hpw;
@@ -139,11 +158,15 @@ export default function BoltCalculator() {
 
   return (
     <>
+      <div className="beam-diagram-wrapper">
+        <BoltDimensionDiagram />
+      </div>
+
       <form className="loan-form" onSubmit={handleSubmit} noValidate>
         <div className="form-group">
           <label htmlFor="diam">呼び径</label>
           <select id="diam" value={diam} onChange={(e) => setDiam(e.target.value as Diameter)}>
-            {(Object.keys(SPECS) as Diameter[]).map((d) => (
+            {(Object.keys(BOLT_CALC_SPECS) as Diameter[]).map((d) => (
               <option key={d} value={d}>{d}</option>
             ))}
           </select>
@@ -169,17 +192,56 @@ export default function BoltCalculator() {
 
         <div className="form-group">
           <label htmlFor="nNut">六角ナット N (枚)</label>
-          <input id="nNut" type="number" min="0" max="10" value={n} onChange={(e) => setN(e.target.value)} />
+          <input
+            id="nNut"
+            type="number"
+            min="0"
+            max="10"
+            step="1"
+            value={n}
+            onChange={(e) => {
+              setN(e.target.value);
+              setNError('');
+            }}
+            className={nError ? 'input-error' : ''}
+          />
+          {nError && <span className="error-message">{nError}</span>}
         </div>
 
         <div className="form-group">
           <label htmlFor="nPw">平座金 PW (枚)</label>
-          <input id="nPw" type="number" min="0" max="10" value={pw} onChange={(e) => setPw(e.target.value)} />
+          <input
+            id="nPw"
+            type="number"
+            min="0"
+            max="10"
+            step="1"
+            value={pw}
+            onChange={(e) => {
+              setPw(e.target.value);
+              setPwError('');
+            }}
+            className={pwError ? 'input-error' : ''}
+          />
+          {pwError && <span className="error-message">{pwError}</span>}
         </div>
 
         <div className="form-group">
           <label htmlFor="nSw">ばね座金 SW (枚)</label>
-          <input id="nSw" type="number" min="0" max="10" value={sw} onChange={(e) => setSw(e.target.value)} />
+          <input
+            id="nSw"
+            type="number"
+            min="0"
+            max="10"
+            step="1"
+            value={sw}
+            onChange={(e) => {
+              setSw(e.target.value);
+              setSwError('');
+            }}
+            className={swError ? 'input-error' : ''}
+          />
+          {swError && <span className="error-message">{swError}</span>}
         </div>
 
         <div className="form-group" style={{ gridColumn: '1 / -1' }}>
@@ -208,7 +270,7 @@ export default function BoltCalculator() {
         <div className="results" style={{ marginTop: '2rem' }}>
           <h2>計算結果</h2>
           <p className="result-meta">
-            呼び径 {result.diam}（ピッチ {SPECS[result.diam].p} mm）
+            呼び径 {result.diam}（ピッチ {BOLT_CALC_SPECS[result.diam].p} mm）
           </p>
           <div className="result-cards">
             <div className="result-card result-card--primary">
