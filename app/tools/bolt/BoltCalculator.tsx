@@ -4,72 +4,8 @@ import { useState } from 'react';
 import { addEngHistoryEntry, type EngHistoryEntry, type FormulaStep } from '@/lib/engHistory';
 import { printEngReport } from '@/lib/printReport';
 import { trackToolCalculate } from '@/lib/analytics/events';
-
-type Diameter = 'M6' | 'M8' | 'M10' | 'M12' | 'M16' | 'M20' | 'M24';
-
-const SPECS: Record<Diameter, { p: number; Hnut: number; Hpw: number; Hsw: number }> = {
-  M6: { p: 1.0, Hnut: 5.2, Hpw: 1.6, Hsw: 1.6 },
-  M8: { p: 1.25, Hnut: 6.8, Hpw: 1.6, Hsw: 2.0 },
-  M10: { p: 1.5, Hnut: 8.4, Hpw: 2.0, Hsw: 2.5 },
-  M12: { p: 1.75, Hnut: 10.8, Hpw: 2.5, Hsw: 3.0 },
-  M16: { p: 2.0, Hnut: 14.8, Hpw: 3.0, Hsw: 4.0 },
-  M20: { p: 2.5, Hnut: 18.0, Hpw: 3.0, Hsw: 5.1 },
-  M24: { p: 3.0, Hnut: 21.5, Hpw: 4.0, Hsw: 5.6 },
-};
-
-type BoltPreset = {
-  key: string;
-  label: string;
-  diam: Diameter;
-  t: string;
-  n: string;
-  pw: string;
-  sw: string;
-  purpose: string;
-};
-
-const INPUT_PRESETS: BoltPreset[] = [
-  {
-    key: 'plate-single',
-    label: '鋼板1枚 + ナット1枚 + 平座金1枚',
-    diam: 'M12',
-    t: '12',
-    n: '1',
-    pw: '1',
-    sw: '0',
-    purpose: '鋼板固定（標準）',
-  },
-  {
-    key: 'machine-base',
-    label: '機械ベース固定（平座金+ばね座金）',
-    diam: 'M16',
-    t: '20',
-    n: '1',
-    pw: '1',
-    sw: '1',
-    purpose: 'モーターベース固定',
-  },
-  {
-    key: 'thick-member',
-    label: '厚板締結（ナット2枚）',
-    diam: 'M20',
-    t: '35',
-    n: '2',
-    pw: '1',
-    sw: '0',
-    purpose: '厚板ブラケット固定',
-  },
-  {
-    key: 'light-cover',
-    label: '軽量カバー固定',
-    diam: 'M8',
-    t: '6',
-    n: '1',
-    pw: '1',
-    sw: '0',
-    purpose: 'カバー取付',
-  },
-];
+import { BOLT_CALC_SPECS, M12_REFERENCE_NOTE, type Diameter } from '@/lib/bolts/specs';
+import BoltDimensionDiagram from './BoltDimensionDiagram';
 
 function parseIntegerInRange(
   value: string,
@@ -90,7 +26,6 @@ function parseIntegerInRange(
   return { ok: true, value: num };
 }
 
-
 function ceilToBuyLength(mm: number): number {
   const step = mm <= 100 ? 5 : mm <= 200 ? 10 : 25;
   return Math.ceil(mm / step) * step;
@@ -106,36 +41,18 @@ interface Result {
 }
 
 export default function BoltCalculator() {
-  const initialPreset = INPUT_PRESETS[0];
-  const [presetKey, setPresetKey] = useState(initialPreset.key);
-  const [diam, setDiam] = useState<Diameter>(initialPreset.diam);
-  const [n, setN] = useState(initialPreset.n);
-  const [pw, setPw] = useState(initialPreset.pw);
-  const [sw, setSw] = useState(initialPreset.sw);
-  const [t, setT] = useState(initialPreset.t);
-  const [purpose, setPurpose] = useState(initialPreset.purpose);
+  const [diam, setDiam] = useState<Diameter>('M12');
+  const [n, setN] = useState('1');
+  const [pw, setPw] = useState('1');
+  const [sw, setSw] = useState('0');
+  const [t, setT] = useState('12');
+  const [purpose, setPurpose] = useState('');
   const [tError, setTError] = useState('');
   const [nError, setNError] = useState('');
   const [pwError, setPwError] = useState('');
   const [swError, setSwError] = useState('');
   const [result, setResult] = useState<Result | null>(null);
   const [lastEntry, setLastEntry] = useState<EngHistoryEntry | null>(null);
-
-  function applyPreset(key: string) {
-    const preset = INPUT_PRESETS.find((item) => item.key === key);
-    if (!preset) return;
-    setPresetKey(key);
-    setDiam(preset.diam);
-    setT(preset.t);
-    setN(preset.n);
-    setPw(preset.pw);
-    setSw(preset.sw);
-    setPurpose(preset.purpose);
-    setTError('');
-    setNError('');
-    setPwError('');
-    setSwError('');
-  }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -155,7 +72,7 @@ export default function BoltCalculator() {
     setSwError(parsedSw.ok ? '' : parsedSw.error);
     if (!parsedN.ok || !parsedPw.ok || !parsedSw.ok) return;
 
-    const spec = SPECS[diam];
+    const spec = BOLT_CALC_SPECS[diam];
     const nv = parsedN.value;
     const pwv = parsedPw.value;
     const swv = parsedSw.value;
@@ -241,27 +158,24 @@ export default function BoltCalculator() {
 
   return (
     <>
-      <form className="loan-form" onSubmit={handleSubmit} noValidate>
-        <div className="form-group" style={{ gridColumn: '1 / -1' }}>
-          <label htmlFor="bolt-preset">入力プリセット</label>
-          <select
-            id="bolt-preset"
-            value={presetKey}
-            onChange={(e) => applyPreset(e.target.value)}
-          >
-            {INPUT_PRESETS.map((preset) => (
-              <option key={preset.key} value={preset.key}>
-                {preset.label}
-              </option>
-            ))}
-          </select>
-          <span className="beam-conv">代表条件を読み込み後、必要に応じて各値を調整できます。</span>
-        </div>
+      <div className="beam-diagram-wrapper">
+        <BoltDimensionDiagram />
+        <p className="beam-note" style={{ marginTop: '0.75rem', marginBottom: 0 }}>
+          図の寸法値はM12基準です。
+        </p>
+        <p className="beam-note" style={{ marginTop: '0.25rem', marginBottom: 0 }}>
+          計算は選択した呼び径の値を使用します。
+        </p>
+        <p className="beam-note" style={{ marginTop: '0.25rem', marginBottom: 0 }}>
+          {M12_REFERENCE_NOTE}
+        </p>
+      </div>
 
+      <form className="loan-form" onSubmit={handleSubmit} noValidate>
         <div className="form-group">
           <label htmlFor="diam">呼び径</label>
           <select id="diam" value={diam} onChange={(e) => setDiam(e.target.value as Diameter)}>
-            {(Object.keys(SPECS) as Diameter[]).map((d) => (
+            {(Object.keys(BOLT_CALC_SPECS) as Diameter[]).map((d) => (
               <option key={d} value={d}>{d}</option>
             ))}
           </select>
@@ -365,7 +279,7 @@ export default function BoltCalculator() {
         <div className="results" style={{ marginTop: '2rem' }}>
           <h2>計算結果</h2>
           <p className="result-meta">
-            呼び径 {result.diam}（ピッチ {SPECS[result.diam].p} mm）
+            呼び径 {result.diam}（ピッチ {BOLT_CALC_SPECS[result.diam].p} mm）
           </p>
           <div className="result-cards">
             <div className="result-card result-card--primary">

@@ -2,6 +2,7 @@ import type { EngHistoryEntry } from './engHistory';
 import { fmt } from './beams/units';
 import { getSectionSVGString } from './beams/sectionSVG';
 import type { SectionShape } from './beams/sections';
+import { getBoltSVGString } from './bolts/boltSVG';
 
 function fmtDate(ts: number): string {
   return new Date(ts).toLocaleString('ja-JP', {
@@ -115,8 +116,8 @@ ${buildFormulaSteps(entry)}
 
 function buildBoltReport(entry: EngHistoryEntry): string {
   const r = entry.results;
+  const svg = getBoltSVGString();
   const inputRows = [
-    `<tr><th>プリセット</th><td>${entry.inputs.boltPreset ?? '-'}</td></tr>`,
     `<tr><th>呼び径</th><td>${entry.inputs.diameter ?? '-'}</td></tr>`,
     ...Object.entries(entry.inputs.dims).map(([k, v]) => `<tr><th>${k}</th><td>${v}</td></tr>`),
   ].join('');
@@ -130,13 +131,15 @@ function buildBoltReport(entry: EngHistoryEntry): string {
   return `${baseStyle('ボルト長さ計算書')}
 <h1>ボルト長さ計算書</h1>
 <div class="meta">計算日時: ${fmtDate(entry.timestamp)} / 用途: ${entry.inputs.purpose ?? '-'}</div>
-<h2>① 入力</h2>
+<h2>① 図解</h2>
+<div style="max-width:420px">${svg}</div>
+<h2>② 入力</h2>
 <table><tbody>${inputRows}</tbody></table>
-<h2>② 計算式</h2>
+<h2>③ 計算式</h2>
 ${buildFormulaSteps(entry)}
-<h2>③ 計算結果</h2>
+<h2>④ 計算結果</h2>
 <table><tbody>${resultRows}</tbody></table>
-<div class="disclaimer">本計算書は参考値です。実調達時はJIS規格・メーカー寸法を必ず確認してください。</div>
+<div class="disclaimer">本計算書は参考値です。実調達時はJIS規格・メーカー寸法を必ず確認してください。図解寸法はM12概略であり、製品寸法差を含みます。</div>
 <div class="footer">calcnavi / tools/bolt</div>
 </body></html>`;
 }

@@ -85,7 +85,7 @@ export default async function BoltPage() {
       <p className="page-description">
         ナット・座金の組み合わせから、先端3山確保に必要なボルト長さと推奨購入長さを計算します（M6〜M24）。
       </p>
-      <p className="tool-flow">入力条件 → 計算結果 → 途中式・PDF出力 の順で確認できます。</p>
+      <p className="tool-flow">入力条件 → 計算結果 → 途中式・PDF出力 の順で確認できます。概略図で各寸法位置も確認できます。</p>
       <BoltCalculator />
       <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', marginTop: '2rem', lineHeight: 1.7 }}>
         ※ 本ツールの結果は参考値です。最終確認は規格・メーカー・専門家にお問い合わせください。
