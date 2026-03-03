@@ -12,6 +12,33 @@ export const metadata: Metadata = {
     template: `%s | ${SITE_NAME}`,
   },
   description: SITE_DESCRIPTION,
+  icons: {
+    icon: [
+      { url: '/favicon.ico' },
+      { url: '/favicon.png', type: 'image/png' },
+    ],
+    shortcut: '/favicon.ico',
+    apple: '/favicon.png',
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'ja_JP',
+    url: SITE_URL,
+    siteName: SITE_NAME,
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'calcnavi + 計算ナビ',
+      },
+    ],
+  },
+  // X (formerly Twitter) still consumes twitter:* card metadata keys.
+  twitter: {
+    card: 'summary_large_image',
+    images: ['/og-image.png'],
+  },
   verification: {
     google: '_s1QVEtZdDk23z5f3faZKgRjWDcR1MuOGDZd_35LFDk',
   },
