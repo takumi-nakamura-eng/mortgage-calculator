@@ -1,15 +1,21 @@
 import type { Metadata } from 'next';
+import { buildMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildMetadata({
   title: '利用規約',
   description: 'calcnavi（計算ナビ）の利用規約。サービスの利用条件・禁止事項・免責などを説明します。',
-};
+  path: '/terms',
+});
 
 export default function TermsPage() {
   return (
     <main className="container">
       <h1 className="page-title">利用規約</h1>
       <div className="static-content">
+        <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>
+          施行日：2026年3月3日
+        </p>
+
         <h2>第1条（適用）</h2>
         <p>
           本規約は、calcnavi（計算ナビ、以下「当サイト」）が提供するすべての計算ツール・コンテンツの利用に適用されます。
@@ -19,7 +25,7 @@ export default function TermsPage() {
         <h2>第2条（計算結果の性質）</h2>
         <ul>
           <li>当サイトが提供する計算結果はすべて参考値です。</li>
-          <li>実際の返済額・設計値・仕様等は必ず専門家または各機関にご確認ください。</li>
+          <li>実際の設計値・施工条件・仕様等は必ず規格原文・メーカー仕様書・専門家にご確認ください。</li>
           <li>計算結果を最終的な意思決定の唯一の根拠とすることはお控えください。</li>
         </ul>
 

@@ -1,16 +1,22 @@
 import type { Metadata } from 'next';
+import { buildMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildMetadata({
   title: 'プライバシーポリシー',
   description:
     'calcnavi（計算ナビ）のプライバシーポリシー。Cookie・広告・アクセス解析・個人情報の取り扱いについて説明します。',
-};
+  path: '/privacy',
+});
 
 export default function PrivacyPage() {
   return (
     <main className="container">
       <h1 className="page-title">プライバシーポリシー</h1>
       <div className="static-content">
+        <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>
+          最終更新日：2026年3月3日
+        </p>
+
         <h2>1. 取得する情報</h2>
         <ul>
           <li>
@@ -65,6 +71,17 @@ export default function PrivacyPage() {
           </li>
           <li>
             広告配信には、過去の閲覧情報に基づくリマーケティング広告が含まれる場合があります。
+          </li>
+          <li>
+            パーソナライズ広告の設定変更・オプトアウトは
+            <a
+              href="https://adssettings.google.com"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Google 広告設定
+            </a>
+            から行えます。
           </li>
           <li>
             詳細は
