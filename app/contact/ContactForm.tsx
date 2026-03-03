@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 
-const MAIL = 'cantact.calcnavi@gmail.com';
+const MAIL = 'contact.calcnavi@gmail.com';
 const TYPES = ['不具合報告', '機能のご要望', 'その他'];
 
 type F = { company: string; name: string; email: string; type: string; body: string };
