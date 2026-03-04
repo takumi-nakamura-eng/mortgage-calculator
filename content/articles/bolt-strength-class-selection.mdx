@@ -1,0 +1,158 @@
+---
+title: "ボルト強度区分（4.6/8.8/10.9）の選び方"
+description: "ボルトの強度区分の読み方、4.6・8.8・10.9・12.9の使い分け、ナットとの組み合わせルールを整理します。"
+publishedAt: "2026-03-04"
+updatedAt: "2026-03-04"
+category: "ねじ・締結"
+tags:
+  - "強度区分"
+  - "ボルト"
+  - "締結"
+  - "JIS"
+toolRefs:
+  - "bolt-length"
+diagramKey: "bolt-strength"
+faq:
+  - q: "強度区分の数字は何を意味しますか？"
+    a: "小数点の前が引張強さの1/100（MPa）、後が降伏比（降伏点/引張強さ）を表します。8.8なら引張強さ800 MPa、降伏点640 MPaです。"
+  - q: "強度区分を上げればいつでも安全ですか？"
+    a: "いいえ。高強度ボルトは脆性破壊・遅れ破壊のリスクがあり、環境条件や締付管理が重要になります。"
+sources:
+  - title: "JIS B 1051 炭素鋼及び合金鋼製締結用部品の機械的性質"
+    url: "https://kikakurui.com/b1/B1051-2014-01.html"
+    site: "規格一覧"
+    accessedAt: "2026-03-04"
+    note: "カテゴリ: 公的。ボルト強度区分の定義・機械的性質の規格原文"
+  - title: "JIS B 1181 六角ナット"
+    url: "https://kikakurui.com/b1/B1181-2014-01.html"
+    site: "規格一覧"
+    accessedAt: "2026-03-04"
+    note: "カテゴリ: 公的。ナットの強度区分とボルトとの対応表"
+  - title: "MISUMI 技術情報"
+    url: "https://jp.misumi-ec.com/tech-info/"
+    site: "MISUMI"
+    accessedAt: "2026-03-04"
+    note: "カテゴリ: メーカー技術資料。強度区分の実務選定観点"
+  - title: "SMC 技術資料"
+    url: "https://www.smcworld.com/webcatalog/ja/"
+    site: "SMC"
+    accessedAt: "2026-03-04"
+    note: "カテゴリ: メーカー技術資料。機械設計時の締結設計の確認"
+---
+
+## この記事でわかること
+
+ボルト強度区分の数字の読み方、4.6・8.8・10.9・12.9の用途別使い分け、そしてナットとの正しい組み合わせルールがわかります。
+
+## 結論
+
+ボルトの強度区分は [JIS B 1051](https://kikakurui.com/b1/B1051-2014-01.html) で規定されており、「引張強さ × 降伏比」を小数点で表記します。
+例えば8.8は引張強さ800 MPa・降伏点640 MPa（800 × 0.8）を意味します。
+一般機械には4.6（低強度・安価）、設備架台や中荷重には8.8、高軸力・振動環境には10.9を選ぶのが基本です。
+12.9は最高強度ですが、遅れ破壊や水素脆化のリスクが高く、環境条件と締付管理を慎重に検討する必要があります。
+ナットの強度区分はボルトと対応させ、[JIS B 1181](https://kikakurui.com/b1/B1181-2014-01.html) の組み合わせ表に従います。ボルト8.8にはナット強度区分8以上が必要です。
+
+## 図解
+
+<div className="diagram-card diagram-card--compact">
+<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ボルト強度区分の読み方">
+  <rect x="40" y="30" width="320" height="140" rx="12" fill="#f8fafc" stroke="#cbd5e1" />
+  <text x="200" y="60" textAnchor="middle" fontSize="28" fontWeight="700" fill="#1d4ed8">8 . 8</text>
+  <line x1="160" y1="72" x2="160" y2="100" stroke="#334155" strokeWidth="1.5" />
+  <line x1="230" y1="72" x2="230" y2="100" stroke="#334155" strokeWidth="1.5" />
+  <text x="160" y="118" textAnchor="middle" fontSize="11" fill="#334155">引張強さ ×100</text>
+  <text x="160" y="133" textAnchor="middle" fontSize="11" fill="#64748b">= 800 MPa</text>
+  <text x="230" y="118" textAnchor="middle" fontSize="11" fill="#334155">降伏比 ×10</text>
+  <text x="230" y="133" textAnchor="middle" fontSize="11" fill="#64748b">= 0.8</text>
+  <text x="200" y="160" textAnchor="middle" fontSize="12" fontWeight="600" fill="#dc2626">降伏点 = 800 × 0.8 = 640 MPa</text>
+</svg>
+</div>
+
+## 比較表
+
+| 強度区分 | 引張強さ (MPa) | 降伏点 (MPa) | 主な用途 | コスト | リスク |
+|---|---:|---:|---|---|---|
+| 4.6 | 400 | 240 | 軽荷重・仮止め・非構造 | 安い | 低い |
+| 8.8 | 800 | 640 | 設備架台・一般機械・中荷重構造 | 中程度 | 低い |
+| 10.9 | 1040 | 940 | 高軸力・振動環境・重要継手 | やや高い | 遅れ破壊に注意 |
+| 12.9 | 1220 | 1100 | 極高軸力・特殊用途 | 高い | 遅れ破壊・水素脆化リスク大 |
+
+ボルト・ナットの組み合わせ:
+
+| ボルト強度区分 | 最低限のナット強度区分 | 根拠 |
+|---|---|---|
+| 4.6 | 4 | JIS B 1181 |
+| 8.8 | 8 | JIS B 1181 |
+| 10.9 | 10 | JIS B 1181 |
+| 12.9 | 12 | JIS B 1181 |
+
+## 計算例（再現用）
+
+<a href="/tools/bolt" className="tool-item article-tool-item">
+  <CardDiagram variant="tool" diagramKey="bolt-length" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">ボルト長さ計算</span>
+    <span className="tool-item-desc">強度区分を選んだ後のボルト首下長さを算出。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+条件: M16 ボルト、強度区分8.8、必要軸力 `F = 50 kN`。
+
+ボルトの有効断面積（M16）: `A_s = 157 mm²`
+
+保証荷重応力: 降伏点の90% = `640 × 0.9 = 576 MPa`（JIS B 1051 参考値）
+
+最大許容軸力: `F_max = σ × A_s = 576 × 157 = 90,432 N ≒ 90.4 kN`
+
+判定: `50 kN ≤ 90.4 kN` → **OK**。軸力に対して十分な余裕があります。
+
+## 落とし穴
+
+- 強度区分の数字を「引張強さそのもの」と誤解する（8.8を880 MPaと読む等）
+- ボルト10.9にナット4を組み合わせ、ナット側ねじ山が先に破損する
+- 12.9ボルトを「高強度で安全」と安易に採用し、遅れ破壊（数時間〜数日後に突然破断）が発生する
+- 締付トルク管理を怠り、高強度ボルトの軸力が設計値と大きくずれる
+
+## 判断基準
+
+`契約図書・設計図のボルト指定 > JIS B 1051 強度区分表 > 荷重条件（軸力・振動・温度） > メーカー推奨値（迷ったら8.8が汎用性で有利）`
+
+## 関連ツール
+
+<a href="/tools/bolt" className="tool-item article-tool-item">
+  <CardDiagram variant="tool" diagramKey="bolt-length" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">ボルト長さ計算</span>
+    <span className="tool-item-desc">締結体厚さ・座金・ナットから必要な首下長さを算出。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+## 関連記事
+
+<a href="/articles/coarse-thread" className="tool-item article-tool-item">
+  <CardDiagram variant="article" diagramKey="coarse-thread" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">並目とは</span>
+    <span className="tool-item-desc">ボルト強度区分と合わせて確認するピッチの基本。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+<a href="/articles/nut-basics" className="tool-item article-tool-item">
+  <CardDiagram variant="article" diagramKey="nut-basics" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">ナットの基礎知識</span>
+    <span className="tool-item-desc">ボルト強度区分に対応するナットの選び方。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+## FAQ
+
+### Q1. 強度区分の数字は何を意味しますか？
+A. 小数点の前の数字が引張強さの1/100（MPa単位）、小数点の後が降伏比（降伏点÷引張強さ）です。例えば8.8は引張強さ800 MPa、降伏点640 MPa（800 × 0.8）を意味します。
+
+### Q2. 強度区分を上げればいつでも安全ですか？
+A. いいえ。10.9以上の高強度ボルトは遅れ破壊（水素脆化）のリスクがあり、腐食環境・電食・不適切な表面処理で突然破断する可能性があります。環境条件と締付トルク管理を合わせて検討してください。

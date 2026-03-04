@@ -32,7 +32,24 @@ sources:
     site: "SMC"
     accessedAt: "2026-03-01"
     note: "機械設計時の一般的な実務注意点の確認"
+  - title: "JIS B 1181 六角ナット"
+    url: "https://kikakurui.com/b1/B1181-2014-01.html"
+    site: "規格一覧"
+    accessedAt: "2026-03-04"
+    note: "カテゴリ: 公的。六角ナットの種類・寸法・高さの規格原文"
 ---
+
+## この記事でわかること
+
+六角ナットの1種・2種・3種の高さの違い、用途別の選び方、そしてボルトとの強度区分の組み合わせ方がわかります。
+
+## 結論
+
+ナットの高さ（`Hnut`）は有効ねじかかり長を決定する重要なパラメータです。
+[JIS B 1181](https://kikakurui.com/b1/B1181-2014-01.html) では六角ナットを1種（標準高さ）・2種（やや高い）・3種（薄い）に分類しています。
+一般的な締結には1種を使い、高い締結力や長期の振動環境では2種、省スペースやロック用途では3種を選びます。
+ボルト長さ計算では `L = t + Hpw + Hsw + Hnut + 3p` の `Hnut` に種類ごとの高さを入れます。
+ナットの強度区分はボルトの強度区分と対応させる必要があり、例えばボルト8.8にはナット強度区分8以上を組み合わせます。
 
 ## 図解
 
@@ -47,26 +64,88 @@ sources:
 
 ## 比較表
 
-| 種類 | 高さ | 主な使いどころ |
-|---|---|---|
-| 1種 | 標準 | 一般用途 |
-| 2種 | やや高い | 高い締結力が必要 |
-| 3種 | 薄い | 省スペース・ロック用途 |
+| 種類 | 高さ（M12の場合） | 有効かかり長 | 主な使いどころ | 強度面 |
+|---|---|---|---|---|
+| 1種 | 10.8 mm（標準） | 十分 | 一般用途・汎用締結 | 標準的な締結力を確保 |
+| 2種 | 12.0 mm（やや高い） | より長い | 高締結力・振動環境 | 高い軸力に対応可能 |
+| 3種 | 6.0 mm（薄い） | 短い | 省スペース・ロック用 | 締結力は低め、単独使用注意 |
 
-## 計算例
+ボルト・ナットの強度区分の組み合わせ:
 
-条件: M12、ナット1枚、`Hnut = 10.8 mm`。
+| ボルト強度区分 | 最低限のナット強度区分 |
+|---|---|
+| 4.6 | 4 |
+| 8.8 | 8 |
+| 10.9 | 10 |
+| 12.9 | 12 |
+
+## 計算例（再現用）
+
+<a href="/tools/bolt" className="tool-item article-tool-item">
+  <CardDiagram variant="tool" diagramKey="bolt-length" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">ボルト長さ計算</span>
+    <span className="tool-item-desc">ナット高さ Hnut を含むボルト首下長さを算出。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+条件: M12、ナット1種1枚、`Hnut = 10.8 mm`。
 
 式: ナット分の必要長さ `= N × Hnut`
 
 計算: `1 × 10.8 = 10.8 mm`
 
-結果: ナット分の必要長さは **10.8 mm**。
+結果: ナット分の必要長さは **10.8 mm**。ボルト長さ `L = t + Hpw + Hsw + Hnut + 3p` に加算します。
+
+ダブルナットの場合: 1種 `10.8 mm` + 3種 `6.0 mm` = **16.8 mm** をナット分として加算します。
+
+## 落とし穴
+
+- ナット1種と2種の高さの違いを見落とし、ボルト長さが足りず3山出ない
+- ボルト強度区分10.9にナット強度区分4を組み合わせ、ナット側がねじ山破損する
+- ダブルナット使用時にナット2枚分の高さを加算し忘れる
+- 3種（薄ナット）を高軸力の一般締結に使い、かかり長不足で抜ける
+
+## 判断基準
+
+`契約図書・設計図のナット指定 > JIS B 1181 種類・高さ表 > ボルト強度区分との対応 > メーカー推奨値（競合時は高さが高い方）`
+
+## 関連ツール
+
+<a href="/tools/bolt" className="tool-item article-tool-item">
+  <CardDiagram variant="tool" diagramKey="bolt-length" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">ボルト長さ計算</span>
+    <span className="tool-item-desc">締結体厚さ・座金・ナットから必要な首下長さを算出。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+## 関連記事
+
+<a href="/articles/coarse-thread" className="tool-item article-tool-item">
+  <CardDiagram variant="article" diagramKey="coarse-thread" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">並目とは</span>
+    <span className="tool-item-desc">ナット高さに加算するピッチ p の選び方。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+<a href="/articles/washer-role" className="tool-item article-tool-item">
+  <CardDiagram variant="article" diagramKey="washer-role" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">座金の役割</span>
+    <span className="tool-item-desc">ナットと組み合わせる座金の種類と厚さの影響。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
 
 ## FAQ
 
 ### Q1. 呼び径違いのナットを流用できますか？
-A. できません。呼び径が一致しないとねじ山が噛み合いません。
+A. できません。呼び径が一致しないとねじ山が噛み合いません。M12ボルトにはM12ナットを必ず使用してください。
 
 ### Q2. 強度区分も確認すべきですか？
-A. はい。ボルト・ナットの組み合わせ強度は設計上の重要項目です。
+A. はい。ボルトの強度区分に対応するナット強度区分を選ばないと、ナット側のねじ山が先に破損します。JIS B 1181の強度区分表を確認してください。

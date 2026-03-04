@@ -32,7 +32,23 @@ sources:
     site: "SMC"
     accessedAt: "2026-03-01"
     note: "機械設計時の一般的な実務注意点の確認"
+  - title: "JIS B 0101 ねじ用語"
+    url: "https://kikakurui.com/b0/B0101-2013-01.html"
+    site: "規格一覧"
+    accessedAt: "2026-03-04"
+    note: "カテゴリ: 公的。不完全ねじ部・有効ねじ長さ等の用語定義"
 ---
+
+## この記事でわかること
+
+「先端3山出し」がなぜ実務で使われるのか、不完全ねじ部との関係、そしてダブルナットや特殊条件で余長計算がどう変わるかがわかります。
+
+## 結論
+
+「ナットから3山出す」とは、ナット端面からボルト先端までにピッチ3山分（`3p`）の余長を確保することです。
+この慣例が定着した理由は、ボルト先端の不完全ねじ部（[JIS B 0101](https://kikakurui.com/b0/B0101-2013-01.html)）がナット内に収まらないと有効かかり長が不足し、締結力が確保できなくなるためです。
+不完全ねじ部は製造上避けられない部分で、通常1.5〜2山分あります。残り1〜1.5山は組立時の誤差吸収と目視確認のためのマージンです。
+ボルト長さ計算では `L = t + Hpw + Hsw + Hnut + 3p` の最後の項 `3p` がこの余長に相当します。
 
 ## 図解
 
@@ -47,26 +63,79 @@ sources:
 
 ## 比較表
 
-| 状態 | 先端余長 | コメント |
-|---|---|---|
-| A | 1山 | かかり不足リスク |
-| B | 3山 | 目安として標準的 |
-| C | 5山 | 余長過多で干渉注意 |
+| 状態 | 先端余長 | リスク | コメント |
+|---|---|---|---|
+| A: 1山出し | `1p` | 高い | 不完全ねじ部がナット内でかかり、有効締結力不足 |
+| B: 3山出し | `3p` | 低い | 不完全ねじ部＋誤差マージンを確保。目視確認も可能 |
+| C: 5山出し | `5p` | 低い | 締結上は問題ないが、余長過多で周辺部材への干渉注意 |
 
-## 計算例
+## 計算例（再現用）
 
-条件: M16 並目 `p=2.0 mm`。
+<a href="/tools/bolt" className="tool-item article-tool-item">
+  <CardDiagram variant="tool" diagramKey="bolt-length" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">ボルト長さ計算</span>
+    <span className="tool-item-desc">3p 余長を含むボルト首下長さを条件固定で再現確認。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+条件: M16 並目 `p = 2.0 mm`。
 
 式: `先端余長 = 3p`
 
 計算: `3 × 2.0 = 6.0 mm`
 
-結果: 推奨余長は **6.0 mm**。
+結果: 推奨余長は **6.0 mm**。ボルト首下長さの式 `L = t + Hpw + Hsw + Hnut + 3p` の最後の項に加算します。
+
+ダブルナットの場合: `L = t + Hpw + Hsw + Hnut1 + Hnut2 + 3p` となり、ナット2枚分の高さを加算した上で余長 `3p` を確保します。
+
+## 落とし穴
+
+- ダブルナット使用時にナット2枚分の高さを加算し忘れ、3山の余長がナット内に埋もれる
+- 不完全ねじ部を考慮せずに「3山」を「余分な出っ張り」と誤解し、余長をゼロにする
+- ボルト長さを JIS 規格長さに丸める際に、余長 3p を切り捨てて短い方を選んでしまう
+- 組立後に目視で「3山出ている」ことを確認しない（施工管理のチェック漏れ）
+
+## 判断基準
+
+`契約図書・施工要領書の指定 > JIS B 0101 不完全ねじ部の定義 > 3p 余長の実務慣例 > メーカー推奨値（競合時は長い方）`
+
+## 関連ツール
+
+<a href="/tools/bolt" className="tool-item article-tool-item">
+  <CardDiagram variant="tool" diagramKey="bolt-length" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">ボルト長さ計算</span>
+    <span className="tool-item-desc">締結体厚さ・座金・ナットから必要な首下長さを算出。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+## 関連記事
+
+<a href="/articles/coarse-thread" className="tool-item article-tool-item">
+  <CardDiagram variant="article" diagramKey="coarse-thread" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">並目とは</span>
+    <span className="tool-item-desc">並目ピッチ p の基本と細目との使い分け。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+<a href="/articles/washer-role" className="tool-item article-tool-item">
+  <CardDiagram variant="article" diagramKey="washer-role" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">座金の役割</span>
+    <span className="tool-item-desc">平座金・ばね座金の厚さがボルト長さに与える影響。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
 
 ## FAQ
 
 ### Q1. 余長が長すぎる問題はありますか？
-A. 周辺部材への干渉や見た目、組立性の問題が出る場合があります。
+A. 周辺部材への干渉、見た目の問題、組立時にボルト先端が邪魔になるケースがあります。5山以上出る場合はボルト長さの見直しを検討します。
 
 ### Q2. ダブルナット時の考え方は？
-A. ナット枚数分を式へ反映し、余長を再計算してください。
+A. ナット2枚分の高さ（`Hnut1 + Hnut2`）をボルト長さの式に加算した上で、余長 `3p` を確保します。ナット1枚の計算をそのまま流用すると余長不足になります。

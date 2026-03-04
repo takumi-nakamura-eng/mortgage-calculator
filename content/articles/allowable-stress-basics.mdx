@@ -2,7 +2,7 @@
 title: "許容曲げ応力の考え方"
 description: "許容曲げ応力の基本と、梁計算でOK/NG判定に使うときの注意点をまとめます。"
 publishedAt: "2026-03-03"
-updatedAt: "2026-03-03"
+updatedAt: "2026-03-04"
 category: "梁・断面"
 tags:
   - "許容応力"
@@ -32,7 +32,24 @@ sources:
     site: "SMC"
     accessedAt: "2026-03-01"
     note: "機械設計時の一般的な実務注意点の確認"
+  - title: "JIS G 3101 一般構造用圧延鋼材"
+    url: "https://kikakurui.com/g3/G3101-2020-01.html"
+    site: "規格一覧"
+    accessedAt: "2026-03-04"
+    note: "カテゴリ: 公的。SS400等の降伏点・引張強さの規格原文"
 ---
+
+## この記事でわかること
+
+許容曲げ応力の意味、安全率との関係、SS400の代表的な許容値、そして梁計算でのOK/NG判定の考え方がわかります。
+
+## 結論
+
+許容曲げ応力 `σ_allow` は「この応力以下なら安全」と判断する設計上の上限値です。
+基本の関係は `σ_allow = σ_y / S`（σ_y: 降伏応力、S: 安全率）で、材料の降伏点を安全率で割って求めます。
+SS400（[JIS G 3101](https://kikakurui.com/g3/G3101-2020-01.html)）の場合、降伏点 σ_y = 245 MPa（板厚16mm以下）で、建築鉄骨では長期許容曲げ応力が `σ_allow = 245 / 1.5 ≒ 156 MPa` 前後になります。
+梁の設計判定は `σ_max = M / Z` を求め、`σ_max ≤ σ_allow` なら OK、超えれば NG です。
+安全率は荷重条件によって変わり、静荷重で1.5〜2.0、繰返し荷重で2.0〜4.0が目安です。
 
 ## 図解
 
@@ -49,29 +66,97 @@ sources:
 
 ## 比較表
 
-| ケース | σmax (MPa) | σallow (MPa) | 判定 |
-|---|---:|---:|---|
-| A | 110 | 150 | OK |
-| B | 145 | 150 | OK（余裕小） |
-| C | 165 | 150 | NG |
+| ケース | σmax (MPa) | σallow (MPa) | 判定 | コメント |
+|---|---:|---:|---|---|
+| A | 110 | 156 | OK | 余裕率 42%。標準的な設計 |
+| B | 145 | 156 | OK（余裕小） | 余裕率 8%。荷重変動に注意 |
+| C | 165 | 156 | NG | 断面Zの増大か荷重条件の見直しが必要 |
 
-## 計算例
+SS400の代表的な許容応力値（参考）:
 
-条件: `M = 18 kN·m`, `Z = 120 cm³`, `σallow = 150 MPa`。
+| 板厚 | 降伏点 σ_y (MPa) | 安全率 S=1.5 時 σ_allow (MPa) | 安全率 S=2.0 時 σ_allow (MPa) |
+|---|---:|---:|---:|
+| ≤ 16 mm | 245 | 163 | 123 |
+| 16〜40 mm | 235 | 157 | 118 |
+| 40〜100 mm | 215 | 143 | 108 |
 
-式: `σmax = M / Z`
+## 計算例（再現用）
+
+<a href="/tools/beams/simple-supported" className="tool-item article-tool-item">
+  <CardDiagram variant="tool" diagramKey="beam" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">単純梁（単純支持）計算</span>
+    <span className="tool-item-desc">曲げ応力 σmax と許容応力の OK/NG 判定を再現確認。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+条件: `M = 18 kN·m`, `Z = 120 cm³`, `σ_allow = 156 MPa`（SS400, S=1.5）。
+
+式: `σ_max = M / Z`
 
 計算:
 - `M = 18 × 10^6 N·mm`
 - `Z = 120 × 10^3 mm³`
-- `σmax = 150 MPa`
+- `σ_max = 18 × 10^6 / (120 × 10^3) = 150 MPa`
 
-結果: **σmax = σallow** で境界。設計余裕の再確認が必要。
+判定: `150 ≤ 156` → **OK**（余裕率 4%）。余裕が小さいため、荷重の変動や将来の増設を考慮するなら断面サイズアップを検討します。
+
+## 落とし穴
+
+- 材料の降伏点と引張強さを混同し、許容応力を過大に見積もる（SS400の引張強さ400 MPaで計算してしまう）
+- 静荷重用の安全率1.5を繰返し荷重にそのまま適用し、疲労破壊のリスクを見落とす
+- 板厚による降伏点の違い（16mm以下: 245 MPa、40mm超: 215 MPa）を無視して一律245 MPaで計算
+- 許容応力の根拠（どの規格・どの安全率）を記録せず、レビュー時に説明できなくなる
+
+## 判断基準
+
+`契約図書・法令/規格の許容値 > 学協会規準（AIJ鋼構造設計規準等） > メーカー推奨値 > 社内基準（競合時は安全率が大きい方）`
+
+## 関連ツール
+
+<a href="/tools/beams/simple-supported" className="tool-item article-tool-item">
+  <CardDiagram variant="tool" diagramKey="beam" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">単純梁（単純支持）計算</span>
+    <span className="tool-item-desc">曲げ応力と最大たわみを同時に確認。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+<a href="/tools/section-properties" className="tool-item article-tool-item">
+  <CardDiagram variant="tool" diagramKey="section-properties" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">断面性能計算（I・Z）</span>
+    <span className="tool-item-desc">断面寸法から断面係数 Z を算出して OK/NG 判定に使用。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+## 関連記事
+
+<a href="/articles/moment-of-inertia-basics" className="tool-item article-tool-item">
+  <CardDiagram variant="article" diagramKey="moment-of-inertia" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">断面二次モーメントIの使い方</span>
+    <span className="tool-item-desc">たわみ側（I）の一次判定と必要Iの逆算方法。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+<a href="/articles/section-modulus-basics" className="tool-item article-tool-item">
+  <CardDiagram variant="article" diagramKey="section-modulus" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">断面係数Zの使い方</span>
+    <span className="tool-item-desc">強度側（Z）の一次判定と許容応力との関係。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
 
 ## FAQ
 
 ### Q1. 余裕率はどの程度必要ですか？
-A. 社内基準や適用規格に依存します。境界値付近は余裕を持たせるのが一般的です。
+A. 社内基準や適用規格に依存します。一般的に10〜30%の余裕を持たせますが、境界値付近は荷重変動や施工誤差を考慮して断面サイズアップを検討します。
 
 ### Q2. ツールの初期値をそのまま使ってよいですか？
-A. 初期値は目安です。必ず案件条件に合わせて更新してください。
+A. 初期値は目安です。許容応力は必ず案件の適用規格・材料・荷重条件に合わせて設定してください。根拠を記録に残すことも重要です。

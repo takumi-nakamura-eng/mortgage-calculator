@@ -1,0 +1,162 @@
+---
+title: "単純梁の支持条件と反力の読み方"
+description: "単純梁（単純支持梁）のピン・ローラー支持の意味、反力の求め方、荷重条件ごとの計算例を整理します。"
+publishedAt: "2026-03-04"
+updatedAt: "2026-03-04"
+category: "梁・断面"
+tags:
+  - "単純梁"
+  - "反力"
+  - "支持条件"
+  - "梁設計"
+toolRefs:
+  - "beam"
+diagramKey: "beam-reaction"
+faq:
+  - q: "ピン支持とローラー支持の違いは何ですか？"
+    a: "ピン支持は鉛直・水平の反力を持ち、ローラー支持は鉛直反力のみです。単純梁ではこの組み合わせで静定構造になります。"
+  - q: "反力を間違えると何が起きますか？"
+    a: "曲げモーメント・せん断力の計算がすべてずれるため、断面選定・たわみ判定の結果も誤ります。"
+sources:
+  - title: "建築基準法施行令（e-Gov法令検索）"
+    url: "https://elaws.e-gov.go.jp/document?lawid=325CO0000000338"
+    site: "e-Gov法令検索"
+    accessedAt: "2026-03-04"
+    note: "カテゴリ: 公的。構造計算の根拠となる法令"
+  - title: "日本建築学会 鋼構造設計規準（AIJ）"
+    url: "https://www.aij.or.jp/paper/detail.html?productId=623"
+    site: "日本建築学会"
+    accessedAt: "2026-03-04"
+    note: "カテゴリ: 学協会。梁の設計と支持条件の考え方"
+  - title: "Engineering ToolBox: Beam Deflection and Stress Formula"
+    url: "https://www.engineeringtoolbox.com/beam-stress-deflection-d_1312.html"
+    site: "Engineering ToolBox"
+    accessedAt: "2026-03-04"
+    note: "カテゴリ: 工学技術資料。各荷重条件の反力・曲げモーメント式"
+  - title: "MISUMI 技術情報"
+    url: "https://jp.misumi-ec.com/tech-info/"
+    site: "MISUMI"
+    accessedAt: "2026-03-04"
+    note: "カテゴリ: メーカー技術資料。梁設計の実務確認観点"
+---
+
+## この記事でわかること
+
+単純梁（単純支持梁）のピン・ローラー支持の意味、反力の求め方、そして荷重条件ごとの反力計算のポイントがわかります。
+
+## 結論
+
+単純梁は「片端ピン支持＋もう片端ローラー支持」の静定構造です。
+ピン支持は鉛直反力 `R_V` と水平反力 `R_H` を受け、ローラー支持は鉛直反力 `R_V` のみを受けます。
+反力は力のつり合い（`ΣF_V = 0`）とモーメントのつり合い（`ΣM = 0`）の2式で求めます。
+中央集中荷重 `P` の場合、左右の反力はそれぞれ `R_A = R_B = P / 2` です。
+等分布荷重 `w` の場合、`R_A = R_B = wL / 2` です。
+反力は曲げモーメント・せん断力計算の出発点なので、ここを間違えると以降のすべての判定（応力・たわみ）が狂います。
+
+## 図解
+
+<div className="diagram-card diagram-card--compact">
+<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="単純梁の支持条件と反力">
+  <line x1="60" y1="80" x2="340" y2="80" stroke="#111827" strokeWidth="6" />
+  <polygon points="60,84 48,104 72,104" fill="#334155" />
+  <polygon points="340,84 328,104 352,104" fill="none" stroke="#334155" strokeWidth="2" />
+  <circle cx="340" cy="110" r="5" fill="none" stroke="#334155" strokeWidth="2" />
+  <line x1="200" y1="30" x2="200" y2="74" stroke="#dc2626" strokeWidth="2.5" />
+  <polygon points="200,80 194,70 206,70" fill="#dc2626" />
+  <text x="200" y="22" textAnchor="middle" fontSize="12" fill="#dc2626">P</text>
+  <line x1="60" y1="140" x2="60" y2="120" stroke="#2563eb" strokeWidth="2" />
+  <polygon points="60,118 54,128 66,128" fill="#2563eb" />
+  <text x="60" y="155" textAnchor="middle" fontSize="11" fill="#2563eb">R_A</text>
+  <line x1="340" y1="140" x2="340" y2="120" stroke="#2563eb" strokeWidth="2" />
+  <polygon points="340,118 334,128 346,128" fill="#2563eb" />
+  <text x="340" y="155" textAnchor="middle" fontSize="11" fill="#2563eb">R_B</text>
+  <text x="60" y="178" textAnchor="middle" fontSize="10" fill="#475569">ピン</text>
+  <text x="340" y="178" textAnchor="middle" fontSize="10" fill="#475569">ローラー</text>
+  <line x1="60" y1="190" x2="340" y2="190" stroke="#475569" strokeWidth="1" />
+  <text x="200" y="200" textAnchor="middle" fontSize="11" fill="#334155">L</text>
+</svg>
+</div>
+
+## 比較表
+
+| 荷重条件 | 反力 R_A | 反力 R_B | 最大曲げモーメント M_max | 最大たわみ δ_max |
+|---|---|---|---|---|
+| 中央集中荷重 P | `P/2` | `P/2` | `PL/4`（中央） | `PL³/(48EI)` |
+| 等分布荷重 w | `wL/2` | `wL/2` | `wL²/8`（中央） | `5wL⁴/(384EI)` |
+| 偏心集中荷重 P（aとb） | `Pb/L` | `Pa/L` | `Pab/L`（荷重点） | 荷重位置により変化 |
+
+この式の導出は [Engineering ToolBox](https://www.engineeringtoolbox.com/beam-stress-deflection-d_1312.html) の梁公式集を参照しています。
+
+## 計算例（再現用）
+
+<a href="/tools/beams/simple-supported" className="tool-item article-tool-item">
+  <CardDiagram variant="tool" diagramKey="beam" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">単純梁（単純支持）計算</span>
+    <span className="tool-item-desc">反力・曲げモーメント・たわみを条件固定で再現確認。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+条件: スパン `L = 3000 mm`、中央集中荷重 `P = 10 kN`。
+
+反力:
+- `R_A = P / 2 = 10 / 2 = 5 kN`
+- `R_B = P / 2 = 5 kN`
+
+検算（ΣF_V = 0）: `R_A + R_B - P = 5 + 5 - 10 = 0` ✓
+
+最大曲げモーメント:
+- `M_max = PL / 4 = 10 × 3000 / 4 = 7500 N·m = 7.5 kN·m`
+
+この反力と曲げモーメントを使って、断面選定（Z判定）やたわみ判定（I判定）に進みます。
+
+## 落とし穴
+
+- 片持ち梁の反力式を単純梁に適用してしまう（支持条件が異なると式が全く異なる）
+- モーメントのつり合い式で荷重の作用点距離を取り違え、反力が左右で逆転する
+- 等分布荷重の合力を `wL` とすべきところを `w` だけで計算し、反力の単位が合わなくなる
+- 反力の検算（`ΣF_V = 0` の確認）をせず、数値の誤りに気付かないまま断面計算に進む
+
+## 判断基準
+
+`設計図の支持条件指定 > 法令/規準の荷重条件（建築基準法施行令等） > 学協会規準（AIJ等） > メーカー資料（競合時は荷重が大きい方）`
+
+## 関連ツール
+
+<a href="/tools/beams/simple-supported" className="tool-item article-tool-item">
+  <CardDiagram variant="tool" diagramKey="beam" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">単純梁（単純支持）計算</span>
+    <span className="tool-item-desc">曲げ応力と最大たわみを同時に確認。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+## 関連記事
+
+<a href="/articles/allowable-stress-basics" className="tool-item article-tool-item">
+  <CardDiagram variant="article" diagramKey="allowable-stress" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">許容曲げ応力の考え方</span>
+    <span className="tool-item-desc">反力から求めた曲げモーメントで応力判定する方法。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+<a href="/articles/deflection-limit-l-over-n" className="tool-item article-tool-item">
+  <CardDiagram variant="article" diagramKey="deflection-limit" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">L/200・L/300・L/400の選び分け</span>
+    <span className="tool-item-desc">反力計算後のたわみ判定で使う許容値の選び方。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+## FAQ
+
+### Q1. ピン支持とローラー支持の違いは何ですか？
+A. ピン支持は鉛直方向と水平方向の両方の反力を受けます。ローラー支持は鉛直方向の反力のみで、水平方向には自由に変位できます。この組み合わせで静定構造（未知数3個＝つり合い式3本）になります。
+
+### Q2. 反力を間違えると何が起きますか？
+A. 反力は曲げモーメント・せん断力計算の出発点です。反力が間違っていると断面係数Z・断面二次モーメントIの判定がすべてずれるため、必ず `ΣF_V = 0` で検算してから次のステップに進んでください。

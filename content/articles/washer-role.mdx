@@ -33,7 +33,24 @@ sources:
     site: "SMC"
     accessedAt: "2026-03-01"
     note: "機械設計時の一般的な実務注意点の確認"
+  - title: "JIS B 1256 平座金"
+    url: "https://kikakurui.com/b1/B1256-2008-01.html"
+    site: "規格一覧"
+    accessedAt: "2026-03-04"
+    note: "カテゴリ: 公的。平座金の寸法・厚さの規格原文"
 ---
+
+## この記事でわかること
+
+平座金とばね座金のそれぞれの役割、使い分けの判断基準、そして面圧計算の基本がわかります。
+
+## 結論
+
+座金は「面圧分散」「座面保護」「ゆるみ抑制補助」のために使います。
+平座金（[JIS B 1256](https://kikakurui.com/b1/B1256-2008-01.html)）はボルト頭・ナット座面の圧力を広い面積に分散させ、母材のめり込みや傷を防ぎます。
+ばね座金はゆるみ抑制の補助として使われますが、振動が大きい条件では単独では不十分で、ナイロンナットやダブルナットとの併用が推奨されます。
+ボルト長さ計算では座金の厚さ `Hpw`（平座金）と `Hsw`（ばね座金）を必ず加算します。
+母材が軟材（アルミ・樹脂等）の場合は面圧が許容値を超えやすいため、`σ = F / A` で座面圧を確認してから座金の要否を判断します。
 
 ## 図解
 
@@ -48,25 +65,79 @@ sources:
 
 ## 比較表
 
-| 種類 | 主目的 | 注意点 |
-|---|---|---|
-| 平座金 | 面圧分散・座面保護 | それ単体でゆるみ止めには弱い |
-| ばね座金 | ゆるみ抑制補助 | 過信せず条件確認が必要 |
+| 種類 | 主目的 | JIS規格 | 使用条件 | 注意点 |
+|---|---|---|---|---|
+| 平座金 | 面圧分散・座面保護 | JIS B 1256 | 軟材・塗装面・薄板 | 単体でゆるみ止め効果はほぼなし |
+| ばね座金 | ゆるみ抑制補助 | JIS B 1251 | 一般振動環境 | 高振動環境では不十分、他の対策と併用 |
+| 歯付き座金 | ゆるみ止め強化 | JIS B 1255 | 高振動・回転機器 | 座面に食い込み跡が残る |
 
-## 計算例
+## 計算例（再現用）
 
-条件: M12、平座金1枚 `Hpw=2.5 mm`、ばね座金1枚 `Hsw=3.0 mm`。
+<a href="/tools/bolt" className="tool-item article-tool-item">
+  <CardDiagram variant="tool" diagramKey="bolt-length" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">ボルト長さ計算</span>
+    <span className="tool-item-desc">座金厚さを含めたボルト首下長さを算出。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
 
-式: 座金分厚さ `= PW×Hpw + SW×Hsw`
+条件: M12、平座金1枚 `Hpw = 2.5 mm`、ばね座金1枚 `Hsw = 3.0 mm`。
 
-計算: `1×2.5 + 1×3.0 = 5.5 mm`
+式: 座金分厚さ `= PW × Hpw + SW × Hsw`
 
-結果: 座金分の必要長さは **5.5 mm**。
+計算: `1 × 2.5 + 1 × 3.0 = 5.5 mm`
+
+結果: 座金分の必要長さは **5.5 mm**。ボルト長さ `L = t + Hpw + Hsw + Hnut + 3p` に加算します。
+
+面圧確認例: 軸力 `F = 30 kN`、平座金の有効面積 `A = 250 mm²` の場合、`σ = F / A = 120 MPa`。母材がアルミ合金（許容面圧 ~80 MPa）なら面圧超過のため、座金径を大きくするか締付トルクを下げます。
+
+## 落とし穴
+
+- 軟材（アルミ・樹脂）に座金なしで締結し、ボルト頭が母材にめり込んで軸力低下
+- ばね座金だけで「ゆるみ止めは万全」と判断し、高振動環境で脱落事故
+- 座金の厚さをボルト長さ計算に含め忘れ、3山余長が確保できない
+- 平座金の内径がボルト呼び径より小さいものを使用し、組立不能になる
+
+## 判断基準
+
+`契約図書・施工仕様書の指定 > JIS B 1256 座金寸法 > 母材の許容面圧 > メーカー推奨値（競合時は安全側）`
+
+## 関連ツール
+
+<a href="/tools/bolt" className="tool-item article-tool-item">
+  <CardDiagram variant="tool" diagramKey="bolt-length" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">ボルト長さ計算</span>
+    <span className="tool-item-desc">締結体厚さ・座金・ナットから必要な首下長さを算出。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+## 関連記事
+
+<a href="/articles/nut-basics" className="tool-item article-tool-item">
+  <CardDiagram variant="article" diagramKey="nut-basics" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">ナットの基礎知識</span>
+    <span className="tool-item-desc">1種・2種・3種の高さ違いと座金との組み合わせ。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+<a href="/articles/three-threads" className="tool-item article-tool-item">
+  <CardDiagram variant="article" diagramKey="three-threads" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">先端3山出しの意味</span>
+    <span className="tool-item-desc">座金厚さを含めた後の余長 3p の確保方法。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
 
 ## FAQ
 
 ### Q1. 柔らかい母材で平座金は必須ですか？
-A. 面圧集中を避けるため、ほぼ必須と考える運用が一般的です。
+A. 面圧集中を避けるため、ほぼ必須と考える運用が一般的です。アルミ・樹脂・薄板鋼板などでは、座金なしだとボルト頭のめり込みで軸力が低下します。
 
 ### Q2. 座金厚さは計算に含めるべきですか？
-A. はい。ボルト長さ選定では必ず合算してください。
+A. はい。ボルト長さ選定では平座金 `Hpw` とばね座金 `Hsw` を必ず合算してください。省略するとナットから3山出す余長が不足します。
