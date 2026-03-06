@@ -1,370 +1,84 @@
 'use client';
 
-import { useState, useCallback, useMemo } from 'react';
-import {
-  calcSimpleBeam,
-  validateBeamInputs,
-  type LoadCase,
-  type BeamResult,
-} from '@/lib/beams/simpleBeam';
-import {
-  kgToKN,
-  kNToKg,
-  GPaToMPa,
-  cm3ToMm3,
-  cm4ToMm4,
-  fmt,
-} from '@/lib/beams/units';
-import {
-  calcSection,
-  validateSectionDims,
-  SECTION_DEFS,
-  type SectionShape,
-} from '@/lib/beams/sections';
+import { fmt } from '@/lib/beams/units';
+import { SECTION_DEFS, type SectionShape } from '@/lib/beams/sections';
 import { buildBeamFormulaSteps } from '@/lib/beams/beamFormulas';
-import { addEngHistoryEntry, type EngHistoryEntry } from '@/lib/engHistory';
+import { calcSimpleBeam } from '@/lib/beams/simpleBeam';
 import { printEngReport } from '@/lib/printReport';
-import { trackToolCalculate } from '@/lib/analytics/events';
+import { MATERIAL_PRESETS, useBeamForm, type LoadUnit, type ZUnit, type IUnit } from '../hooks/useBeamForm';
+import BeamCalculatorLayout from '../components/BeamCalculatorLayout';
 import BeamDiagram from './BeamDiagram';
-
-// ─── Constants ────────────────────────────────────────────────────────────────
-
-const MATERIAL_PRESETS = [
-  { label: '炭素鋼（SS400 相当）', E_GPa: 205, sigmaAllow_MPa: 150 },
-  { label: 'SUS304',              E_GPa: 193, sigmaAllow_MPa: 130 },
-  { label: 'アルミ（参考）',       E_GPa: 69,  sigmaAllow_MPa: 80  },
-  { label: 'カスタム',             E_GPa: null, sigmaAllow_MPa: null },
-] as const;
-
-
-type LoadUnit   = 'kg' | 'kN';
-type ZUnit      = 'cm3' | 'mm3';
-type IUnit      = 'cm4' | 'mm4';
-type SectionMode = 'shape' | 'direct'; // 'shape' is default
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function SimpleSupportedCalculator() {
-  // ── Material ─────────────────────────────────────────────────────────────
-  const [materialIdx, setMaterialIdx] = useState(0);
-  const [E_GPa, setE_GPa]           = useState<string>('205');
-  const [sigmaAllow, setSigmaAllow]  = useState<string>('150');
-  const isCustomMaterial = materialIdx === 3;
+  const {
+    materialIdx,
+    E_GPa,
+    sigmaAllow,
+    isCustomMaterial,
+    L,
+    loadCase,
+    loadValue,
+    loadUnit,
+    sectionMode,
+    Z,
+    ZUnit,
+    I,
+    IUnit,
+    selectedShape,
+    shapeDims,
+    deflectionNStr,
+    deflectionN,
+    purpose,
+    result,
+    formErrors,
+    formWarnings,
+    loadKNNormalized,
+    lastEntry,
+    formulaSteps,
+    shapeResult,
+    shapeErrors,
+    loadKNDisplay,
+    wDisplay,
+    wKNperMDisplay,
+    currentShapeDef,
+    setE_GPa,
+    setSigmaAllow,
+    setL,
+    setLoadCase,
+    setLoadValue,
+    setZ,
+    setI,
+    setShapeDims,
+    setDeflectionNStr,
+    setPurpose,
+    handleMaterialChange,
+    handleLoadUnitChange,
+    handleZUnitChange,
+    handleIUnitChange,
+    handleSectionModeChange,
+    handleShapeChange,
+    handleCalculate,
+  } = useBeamForm({
+    defaultDeflectionN: 300,
+    toolId: 'simple-beam',
+    toolName: '単純梁計算',
+    analyticsToolId: 'beam',
+    calculateBeam: calcSimpleBeam,
+    buildFormulaSteps: buildBeamFormulaSteps,
+  });
 
-  // ── Span ─────────────────────────────────────────────────────────────────
-  const [L, setL] = useState<string>('');
-
-  // ── Load ─────────────────────────────────────────────────────────────────
-  const [loadCase, setLoadCase]   = useState<LoadCase>('center');
-  const [loadValue, setLoadValue] = useState<string>('');
-  const [loadUnit, setLoadUnit]   = useState<LoadUnit>('kg');
-
-  // ── Section mode (default: shape) ────────────────────────────────────────
-  const [sectionMode, setSectionMode] = useState<SectionMode>('shape');
-
-  // Direct input
-  const [Z, setZ]         = useState<string>('');
-  const [ZUnit, setZUnit] = useState<ZUnit>('cm3');
-  const [I, setI]         = useState<string>('');
-  const [IUnit, setIUnit] = useState<IUnit>('cm4');
-
-  // Shape input
-  const [selectedShape, setSelectedShape] = useState<SectionShape>('H');
-  const [shapeDims, setShapeDims]         = useState<Record<string, string>>({});
-
-  // ── Deflection limit (direct number input, e.g. 300 → L/300) ─────────────
-  const [deflectionNStr, setDeflectionNStr] = useState<string>('300');
-  const deflectionN = (() => {
-    const n = parseInt(deflectionNStr, 10);
-    return isNaN(n) || n <= 0 ? 300 : n;
-  })();
-
-  // ── Purpose (optional) ────────────────────────────────────────────────────
-  const [purpose, setPurpose] = useState<string>('');
-
-  // ── Results ───────────────────────────────────────────────────────────────
-  const [result, setResult]           = useState<BeamResult | null>(null);
-  const [formErrors, setFormErrors]   = useState<Record<string, string>>({});
-  const [formWarnings, setFormWarnings] = useState<string[]>([]);
-  const [loadKNNormalized, setLoadKNNormalized] = useState<number | null>(null);
-  const [lastEntry, setLastEntry]     = useState<EngHistoryEntry | null>(null);
-  const [formulaSteps, setFormulaSteps] = useState<ReturnType<typeof buildBeamFormulaSteps>>([]);
-
-  // ── Derived: shape section result ─────────────────────────────────────────
-  const shapeResult = useMemo(() => {
-    if (sectionMode !== 'shape') return null;
-    const def = SECTION_DEFS.find((d) => d.shape === selectedShape);
-    if (!def) return null;
-    const nums: Record<string, number> = {};
-    for (const p of def.params) {
-      const v = parseFloat(shapeDims[p.key] ?? '');
-      if (isNaN(v) || v <= 0) return null;
-      nums[p.key] = v;
-    }
-    if (validateSectionDims(selectedShape, nums).length > 0) return null;
-    return calcSection(selectedShape, nums);
-  }, [sectionMode, selectedShape, shapeDims]);
-
-  const shapeErrors = useMemo(() => {
-    if (sectionMode !== 'shape') return [];
-    const def = SECTION_DEFS.find((d) => d.shape === selectedShape);
-    if (!def) return [];
-    const nums: Record<string, number> = {};
-    let hasAnyInput = false;
-    for (const p of def.params) {
-      const v = parseFloat(shapeDims[p.key] ?? '');
-      if (!isNaN(v)) hasAnyInput = true;
-      nums[p.key] = v;
-    }
-    if (!hasAnyInput) return [];
-    return validateSectionDims(selectedShape, nums);
-  }, [sectionMode, selectedShape, shapeDims]);
-
-  // ── Material preset change ────────────────────────────────────────────────
-  function handleMaterialChange(idx: number) {
-    setMaterialIdx(idx);
-    const preset = MATERIAL_PRESETS[idx];
-    if (preset.E_GPa !== null)        setE_GPa(String(preset.E_GPa));
-    if (preset.sigmaAllow_MPa !== null) setSigmaAllow(String(preset.sigmaAllow_MPa));
-  }
-
-  // ── Load unit toggle ──────────────────────────────────────────────────────
-  const handleLoadUnitChange = useCallback(
-    (newUnit: LoadUnit) => {
-      if (newUnit === loadUnit) return;
-      const v = parseFloat(loadValue);
-      if (!isNaN(v) && v > 0) {
-        setLoadValue(newUnit === 'kN' ? fmt(kgToKN(v), 4) : fmt(kNToKg(v), 2));
-      }
-      setLoadUnit(newUnit);
-    },
-    [loadUnit, loadValue],
-  );
-
-  // ── Z unit toggle ─────────────────────────────────────────────────────────
-  const handleZUnitChange = useCallback(
-    (newUnit: ZUnit) => {
-      if (newUnit === ZUnit) return;
-      const v = parseFloat(Z);
-      if (!isNaN(v) && v > 0) {
-        setZ(newUnit === 'mm3' ? fmt(v * 1000, 4) : fmt(v / 1000, 6));
-      }
-      setZUnit(newUnit);
-    },
-    [ZUnit, Z],
-  );
-
-  // ── I unit toggle ─────────────────────────────────────────────────────────
-  const handleIUnitChange = useCallback(
-    (newUnit: IUnit) => {
-      if (newUnit === IUnit) return;
-      const v = parseFloat(I);
-      if (!isNaN(v) && v > 0) {
-        setI(newUnit === 'mm4' ? fmt(v * 10000, 4) : fmt(v / 10000, 6));
-      }
-      setIUnit(newUnit);
-    },
-    [IUnit, I],
-  );
-
-  // ── Section mode switch ───────────────────────────────────────────────────
-  function handleSectionModeChange(mode: SectionMode) {
-    setSectionMode(mode);
-    setResult(null);
-    setFormErrors({});
-    setLastEntry(null);
-    setFormulaSteps([]);
-  }
-
-  // ── Shape change ─────────────────────────────────────────────────────────
-  function handleShapeChange(shape: SectionShape) {
-    setSelectedShape(shape);
-    setShapeDims({});
-    setResult(null);
-    setLastEntry(null);
-  }
-
-  // ── Calculation ───────────────────────────────────────────────────────────
-  function handleCalculate(e: React.FormEvent) {
-    e.preventDefault();
-
-    const errors: Record<string, string> = {};
-    const warnings: string[] = [];
-
-    const L_mm      = parseFloat(L);
-    const loadRaw   = parseFloat(loadValue);
-    const loadKN    = isNaN(loadRaw)
-      ? null
-      : loadUnit === 'kg' ? kgToKN(loadRaw) : loadRaw;
-    const E_GPa_num = parseFloat(E_GPa);
-    const E_MPa     = isNaN(E_GPa_num) ? null : GPaToMPa(E_GPa_num);
-    const sigmaNum  = parseFloat(sigmaAllow);
-
-    // ── Resolve I and Z ─────────────────────────────────────────────────
-    let I_mm4: number | null = null;
-    let Z_mm3: number | null = null;
-
-    if (sectionMode === 'direct') {
-      const Z_raw = parseFloat(Z);
-      Z_mm3 = isNaN(Z_raw) ? null : ZUnit === 'cm3' ? cm3ToMm3(Z_raw) : Z_raw;
-      const I_raw = parseFloat(I);
-      I_mm4 = isNaN(I_raw) ? null : IUnit === 'cm4' ? cm4ToMm4(I_raw) : I_raw;
-    } else {
-      if (!shapeResult) {
-        errors['section'] = '断面寸法を正しく入力してください。';
-      } else {
-        I_mm4 = shapeResult.I_mm4;
-        Z_mm3 = shapeResult.Z_mm3;
-      }
-    }
-
-    // Deflection limit validation
-    if (isNaN(deflectionN) || deflectionN <= 0) {
-      errors['deflection'] = '許容たわみ基準に正の整数を入力してください。';
-    }
-
-    // Beam-level validation
-    const validation = validateBeamInputs(
-      isNaN(L_mm) ? null : L_mm,
-      loadKN,
-      E_MPa,
-      I_mm4,
-      Z_mm3,
-      isNaN(sigmaNum) ? null : sigmaNum,
-    );
-    for (const err of validation.errors)  errors[err.field]   = err.message;
-    for (const w   of validation.warnings) warnings.push(w.message);
-
-    setFormErrors(errors);
-    setFormWarnings(warnings);
-
-    if (Object.keys(errors).length > 0) {
-      setResult(null);
-      setLoadKNNormalized(null);
-      setLastEntry(null);
-      setFormulaSteps([]);
-      return;
-    }
-
-    const res = calcSimpleBeam({
-      L: L_mm,
-      loadCase,
-      loadN: loadKN! * 1000,
-      E: E_MPa!,
-      I: I_mm4!,
-      Z: Z_mm3!,
-      sigmaAllow: sigmaNum,
-      deflectionLimitN: deflectionN,
-    });
-
-    setResult(res);
-    setLoadKNNormalized(loadKN!);
-
-    // ── Build formula steps ───────────────────────────────────────────────
-    const steps = buildBeamFormulaSteps({
-      loadCase,
-      loadKN: loadKN!,
-      L_mm,
-      E_GPa: E_GPa_num,
-      I_mm4: I_mm4!,
-      Z_mm3: Z_mm3!,
-      sigmaAllow: sigmaNum,
-      deflectionLimitN: deflectionN,
-      result: res,
-    });
-    setFormulaSteps(steps);
-
-    // ── Save to history ───────────────────────────────────────────────────
-    const currentShapeDef = SECTION_DEFS.find((d) => d.shape === selectedShape)!;
-    const materialLabel   = MATERIAL_PRESETS[materialIdx].label;
-
-    // Dims for display in history
-    const dimMap: Record<string, string> = {};
-    if (sectionMode === 'shape') {
-      for (const p of currentShapeDef.params) {
-        const v = shapeDims[p.key] ?? '';
-        if (v) dimMap[p.label] = `${v} ${p.unit}`;
-      }
-    }
-    const rawDimsMap: Record<string, number> = {};
-    if (sectionMode === 'shape') {
-      for (const p of currentShapeDef.params) {
-        const v = parseFloat(shapeDims[p.key] ?? '');
-        if (!isNaN(v)) rawDimsMap[p.key] = v;
-      }
-    }
-
-    const loadDisplayStr = loadUnit === 'kg'
-      ? `${parseFloat(loadValue).toLocaleString('ja-JP')} kg = ${fmt(loadKN!, 3)} kN`
-      : `${fmt(loadKN!, 3)} kN`;
-
-    const entry = addEngHistoryEntry({
-      toolId: 'simple-beam',
-      toolName: '単純梁計算',
-      inputs: {
-        material: materialLabel,
-        purpose: purpose.trim() || undefined,
-        shapeKey:  sectionMode === 'shape' ? selectedShape : '',
-        shapeName: sectionMode === 'shape' ? currentShapeDef.label : '直接入力',
-        dims:      dimMap,
-        rawDims:   rawDimsMap,
-        // Beam-specific
-        loadCase,
-        loadKN: loadKN!,
-        loadDisplayStr,
-        L_mm,
-        E_GPa: E_GPa_num,
-        sigmaAllow_MPa: sigmaNum,
-        deflectionLimitN: deflectionN,
-        sectionMode,
-        I_mm4_input: sectionMode === 'direct' ? I_mm4! : undefined,
-        Z_mm3_input: sectionMode === 'direct' ? Z_mm3! : undefined,
-      },
-      results: {
-        Mmax_kNm:     res.Mmax_kNm,
-        sigmaMax_MPa: res.sigmaMax,
-        stressOK:     res.stressOK,
-        deltaMax_mm:  res.deltaMax,
-        deltaAllow_mm: res.deltaAllow,
-        deflectionOK: res.deflectionOK,
-      },
-      formulaSteps: steps,
-    });
-    setLastEntry(entry);
-    trackToolCalculate({ toolId: 'beam', category: '梁・断面' });
-  }
-
-  // ── Display helpers ───────────────────────────────────────────────────────
-  const loadKNDisplay =
-    loadValue && !isNaN(parseFloat(loadValue))
-      ? loadUnit === 'kg' ? fmt(kgToKN(parseFloat(loadValue)), 2) : fmt(parseFloat(loadValue), 2)
-      : null;
-
-  const wDisplay =
-    loadKNDisplay && L && !isNaN(parseFloat(L)) && parseFloat(L) > 0
-      ? fmt(parseFloat(loadKNDisplay) / parseFloat(L), 6)
-      : null;
-  const wKNperMDisplay = wDisplay ? fmt(parseFloat(wDisplay) * 1000, 4) : null;
-
-  const currentShapeDef = SECTION_DEFS.find((d) => d.shape === selectedShape)!;
-
-  // ── Diagram labels ────────────────────────────────────────────────────────
-  const spanLabel  = L && !isNaN(parseFloat(L)) && parseFloat(L) > 0 ? `${L} mm` : undefined;
+  const spanLabel = L && !isNaN(parseFloat(L)) && parseFloat(L) > 0 ? `${L} mm` : undefined;
   const loadLabelForDiagram = loadKNDisplay ? `${loadKNDisplay} kN` : undefined;
 
   // ─────────────────────────────────────────────────────────────────────────
   return (
-    <div>
-      {/* ── Beam Diagram (top) ── */}
-      <div className="beam-diagram-wrapper">
-        <BeamDiagram
-          loadCase={loadCase}
-          spanLabel={spanLabel}
-          loadLabel={loadLabelForDiagram}
-        />
-      </div>
-
-      <form className="beam-form" onSubmit={handleCalculate} noValidate>
+    <>
+    <BeamCalculatorLayout
+      diagram={<BeamDiagram loadCase={loadCase} spanLabel={spanLabel} loadLabel={loadLabelForDiagram} />}
+      onSubmit={handleCalculate}
+    >
         {/* ① Material */}
         <section className="beam-section">
           <h2 className="beam-section-title">① 材質・ヤング率</h2>
@@ -766,7 +480,7 @@ export default function SimpleSupportedCalculator() {
         <div className="form-submit-row">
           <button type="submit" className="calc-btn">計算する</button>
         </div>
-      </form>
+    </BeamCalculatorLayout>
 
       {/* ── RESULTS ── */}
       {result && (
@@ -878,6 +592,6 @@ export default function SimpleSupportedCalculator() {
           <li>計算結果は参考値です。最終判断は設計基準・仕様書・専門家にご確認ください。</li>
         </ul>
       </div>
-    </div>
+    </>
   );
 }
