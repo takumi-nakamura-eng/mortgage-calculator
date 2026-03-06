@@ -75,7 +75,7 @@ export default async function ArticleDetailPage({
   const relatedTools = TOOLS.filter(
     (tool) => tool.available && article.meta.toolRefs.includes(tool.id),
   );
-  const showHeaderDescription = article.meta.slug !== 'deflection-limit-l-over-n';
+  const showHeaderDescription = !article.meta.hideHeaderDescription;
 
   const articleJsonLd = {
     '@context': 'https://schema.org',

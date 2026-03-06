@@ -5,6 +5,9 @@
 
 // ─── Bolt sizes (ISO metric coarse thread) ─────────────────────────────────
 
+// NOTE: 強度計算は一般的なメトリック並目サイズを広く扱う（M6〜M24, M14/M18/M22含む）。
+// 長さ計算ツールは lib/bolts/specs.ts の実装意図により対象サイズを限定している。
+
 export const BOLT_SIZES = ['M6', 'M8', 'M10', 'M12', 'M14', 'M16', 'M18', 'M20', 'M22', 'M24'] as const;
 export type BoltSize = (typeof BOLT_SIZES)[number];
 

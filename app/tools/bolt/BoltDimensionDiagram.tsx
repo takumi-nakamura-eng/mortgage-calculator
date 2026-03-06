@@ -1,5 +1,3 @@
-'use client';
-
 function Hdim({ x1, x2, y, label }: { x1: number; x2: number; y: number; label: string }) {
   return (
     <g>
