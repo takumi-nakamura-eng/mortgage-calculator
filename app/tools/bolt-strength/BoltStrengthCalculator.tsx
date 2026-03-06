@@ -8,12 +8,12 @@ import {
   GRADE_TABLE,
   type BoltSize,
   type BoltGrade,
-} from '@/lib/boltData';
+} from '@/lib/bolts/data';
 import {
   calcBoltStrength,
   type AreaMode,
   type StrengthBasis,
-} from '@/lib/boltStrength';
+} from '@/lib/bolts/strength';
 import { trackToolCalculate } from '@/lib/analytics/events';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────

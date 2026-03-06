@@ -31,7 +31,7 @@ import {
   getYieldOrProofMin,
   type BoltSize,
   type BoltGrade,
-} from './boltData';
+} from './data';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
