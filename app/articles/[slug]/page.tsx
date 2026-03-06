@@ -96,6 +96,31 @@ export default async function ArticleDetailPage({
     },
   };
 
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'ホーム',
+        item: SITE_URL,
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: '解説記事',
+        item: `${SITE_URL}/articles`,
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: article.meta.title,
+        item: `${SITE_URL}${article.meta.href}`,
+      },
+    ],
+  };
+
   const faqJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
@@ -108,6 +133,7 @@ export default async function ArticleDetailPage({
       },
     })),
   };
+  const hasFaq = article.meta.faq.length > 0;
 
   return (
     <main className="container article-page">
@@ -119,8 +145,14 @@ export default async function ArticleDetailPage({
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
+      {hasFaq ? (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        />
+      ) : null}
 
       <Breadcrumbs
         items={[
