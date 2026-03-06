@@ -16,16 +16,8 @@ import {
 } from '@/lib/engHistory';
 import { printEngReport } from '@/lib/printReport';
 import { trackToolCalculate } from '@/lib/analytics/events';
+import { DENSITY_PRESETS, resolveDensity } from '@/lib/materialPresets';
 import { SectionDiagram } from './SectionDiagram';
-
-// ─── Material density presets ─────────────────────────────────────────────────
-
-const DENSITY_PRESETS = [
-  { label: '一般鋼材（SS400 等）', density: 7850 },
-  { label: 'SUS304 / SUS316',     density: 7930 },
-  { label: 'アルミ合金',           density: 2700 },
-  { label: 'カスタム',             density: null },
-] as const;
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
@@ -79,12 +71,7 @@ export default function SectionPropertiesCalculator() {
   }, [dimErrors, currentDef, parsedDims]);
 
   // ── Density ───────────────────────────────────────────────────────────────
-  const density = useMemo(() => {
-    const preset = DENSITY_PRESETS[densityIdx];
-    if (preset.density !== null) return preset.density;
-    const v = parseFloat(customDensity);
-    return isNaN(v) || v <= 0 ? null : v;
-  }, [densityIdx, customDensity]);
+  const density = useMemo(() => resolveDensity(densityIdx, customDensity), [densityIdx, customDensity]);
 
   // ── Handlers ─────────────────────────────────────────────────────────────
   function handleShapeChange(shape: SectionShape) {

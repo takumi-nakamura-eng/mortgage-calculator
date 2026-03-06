@@ -25,17 +25,10 @@ import { buildCantileverFormulaSteps } from '@/lib/beams/cantileverFormulas';
 import { addEngHistoryEntry, type EngHistoryEntry } from '@/lib/engHistory';
 import { printEngReport } from '@/lib/printReport';
 import { trackToolCalculate } from '@/lib/analytics/events';
+import { BEAM_MATERIAL_PRESETS } from '@/lib/materialPresets';
 import CantileverDiagram from './CantileverDiagram';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
-
-const MATERIAL_PRESETS = [
-  { label: '炭素鋼（SS400 相当）', E_GPa: 205, sigmaAllow_MPa: 150 },
-  { label: 'SUS304',              E_GPa: 193, sigmaAllow_MPa: 130 },
-  { label: 'アルミ（参考）',       E_GPa: 69,  sigmaAllow_MPa: 80  },
-  { label: 'カスタム',             E_GPa: null, sigmaAllow_MPa: null },
-] as const;
-
 
 type LoadUnit   = 'kg' | 'kN';
 type ZUnit      = 'cm3' | 'mm3';
@@ -49,7 +42,7 @@ export default function CantileverCalculator() {
   const [materialIdx, setMaterialIdx] = useState(0);
   const [E_GPa, setE_GPa]           = useState<string>('205');
   const [sigmaAllow, setSigmaAllow]  = useState<string>('150');
-  const isCustomMaterial = materialIdx === 3;
+  const isCustomMaterial = materialIdx === BEAM_MATERIAL_PRESETS.length - 1;
 
   // ── Span ─────────────────────────────────────────────────────────────────
   const [L, setL] = useState<string>('');
@@ -123,7 +116,7 @@ export default function CantileverCalculator() {
   // ── Material preset change ────────────────────────────────────────────────
   function handleMaterialChange(idx: number) {
     setMaterialIdx(idx);
-    const preset = MATERIAL_PRESETS[idx];
+    const preset = BEAM_MATERIAL_PRESETS[idx];
     if (preset.E_GPa !== null)        setE_GPa(String(preset.E_GPa));
     if (preset.sigmaAllow_MPa !== null) setSigmaAllow(String(preset.sigmaAllow_MPa));
   }
@@ -271,7 +264,7 @@ export default function CantileverCalculator() {
     setFormulaSteps(steps);
 
     const currentShapeDef = SECTION_DEFS.find((d) => d.shape === selectedShape)!;
-    const materialLabel   = MATERIAL_PRESETS[materialIdx].label;
+    const materialLabel   = BEAM_MATERIAL_PRESETS[materialIdx].label;
 
     const dimMap: Record<string, string> = {};
     if (sectionMode === 'shape') {
@@ -368,7 +361,7 @@ export default function CantileverCalculator() {
                 value={materialIdx}
                 onChange={(e) => handleMaterialChange(Number(e.target.value))}
               >
-                {MATERIAL_PRESETS.map((m, i) => (
+                {BEAM_MATERIAL_PRESETS.map((m, i) => (
                   <option key={m.label} value={i}>{m.label}</option>
                 ))}
               </select>
