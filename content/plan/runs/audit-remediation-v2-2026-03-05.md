@@ -89,6 +89,11 @@
 - 受け入れ基準:
   - 工数見積もりと分割単位がレビュー合意される
 
+
+### 実行メモ（2026-03-06 更新）
+
+- PR-5（Beam Refactor Design Doc）を作成: `content/plan/runs/beam-refactor-design-2026-03-06.md`
+
 ### PR-6/7: Beam Refactor 実装（段階）
 
 - PR-6: `useBeamForm()` 抽出（見た目不変）
