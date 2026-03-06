@@ -6,28 +6,36 @@ import Link from 'next/link';
 const MAIL = 'contact.calcnavi@gmail.com';
 const TYPES = ['不具合報告', '機能のご要望', 'その他'];
 
-type F = { company: string; name: string; email: string; type: string; body: string };
-type E = Partial<Record<keyof F, string>>;
+type ContactFormValues = {
+  company: string;
+  name: string;
+  email: string;
+  type: string;
+  body: string;
+};
+
+type ContactFormErrors = Partial<Record<keyof ContactFormValues, string>>;
 
 export default function ContactForm() {
-  const [f, setF] = useState<F>({ company: '', name: '', email: '', type: '', body: '' });
-  const [errors, setErrors] = useState<E>({});
+  const [formValues, setFormValues] = useState<ContactFormValues>({ company: '', name: '', email: '', type: '', body: '' });
+  const [errors, setErrors] = useState<ContactFormErrors>({});
   const [ready, setReady] = useState(false);
 
-  const set =
-    (k: keyof F) =>
+  const setField =
+    (k: keyof ContactFormValues) =>
     (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
-      setF((prev) => ({ ...prev, [k]: e.target.value }));
+      setFormValues((prev) => ({ ...prev, [k]: e.target.value }));
 
-  const validate = (): E => {
-    const e: E = {};
-    if (!f.name.trim()) e.name = 'お名前を入力してください';
-    if (!f.email.trim()) e.email = 'メールアドレスを入力してください';
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email))
-      e.email = '正しいメールアドレスの形式で入力してください';
-    if (!f.type) e.type = 'お問い合わせ種別を選択してください';
-    if (!f.body.trim()) e.body = 'お問い合わせ内容を入力してください';
-    return e;
+  const validate = (): ContactFormErrors => {
+    const nextErrors: ContactFormErrors = {};
+    if (!formValues.name.trim()) nextErrors.name = 'お名前を入力してください';
+    if (!formValues.email.trim()) nextErrors.email = 'メールアドレスを入力してください';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formValues.email)) {
+      nextErrors.email = '正しいメールアドレスの形式で入力してください';
+    }
+    if (!formValues.type) nextErrors.type = 'お問い合わせ種別を選択してください';
+    if (!formValues.body.trim()) nextErrors.body = 'お問い合わせ内容を入力してください';
+    return nextErrors;
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -36,9 +44,9 @@ export default function ContactForm() {
     setErrors(errs);
     if (Object.keys(errs).length > 0) return;
 
-    const subject = encodeURIComponent(`[calcnavi] お問い合わせ（${f.type}）`);
+    const subject = encodeURIComponent(`[calcnavi] お問い合わせ（${formValues.type}）`);
     const body = encodeURIComponent(
-      `会社名：${f.company.trim() || '（なし）'}\nお名前：${f.name}\nメールアドレス：${f.email}\nお問い合わせ種別：${f.type}\n\n【お問い合わせ内容】\n${f.body}`
+      `会社名：${formValues.company.trim() || '（なし）'}\nお名前：${formValues.name}\nメールアドレス：${formValues.email}\nお問い合わせ種別：${formValues.type}\n\n【お問い合わせ内容】\n${formValues.body}`
     );
     window.location.href = `mailto:${MAIL}?subject=${subject}&body=${body}`;
     setReady(true);
@@ -54,7 +62,7 @@ export default function ContactForm() {
       <form className="contact-form" onSubmit={handleSubmit} noValidate>
         <div className="form-group">
           <label htmlFor="company">会社名（任意）</label>
-          <input id="company" type="text" value={f.company} onChange={set('company')} placeholder="例：株式会社〇〇" />
+          <input id="company" type="text" value={formValues.company} onChange={setField('company')} placeholder="例：株式会社〇〇" />
         </div>
 
         <div className="form-group">
@@ -62,8 +70,8 @@ export default function ContactForm() {
           <input
             id="name"
             type="text"
-            value={f.name}
-            onChange={set('name')}
+            value={formValues.name}
+            onChange={setField('name')}
             placeholder="例：山田 太郎"
             className={errors.name ? 'input-error' : ''}
           />
@@ -75,8 +83,8 @@ export default function ContactForm() {
           <input
             id="email"
             type="email"
-            value={f.email}
-            onChange={set('email')}
+            value={formValues.email}
+            onChange={setField('email')}
             placeholder="例：your@email.com"
             className={errors.email ? 'input-error' : ''}
           />
@@ -87,8 +95,8 @@ export default function ContactForm() {
           <label htmlFor="type">お問い合わせ種別 <span style={{ color: 'var(--danger)', fontSize: '0.75rem' }}>必須</span></label>
           <select
             id="type"
-            value={f.type}
-            onChange={set('type')}
+            value={formValues.type}
+            onChange={setField('type')}
             className={errors.type ? 'input-error' : ''}
           >
             <option value="">選択してください</option>
@@ -101,8 +109,8 @@ export default function ContactForm() {
           <label htmlFor="body">お問い合わせ内容 <span style={{ color: 'var(--danger)', fontSize: '0.75rem' }}>必須</span></label>
           <textarea
             id="body"
-            value={f.body}
-            onChange={set('body')}
+            value={formValues.body}
+            onChange={setField('body')}
             placeholder="お問い合わせの内容を入力してください"
             className={errors.body ? 'input-error' : ''}
           />

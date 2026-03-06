@@ -195,7 +195,7 @@ export default function BoltStrengthCalculator() {
         <button
           type="button"
           className="bs-toggle-btn"
-          onClick={() => setShowSettings(!showSettings)}
+          onClick={() => setShowSettings((prev) => !prev)}
         >
           {showSettings ? '▾ 詳細設定を閉じる' : '▸ 詳細設定（安全率・kv）'}
         </button>
@@ -283,7 +283,7 @@ export default function BoltStrengthCalculator() {
       <button
         type="button"
         className="bs-toggle-btn"
-        onClick={() => setShowRef(!showRef)}
+        onClick={() => setShowRef((prev) => !prev)}
         style={{ marginTop: '0.5rem' }}
       >
         {showRef ? '▾ 根拠・計算式を閉じる' : '▸ 根拠・計算式'}

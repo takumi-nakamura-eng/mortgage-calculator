@@ -1,5 +1,3 @@
-'use client';
-
 import MdxOutboundLink from '@/app/components/MdxOutboundLink';
 
 interface QuoteProps {
