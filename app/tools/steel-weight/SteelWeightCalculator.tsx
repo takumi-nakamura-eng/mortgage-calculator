@@ -38,19 +38,12 @@ function shapeLabel(shape: SteelShape): string {
 
 export default function SteelWeightCalculator() {
   // ── Items state ──
-  const [items, setItems] = useState<SteelWeightItem[]>([]);
-  const [loaded, setLoaded] = useState(false);
-
-  // Load from localStorage on mount
-  useEffect(() => {
-    setItems(loadItems());
-    setLoaded(true);
-  }, []);
+  const [items, setItems] = useState<SteelWeightItem[]>(() => loadItems());
 
   // Persist on change
   useEffect(() => {
-    if (loaded) saveItems(items);
-  }, [items, loaded]);
+    saveItems(items);
+  }, [items]);
 
   // ── Input state ──
   const [selectedShape, setSelectedShape] = useState<SteelShape>('plate');

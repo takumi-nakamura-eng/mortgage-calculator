@@ -1,13 +1,11 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import {
   BOLT_SIZES,
   BOLT_GRADES,
   AS_TABLE,
-  D_TABLE,
   GRADE_TABLE,
-  getYieldOrProofMin,
   type BoltSize,
   type BoltGrade,
 } from '@/lib/boltData';
@@ -36,8 +34,8 @@ export default function BoltStrengthCalculator() {
   const [areaMode, setAreaMode] = useState<AreaMode>('As');
   const [strengthBasis, setStrengthBasis] = useState<StrengthBasis>('Rm_min');
   const [nStr, setNStr] = useState('1');
-  const [NStr, setNStr2] = useState('');
-  const [VStr, setVStr] = useState('');
+  const [tensionInput, setTensionInput] = useState('');
+  const [shearInput, setShearInput] = useState('');
 
   // Advanced settings (collapsible)
   const [showSettings, setShowSettings] = useState(false);
@@ -63,8 +61,8 @@ export default function BoltStrengthCalculator() {
     if (isNaN(gv) || gv <= 0) return null;
     if (isNaN(kv) || kv <= 0) return null;
 
-    const N_kN = NStr.trim() !== '' ? parseFloat(NStr) : undefined;
-    const V_kN = VStr.trim() !== '' ? parseFloat(VStr) : undefined;
+    const N_kN = tensionInput.trim() !== '' ? parseFloat(tensionInput) : undefined;
+    const V_kN = shearInput.trim() !== '' ? parseFloat(shearInput) : undefined;
 
     if (N_kN !== undefined && (isNaN(N_kN) || N_kN < 0)) return null;
     if (V_kN !== undefined && (isNaN(V_kN) || V_kN < 0)) return null;
@@ -81,13 +79,15 @@ export default function BoltStrengthCalculator() {
       N_kN,
       V_kN,
     });
-  }, [size, grade, areaMode, strengthBasis, nStr, NStr, VStr, gammaT, gammaV, kvStr]);
+  }, [size, grade, areaMode, strengthBasis, nStr, tensionInput, shearInput, gammaT, gammaV, kvStr]);
 
   // Track once per session
-  if (result && !tracked) {
-    setTracked(true);
+  useEffect(() => {
+    if (!result || tracked) return;
     trackToolCalculate({ toolId: 'bolt-strength', category: 'ねじ・締結' });
-  }
+    const timer = window.setTimeout(() => setTracked(true), 0);
+    return () => window.clearTimeout(timer);
+  }, [result, tracked]);
 
   // Copy handler
   function handleCopy() {
@@ -172,8 +172,8 @@ export default function BoltStrengthCalculator() {
               min="0"
               step="any"
               placeholder="任意"
-              value={NStr}
-              onChange={(e) => setNStr2(e.target.value)}
+              value={tensionInput}
+              onChange={(e) => setTensionInput(e.target.value)}
             />
           </div>
           <div className="form-group" style={{ flex: '1 1 140px' }}>
@@ -184,8 +184,8 @@ export default function BoltStrengthCalculator() {
               min="0"
               step="any"
               placeholder="任意"
-              value={VStr}
-              onChange={(e) => setVStr(e.target.value)}
+              value={shearInput}
+              onChange={(e) => setShearInput(e.target.value)}
             />
           </div>
         </div>

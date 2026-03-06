@@ -38,6 +38,7 @@ export interface ArticleMeta {
   sources: ArticleSource[];
   thumbnailSvg?: string;
   href: string;
+  hideHeaderDescription?: boolean;
 }
 
 export interface Article {
@@ -56,6 +57,7 @@ interface ParsedFrontmatter {
   diagramKey: string;
   faq: ArticleFaqItem[];
   sources: ArticleSource[];
+  hideHeaderDescription?: boolean;
 }
 
 function escapeHtml(text: string): string {
@@ -202,7 +204,7 @@ function parseFrontmatter(source: string): { data: ParsedFrontmatter; body: stri
 
   const block = match[1];
   const body = source.slice(match[0].length);
-  const record: Record<string, string | string[] | ArticleFaqItem[] | ArticleSource[]> = {};
+  const record: Record<string, string | boolean | string[] | ArticleFaqItem[] | ArticleSource[]> = {};
   let currentListKey: string | null = null;
 
   for (const rawLine of block.split('\n')) {
@@ -230,7 +232,13 @@ function parseFrontmatter(source: string): { data: ParsedFrontmatter; body: stri
         continue;
       }
 
-      record[key] = stripQuotes(rawValue.trim());
+      const parsedValue = stripQuotes(rawValue.trim());
+      if (parsedValue === 'true' || parsedValue === 'false') {
+        record[key] = parsedValue === 'true';
+        continue;
+      }
+
+      record[key] = parsedValue;
       continue;
     }
 
@@ -305,6 +313,7 @@ function parseFrontmatter(source: string): { data: ParsedFrontmatter; body: stri
       diagramKey: String(record.diagramKey ?? ''),
       faq,
       sources,
+      hideHeaderDescription: record.hideHeaderDescription === true,
     },
     body,
   };
