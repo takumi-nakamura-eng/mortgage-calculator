@@ -6,6 +6,7 @@ import { printEngReport } from '@/lib/printReport';
 import { trackToolCalculate } from '@/lib/analytics/events';
 import { calcBoltLength } from '@/lib/bolts/length';
 import { BOLT_CALC_SPECS, type Diameter } from '@/lib/bolts/specs';
+import ToolWorkbenchHeader from '@/app/components/ToolWorkbenchHeader';
 
 function parseIntegerInRange(
   value: string,
@@ -120,12 +121,7 @@ export default function BoltLengthCalculator() {
   return (
     <section className="tool-workbench bolt-length-workbench" aria-label="ボルト長さ計算エリア">
       <div className="tool-workbench__section">
-        <div className="tool-workbench__header">
-          <h2 className="tool-workbench__title">
-            <span className="tool-workbench__title-icon" aria-hidden="true">✍️</span>
-            入力条件
-          </h2>
-        </div>
+        <ToolWorkbenchHeader title="入力条件" />
 
         <form className="loan-form bolt-length-form" onSubmit={handleSubmit} noValidate>
           <div className="form-group bolt-length-form__field bolt-length-form__field--diameter">
@@ -247,38 +243,6 @@ export default function BoltLengthCalculator() {
               <div className="result-card">
                 <p className="result-label">計算値</p>
                 <p className="result-value">{result.lRequired.toFixed(2)} mm</p>
-              </div>
-            </div>
-
-            <div className="table-section bolt-length-results__panel">
-              <h3>内訳</h3>
-              <div className="table-container bolt-length-results__table">
-                <table className="amortization-table">
-                  <thead>
-                    <tr>
-                      <th style={{ textAlign: 'left' }}>項目</th>
-                      <th>寸法 (mm)</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {result.breakdown.map((row) => (
-                      <tr key={row.label}>
-                        <td style={{ textAlign: 'left', color: 'var(--text)', fontWeight: 400 }}>
-                          {row.label}
-                        </td>
-                        <td>{row.value.toFixed(2)}</td>
-                      </tr>
-                    ))}
-                    <tr>
-                      <td style={{ textAlign: 'left', fontWeight: 700, color: 'var(--primary)' }}>
-                        合計 (L_required)
-                      </td>
-                      <td style={{ color: 'var(--primary)', fontWeight: 700 }}>
-                        {result.lRequired.toFixed(2)}
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
               </div>
             </div>
 

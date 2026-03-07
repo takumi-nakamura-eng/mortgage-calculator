@@ -95,7 +95,7 @@ export default async function BoltLengthPage() {
         diagramKey="bolt-length"
       />
       <BoltLengthCalculator />
-      <ToolDisclaimer text="本ツールの結果は参考値です。最終確認は規格・メーカー・専門家にお問い合わせください。" />
+      <ToolDisclaimer />
 
       <AdSlot slot={process.env.NEXT_PUBLIC_ADSENSE_SLOT_TOOL} className="tool-ad" pageType="tool" />
 

@@ -10,6 +10,7 @@ interface ToolHeroProps {
   description: string;
   labels: ToolHeroLabel[];
   diagramKey: string;
+  diagramMaxWidth?: number;
 }
 
 export default function ToolHero({
@@ -17,6 +18,7 @@ export default function ToolHero({
   description,
   labels,
   diagramKey,
+  diagramMaxWidth = 180,
 }: ToolHeroProps) {
   return (
     <section className="tool-hero" aria-label="ツール概要">
@@ -40,7 +42,7 @@ export default function ToolHero({
             kind="tool"
             diagramKey={diagramKey}
             width="100%"
-            maxWidth={180}
+            maxWidth={diagramMaxWidth}
             renderContext="hero"
             framed={false}
             ariaHidden
