@@ -21,6 +21,7 @@ export function SectionPropertiesSvg({
   width = '100%',
   height,
   maxWidth = 420,
+  renderContext,
   ariaLabel = '断面図',
   role = 'img',
   ariaHidden,
@@ -28,8 +29,18 @@ export function SectionPropertiesSvg({
   className,
   shape = 'H',
 }: SectionPropertiesSvgProps) {
+  const resolvedMaxWidth = renderContext === 'card' ? undefined : maxWidth;
+  const wrapperStyle = {
+    width,
+    height: height ?? '100%',
+    maxWidth: resolvedMaxWidth,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  } as const;
+
   return (
-    <div className={className} style={{ maxWidth }}>
+    <div className={className} style={wrapperStyle}>
       {shape === 'H' ? <HBeamDiagram width={width} height={height} ariaLabel={ariaLabel} role={role} ariaHidden={ariaHidden} framed={framed} /> : null}
       {shape === 'rect-tube' ? <RectTubeDiagram width={width} height={height} ariaLabel={ariaLabel} role={role} ariaHidden={ariaHidden} framed={framed} /> : null}
       {shape === 'circ-tube' ? <CircTubeDiagram width={width} height={height} ariaLabel={ariaLabel} role={role} ariaHidden={ariaHidden} framed={framed} /> : null}
@@ -43,7 +54,22 @@ export function SectionPropertiesSvg({
 function baseSvg(props: BoltLengthSvgProps & { label: string; children: ReactNode }) {
   const { width = '100%', height, ariaLabel, role, ariaHidden, framed = false, children } = props;
   return (
-    <svg viewBox="0 0 280 230" width={width} height={height} aria-label={ariaHidden ? undefined : ariaLabel ?? props.label} aria-hidden={ariaHidden} role={role} style={{ display: 'block', maxWidth: 420, ...(framed ? { background: '#f8fafc', border: '1px solid #d0d0d0', borderRadius: '4px' } : null) }}>
+    <svg
+      viewBox="0 0 280 230"
+      preserveAspectRatio="xMidYMid meet"
+      width={width}
+      height={height}
+      aria-label={ariaHidden ? undefined : ariaLabel ?? props.label}
+      aria-hidden={ariaHidden}
+      role={role}
+      style={{
+        display: 'block',
+        width: '100%',
+        height: height ?? '100%',
+        maxWidth: '100%',
+        ...(framed ? { background: '#f8fafc', border: '1px solid #d0d0d0', borderRadius: '4px' } : null),
+      }}
+    >
       {children}
     </svg>
   );

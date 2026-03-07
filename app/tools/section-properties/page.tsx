@@ -3,6 +3,8 @@ import SectionPropertiesCalculator from './SectionPropertiesCalculator';
 import AdSlot from '@/app/components/ads/AdSlot';
 import Breadcrumbs from '@/app/components/Breadcrumbs';
 import RelatedArticles from '@/app/components/RelatedArticles';
+import ToolDisclaimer from '@/app/components/ToolDisclaimer';
+import ToolHero from '@/app/components/ToolHero';
 import { getAllArticles } from '@/lib/content/articles';
 import { getToolById } from '@/lib/data/tools';
 import { SITE_NAME, SITE_URL } from '@/lib/site';
@@ -11,7 +13,7 @@ import { buildMetadata } from '@/lib/seo';
 export const metadata: Metadata = buildMetadata({
   title: '断面性能計算ツール',
   description:
-    'H形鋼・角形鋼管・丸形鋼管・フラットバー・アングル・チャンネルの断面二次モーメント（I）・断面係数（Z）・断面積・重量を計算します。強軸・弱軸対応。',
+    'H形鋼・角形鋼管・丸形鋼管・フラットバー・アングル・チャンネルの断面二次モーメント（I）・断面係数（Z）・断面積を計算できるツールです。強軸・弱軸に対応し、梁や柱の一次確認に使えます。',
   path: '/tools/section-properties',
 });
 
@@ -29,7 +31,7 @@ export default async function SectionPropertiesPage() {
     operatingSystem: 'Web',
     applicationCategory: 'EngineeringApplication',
     description:
-      '各種鋼材形状の断面二次モーメント、断面係数、断面積、重量を計算する無料ツール。',
+      '各種鋼材形状の断面二次モーメント、断面係数、断面積を計算する無料ツール。強軸・弱軸に対応し、梁や柱の一次確認に使えます。',
     offers: {
       '@type': 'Offer',
       price: '0',
@@ -53,13 +55,19 @@ export default async function SectionPropertiesPage() {
         ]}
       />
 
-      <h1 className="page-title">断面性能計算ツール</h1>
-      <p className="page-description">
-        断面形状と寸法を入力すると、断面二次モーメント（I）・断面係数（Z）・断面積・重量を計算します。
-        強軸・弱軸の両方に対応。梁設計・柱設計の断面選定にご活用ください。
-      </p>
-      <p className="tool-flow">入力条件 → 計算結果 → 図解・途中式・PDF出力 の順に確認できます。</p>
+      <ToolHero
+        title="断面性能計算"
+        description="H形鋼・角形鋼管・丸形鋼管・フラットバー・アングル・チャンネルの断面二次モーメント（I）・断面係数（Z）・断面積を計算できるツールです。強軸・弱軸に対応し、梁や柱の一次確認に使えます。"
+        labels={[
+          { label: '対応形状', value: '6断面' },
+          { label: '用途', value: '一次確認' },
+          { label: '種別', value: '梁 / 断面 / 断面性能' },
+        ]}
+        diagramKey="section-properties"
+        diagramMaxWidth={220}
+      />
       <SectionPropertiesCalculator />
+      <ToolDisclaimer />
       <AdSlot slot={process.env.NEXT_PUBLIC_ADSENSE_SLOT_TOOL} className="tool-ad" pageType="tool" />
       <RelatedArticles
         source="tool:section-properties"

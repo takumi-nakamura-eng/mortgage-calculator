@@ -115,10 +115,12 @@ function EngHistoryCard({
                     <td className="val">{val}</td>
                   </tr>
                 ))}
-                <tr>
-                  <td>材料</td>
-                  <td className="val">{entry.inputs.material}</td>
-                </tr>
+                {entry.inputs.material && (
+                  <tr>
+                    <td>材料</td>
+                    <td className="val">{entry.inputs.material}</td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>

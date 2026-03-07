@@ -48,10 +48,13 @@ function buildFormulaSteps(entry: EngHistoryEntry): string {
 function buildSectionPropertiesReport(entry: EngHistoryEntry): string {
   const r = entry.results;
   const svg = getSectionSVGString((entry.inputs.shapeKey || 'H') as SectionShape);
+  const toolUrl = 'https://calcnavi.com/tools/section-properties';
+  const withFixedCols = (rows: string) =>
+    `<table class="report-table report-table--fixed"><colgroup><col style="width:42%"/><col style="width:58%"/></colgroup><tbody>${rows}</tbody></table>`;
   const inputRows = [
     `<tr><th>断面形状</th><td>${entry.inputs.shapeName}</td></tr>`,
     ...Object.entries(entry.inputs.dims).map(([k, v]) => `<tr><th>${k}</th><td>${v}</td></tr>`),
-    `<tr><th>材料</th><td>${entry.inputs.material}</td></tr>`,
+    entry.inputs.material ? `<tr><th>材料</th><td>${entry.inputs.material}</td></tr>` : '',
   ].join('');
 
   const resultRows = [
@@ -60,22 +63,42 @@ function buildSectionPropertiesReport(entry: EngHistoryEntry): string {
     r.Iy_mm4 !== undefined ? `<tr><th>Iy</th><td class="val">${fmt(r.Iy_mm4, 1)} mm⁴</td></tr>` : '',
     r.Zy_mm3 !== undefined ? `<tr><th>Zy</th><td class="val">${fmt(r.Zy_mm3, 2)} mm³</td></tr>` : '',
     r.area_mm2 !== undefined ? `<tr><th>断面積</th><td class="val">${fmt(r.area_mm2, 2)} mm²</td></tr>` : '',
-    r.weightKgPerM != null ? `<tr><th>重量</th><td class="val">${fmt(r.weightKgPerM, 3)} kg/m</td></tr>` : '',
   ].join('');
 
-  return `${baseStyle('断面性能計算書')}
+  return `${baseStyle('断面性能計算書').replace(
+    '</style>',
+    `.compact-grid { display:grid; grid-template-columns: 190px 1fr; gap: 12px; align-items:start; }
+.compact-grid > div { min-width:0; }
+.compact-panel { break-inside: avoid; page-break-inside: avoid; }
+.compact-panel h2 { margin-top: 0; }
+.report-table--fixed { table-layout: fixed; }
+.report-table--fixed th,
+.report-table--fixed td { padding: 4px 7px; }
+.section-steps { margin-top: 10px; }
+.section-steps .formula-step { margin-bottom: 6px; }
+.footer a { color: inherit; text-decoration: underline; }
+</style>`,
+  )}
 <h1>断面性能計算書</h1>
 <div class="meta">計算日時: ${fmtDate(entry.timestamp)} / 用途: ${entry.inputs.purpose ?? '-'}</div>
-<h2>① 図解</h2>
-<div style="max-width:220px">${svg}</div>
-<h2>② 入力</h2>
-<table><tbody>${inputRows}</tbody></table>
-<h2>③ 計算式</h2>
-${buildFormulaSteps(entry)}
-<h2>④ 計算結果</h2>
-<table><tbody>${resultRows}</tbody></table>
+<div class="compact-grid">
+  <div class="compact-panel">
+    <h2>① 図解</h2>
+    <div style="max-width:190px">${svg}</div>
+  </div>
+  <div class="compact-panel">
+    <h2>② 入力</h2>
+    ${withFixedCols(inputRows)}
+    <h2 style="margin-top: 12px;">③ 計算結果</h2>
+    ${withFixedCols(resultRows)}
+  </div>
+</div>
+<div class="section-steps">
+  <h2>④ 計算式</h2>
+  ${buildFormulaSteps(entry)}
+</div>
 <div class="disclaimer">本計算書は参考値です。最終設計判断は必ず規格・仕様書・有資格者の確認を行ってください。</div>
-<div class="footer">calcnavi / tools/section-properties</div>
+<div class="footer"><a href="${toolUrl}">${toolUrl}</a></div>
 </body></html>`;
 }
 

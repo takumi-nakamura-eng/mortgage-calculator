@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useState, useMemo } from 'react';
 import {
   calcSection,
@@ -16,7 +17,7 @@ import {
 } from '@/lib/engHistory';
 import { printEngReport } from '@/lib/printReport';
 import { trackToolCalculate } from '@/lib/analytics/events';
-import { DENSITY_PRESETS, resolveDensity } from '@/lib/materialPresets';
+import ToolWorkbenchHeader from '@/app/components/ToolWorkbenchHeader';
 import { SectionDiagram } from './SectionDiagram';
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -25,14 +26,11 @@ export default function SectionPropertiesCalculator() {
   // ── Inputs ────────────────────────────────────────────────────────────────
   const [selectedShape, setSelectedShape] = useState<SectionShape>('H');
   const [shapeDims, setShapeDims]         = useState<Record<string, string>>({});
-  const [densityIdx, setDensityIdx]       = useState(0);
-  const [customDensity, setCustomDensity] = useState<string>('7850');
   const [purpose, setPurpose]             = useState<string>('');
 
   // ── Committed result (only set when "計算する" is clicked) ────────────────
   const [committedResult, setCommittedResult] = useState<{
     result: SectionResult;
-    weightKgPerM: number | null;
     steps: ReturnType<typeof getSectionFormulaSteps>;
     shapeName: string;
     dims: Record<string, string>;
@@ -71,7 +69,7 @@ export default function SectionPropertiesCalculator() {
   }, [dimErrors, currentDef, parsedDims]);
 
   // ── Density ───────────────────────────────────────────────────────────────
-  const density = useMemo(() => resolveDensity(densityIdx, customDensity), [densityIdx, customDensity]);
+  const materialLabel = '';
 
   // ── Handlers ─────────────────────────────────────────────────────────────
   function handleShapeChange(shape: SectionShape) {
@@ -90,11 +88,7 @@ export default function SectionPropertiesCalculator() {
     const result = calcSection(selectedShape, parsedDims);
     if (!result) return;
 
-    const weightKgPerM = density !== null ? result.area_mm2 * density / 1e6 : null;
     const steps = getSectionFormulaSteps(selectedShape, parsedDims, result);
-    const materialLabel = DENSITY_PRESETS[densityIdx].density !== null
-      ? DENSITY_PRESETS[densityIdx].label
-      : `カスタム (${customDensity} kg/m³)`;
 
     // Build input snapshot for history/PDF
     const dims: Record<string, string> = {};
@@ -119,156 +113,109 @@ export default function SectionPropertiesCalculator() {
         Iy_mm4:       result.Iy_mm4,
         Zy_mm3:       result.Zy_mm3,
         area_mm2:     result.area_mm2,
-        weightKgPerM: weightKgPerM,
       },
       formulaSteps: steps,
     });
 
-    setCommittedResult({ result, weightKgPerM, steps, shapeName: currentDef.label, dims, material: materialLabel, entry });
+    setCommittedResult({ result, steps, shapeName: currentDef.label, dims, material: materialLabel, entry });
     trackToolCalculate({ toolId: 'section-properties', category: '梁・断面' });
   }
 
   // ─────────────────────────────────────────────────────────────────────────
   return (
     <div className="section-prop-wrap">
+      <section className="tool-workbench" aria-label="断面性能計算の入力条件">
+        <div className="tool-workbench__section">
+          <ToolWorkbenchHeader title="入力条件" />
 
-      {/* ── Shape selector ── */}
-      <div className="beam-section">
-        <h2 className="beam-section-title">① 断面形状を選択</h2>
-        <div className="section-shape-tabs">
-          {SECTION_DEFS.map((d) => (
-            <button
-              key={d.shape}
-              type="button"
-              onClick={() => handleShapeChange(d.shape)}
-              className={`section-shape-tab${selectedShape === d.shape ? ' section-shape-tab--active' : ''}`}
-            >
-              {d.label}
-            </button>
-          ))}
-        </div>
-        <p className="beam-note" style={{ marginTop: '0.5rem' }}>{currentDef.desc}</p>
-      </div>
-
-      {/* ── Diagram + Inputs ── */}
-      <div className="beam-section">
-        <h2 className="beam-section-title">② 断面寸法を入力</h2>
-        <div className="section-main-row">
-          <div className="section-diagram-box">
-            <SectionDiagram shape={selectedShape} />
-            <p className="section-diagram-caption">
-              青破線：中立軸（X-X 強軸）　赤矢印：荷重方向<br />
-              <span style={{ color: '#6d28d9' }}>紫：公式で使用する中間寸法の識別子</span>
-            </p>
-          </div>
-
-          <div className="section-inputs-box">
-            {currentDef.params.map((p) => (
-              <div key={p.key} className="form-group">
-                <label htmlFor={`sp-${p.key}`}>
-                  {p.label} <span className="unit-label">[{p.unit}]</span>
-                </label>
-                <input
-                  id={`sp-${p.key}`}
-                  type="number"
-                  min="0.001"
-                  step="any"
-                  placeholder={p.placeholder}
-                  value={shapeDims[p.key] ?? ''}
-                  onChange={(e) => setDim(p.key, e.target.value)}
-                />
-                {p.hint && <span className="beam-conv">{p.hint}</span>}
-              </div>
-            ))}
-            {dimErrors.map((err, i) => (
-              <p key={i} className="error-message">{err}</p>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* ── Material density ── */}
-      <div className="beam-section">
-        <h2 className="beam-section-title">③ 材料（重量計算用）</h2>
-        <div className="beam-row">
-          <div className="form-group" style={{ flex: '1 1 220px' }}>
-            <label htmlFor="density-preset">材料プリセット</label>
-            <select
-              id="density-preset"
-              value={densityIdx}
-              onChange={(e) => setDensityIdx(Number(e.target.value))}
-            >
-              {DENSITY_PRESETS.map((d, i) => (
-                <option key={i} value={i}>{d.label}</option>
+          {/* ── Shape selector ── */}
+          <div className="beam-section">
+            <h2 className="beam-section-title">① 断面形状を選択</h2>
+            <div className="section-shape-tabs">
+              {SECTION_DEFS.map((d) => (
+                <button
+                  key={d.shape}
+                  type="button"
+                  onClick={() => handleShapeChange(d.shape)}
+                  className={`section-shape-tab${selectedShape === d.shape ? ' section-shape-tab--active' : ''}`}
+                >
+                  {d.label}
+                </button>
               ))}
-            </select>
+            </div>
+            <p className="beam-note" style={{ marginTop: '0.5rem' }}>{currentDef.desc}</p>
           </div>
-          {DENSITY_PRESETS[densityIdx].density === null && (
-            <div className="form-group" style={{ flex: '1 1 180px' }}>
-              <label htmlFor="custom-density">
-                密度 <span className="unit-label">[kg/m³]</span>
-              </label>
+
+          {/* ── Diagram + Inputs ── */}
+          <div className="beam-section">
+            <h2 className="beam-section-title">② 断面寸法を入力</h2>
+            <div className="section-main-row">
+              <div className="section-diagram-box">
+                <SectionDiagram shape={selectedShape} />
+                <p className="section-diagram-caption">
+                  青破線：中立軸（X-X 強軸）　赤矢印：荷重方向<br />
+                  <span style={{ color: '#6d28d9' }}>紫：公式で使用する中間寸法の識別子</span>
+                </p>
+              </div>
+
+              <div className="section-inputs-box section-properties-form">
+                {currentDef.params.map((p) => (
+                  <div key={p.key} className="form-group section-properties-form__field">
+                    <label htmlFor={`sp-${p.key}`}>
+                      {p.label} <span className="unit-label">[{p.unit}]</span>
+                    </label>
+                    <input
+                      id={`sp-${p.key}`}
+                      type="number"
+                      min="0.001"
+                      step="any"
+                      placeholder={p.placeholder}
+                      value={shapeDims[p.key] ?? ''}
+                      onChange={(e) => setDim(p.key, e.target.value)}
+                    />
+                    {p.hint && <span className="beam-conv">{p.hint}</span>}
+                  </div>
+                ))}
+                {dimErrors.map((err, i) => (
+                  <p key={i} className="error-message">{err}</p>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* ── Purpose (optional) ── */}
+          <div className="beam-section">
+            <h2 className="beam-section-title">③ 用途メモ（任意）</h2>
+            <div className="form-group section-properties-form__purpose">
+              <label htmlFor="calc-purpose">用途メモ</label>
               <input
-                id="custom-density"
-                type="number"
-                min="0.001"
-                step="any"
-                placeholder="7850"
-                value={customDensity}
-                onChange={(e) => setCustomDensity(e.target.value)}
+                id="calc-purpose"
+                type="text"
+                placeholder="例：梁の断面検討、架台柱の座屈確認"
+                value={purpose}
+                onChange={(e) => setPurpose(e.target.value)}
+                maxLength={100}
               />
             </div>
-          )}
-        </div>
-      </div>
+          </div>
 
-      {/* ── Purpose (optional) ── */}
-      <div className="beam-section">
-        <h2 className="beam-section-title">④ 計算用途（任意）</h2>
-        <div className="form-group" style={{ maxWidth: '480px' }}>
-          <label htmlFor="calc-purpose">
-            用途メモ
-            <span className="beam-conv" style={{ marginLeft: '0.5rem' }}>PDF出力・履歴に表示されます</span>
-          </label>
-          <input
-            id="calc-purpose"
-            type="text"
-            placeholder="例：梁の断面検討、架台柱の座屈確認"
-            value={purpose}
-            onChange={(e) => setPurpose(e.target.value)}
-            maxLength={100}
-          />
+          {/* ── Calculate button ── */}
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <button
+              type="button"
+              className="calc-btn"
+              disabled={!canCalculate}
+              onClick={handleCalculate}
+            >
+              計算する
+            </button>
+          </div>
         </div>
-      </div>
-
-      {/* ── Calculate button ── */}
-      <div style={{ display: 'flex', justifyContent: 'center' }}>
-        <button
-          type="button"
-          className="calc-btn"
-          disabled={!canCalculate}
-          onClick={handleCalculate}
-        >
-          計算する
-        </button>
-      </div>
+      </section>
 
       {/* ── Committed results ── */}
       {committedResult && (
         <>
-          {/* Formula steps */}
-          <div className="beam-section formula-steps-section">
-            <h2 className="beam-section-title">計算式（途中式）</h2>
-            <div className="formula-steps-list">
-              {committedResult.steps.map((s, i) => (
-                <div key={i} className="formula-step-item">
-                  <span className="formula-step-label">{s.label}</span>
-                  <pre className="formula-step-expr">{s.expr}</pre>
-                </div>
-              ))}
-            </div>
-          </div>
-
           {/* Results */}
           <div className="beam-section section-results">
             <div className="section-results-header">
@@ -301,23 +248,27 @@ export default function SectionPropertiesCalculator() {
               )}
 
               <div className="section-result-group">
-                <p className="section-result-group-title">断面積・重量</p>
+                <p className="section-result-group-title">断面積</p>
                 <ResultRow label="断面積 A" mm={committedResult.result.area_mm2} unitMm="mm²" toCm={1/100} unitCm="cm²" decimals={2} />
-                {committedResult.weightKgPerM !== null && (
-                  <div className="section-result-row">
-                    <span className="section-result-label">重量</span>
-                    <span className="section-result-value">
-                      <strong>{fmt(committedResult.weightKgPerM, 3)}</strong>
-                      <span className="section-result-unit">kg/m</span>
-                    </span>
-                  </div>
-                )}
               </div>
             </div>
 
             <p className="beam-note" style={{ marginTop: '1rem' }}>
-              重量計算式：A [mm²] × 密度 [kg/m³] / 1,000,000
+              重量算出が必要な場合は <Link href="/tools/steel-weight">鋼材重量計算ツール</Link> を使ってください。
             </p>
+          </div>
+
+          {/* Formula steps */}
+          <div className="beam-section formula-steps-section">
+            <h2 className="beam-section-title">計算式（途中式）</h2>
+            <div className="formula-steps-list">
+              {committedResult.steps.map((s, i) => (
+                <div key={i} className="formula-step-item">
+                  <span className="formula-step-label">{s.label}</span>
+                  <pre className="formula-step-expr">{s.expr}</pre>
+                </div>
+              ))}
+            </div>
           </div>
         </>
       )}
