@@ -37,6 +37,8 @@ export interface ArticleMeta {
   sources: ArticleSource[];
   href: string;
   hideHeaderDescription?: boolean;
+  heroDiagram?: boolean;
+  readingMinutes: number;
 }
 
 export interface Article {
@@ -56,6 +58,7 @@ interface ParsedFrontmatter {
   faq: ArticleFaqItem[];
   sources: ArticleSource[];
   hideHeaderDescription?: boolean;
+  heroDiagram?: boolean;
 }
 
 function escapeHtml(text: string): string {
@@ -136,6 +139,27 @@ function transformMarkdownTables(source: string): string {
 
 function stripQuotes(value: string): string {
   return value.replace(/^['\"]|['\"]$/g, '');
+}
+
+function stripMdxForReadingTime(source: string): string {
+  return source
+    .replace(/```[\s\S]*?```/g, ' ')
+    .replace(/`[^`\n]*`/g, ' ')
+    .replace(/!\[([^\]]*)\]\([^)]+\)/g, '$1')
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/^#{1,6}\s+/gm, ' ')
+    .replace(/^\|/gm, ' ')
+    .replace(/\|$/gm, ' ')
+    .replace(/\|/g, ' ')
+    .replace(/[*_~>-]/g, ' ')
+    .replace(/&lt;|&gt;|&amp;/g, ' ')
+    .replace(/\s+/g, '');
+}
+
+function calcReadingMinutes(source: string): number {
+  const chars = stripMdxForReadingTime(source).length;
+  return Math.max(1, Math.ceil(chars / 500));
 }
 
 function isValidHttpUrl(input: string): boolean {
@@ -306,6 +330,7 @@ function parseFrontmatter(source: string): { data: ParsedFrontmatter; body: stri
       faq,
       sources,
       hideHeaderDescription: record.hideHeaderDescription === true,
+      heroDiagram: record.heroDiagram === true,
     },
     body,
   };
@@ -338,6 +363,9 @@ function validateSources(slug: string, sources: ArticleSource[]): void {
 function validateArticleContent(slug: string, meta: ParsedFrontmatter, body: string): void {
   validateSources(slug, meta.sources);
   const missing: string[] = [];
+  const hasSection = (heading: string) =>
+    new RegExp(`^##\\s+.*${heading}.*$`, 'm').test(body) ||
+    new RegExp(`<h2[^>]*>[\\s\\S]*?${heading}[\\s\\S]*?<\\/h2>`, 'm').test(body);
 
   if (!meta.title.trim()) missing.push('title');
   if (!meta.description.trim()) missing.push('description');
@@ -351,19 +379,22 @@ function validateArticleContent(slug: string, meta: ParsedFrontmatter, body: str
     missing.push('faq(2件以上)');
   }
 
-  if (!/^##\s+図解/m.test(body) || !/(<svg[\s>]|<Diagram[\s/>]|<[A-Z][A-Za-z0-9]*Svg[\s/>])/m.test(body)) {
+  if (
+    !meta.heroDiagram &&
+    (!/^##\s+図解/m.test(body) || !/(<svg[\s>]|<Diagram[\s/>]|<[A-Z][A-Za-z0-9]*Svg[\s/>])/m.test(body))
+  ) {
     missing.push('図解(SVG)');
   }
 
-  if (!/^##\s+比較表/m.test(body) || !/\|.+\|.+\|\n\|[-:|\s]+\|/m.test(body)) {
+  if (!hasSection('比較表') || !/\|.+\|.+\|\n\|[-:|\s]+\|/m.test(body)) {
     missing.push('比較表');
   }
 
-  if (!/^##\s+計算例/m.test(body)) {
+  if (!hasSection('計算例')) {
     missing.push('計算例');
   }
 
-  if (!/^##\s+FAQ/m.test(body)) {
+  if (!hasSection('FAQ')) {
     missing.push('FAQセクション');
   }
 
@@ -383,6 +414,7 @@ async function readArticleFile(slug: string): Promise<Article | null> {
       slug,
       href: `/articles/${slug}`,
       ...data,
+      readingMinutes: calcReadingMinutes(body),
     },
     body,
   };
