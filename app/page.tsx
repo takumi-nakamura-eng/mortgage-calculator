@@ -90,7 +90,6 @@ export default async function HomePage() {
                 <CardDiagram
                   variant="article"
                   diagramKey={article.diagramKey}
-                  svgMarkup={article.thumbnailSvg}
                   className="tool-item-diagram"
                 />
                 <span className="tool-item-body">

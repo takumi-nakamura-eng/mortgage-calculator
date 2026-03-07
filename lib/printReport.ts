@@ -2,7 +2,7 @@ import type { EngHistoryEntry } from './engHistory';
 import { fmt } from './beams/units';
 import { getSectionSVGString } from './beams/sectionSVG';
 import type { SectionShape } from './beams/sections';
-import { getBoltLengthSvgString } from './diagrams/bolt-length';
+import { getBoltLengthSvgString } from './diagrams/tools/bolt-length';
 
 function fmtDate(ts: number): string {
   return new Date(ts).toLocaleString('ja-JP', {

@@ -70,7 +70,6 @@ export default async function CantileverPage() {
           description: article.description,
           href: article.href,
           diagramKey: article.diagramKey,
-          thumbnailSvg: article.thumbnailSvg,
         }))}
       />
     </main>

@@ -102,7 +102,6 @@ export default async function BoltLengthPage() {
           description: article.description,
           href: article.href,
           diagramKey: article.diagramKey,
-          thumbnailSvg: article.thumbnailSvg,
         }))}
       />
     </main>

@@ -5,6 +5,7 @@ import ArticleViewTracker from '@/app/components/ArticleViewTracker';
 import ArticleEngagementTracker from '@/app/components/ArticleEngagementTracker';
 import Breadcrumbs from '@/app/components/Breadcrumbs';
 import CardDiagram from '@/app/components/CardDiagram';
+import Diagram from '@/app/components/Diagram';
 import MdxOutboundLink from '@/app/components/MdxOutboundLink';
 import Quote from '@/app/components/mdx/Quote';
 import RelatedArticles from '@/app/components/RelatedArticles';
@@ -181,6 +182,7 @@ export default async function ArticleDetailPage({
             ),
             Quote,
             CardDiagram,
+            Diagram,
           }}
         />
       </article>
@@ -227,7 +229,6 @@ export default async function ArticleDetailPage({
           description: item.description,
           href: item.href,
           diagramKey: item.diagramKey,
-          thumbnailSvg: item.thumbnailSvg,
         }))}
       />
     </main>

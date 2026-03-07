@@ -1,4 +1,4 @@
-import { BoltLengthSvg } from '@/lib/diagrams/bolt-length';
+import { BoltLengthSvg } from '@/lib/diagrams/tools/bolt-length';
 
 export default function BoltLengthDimensionDiagram() {
   return (
