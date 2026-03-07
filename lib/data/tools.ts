@@ -19,7 +19,14 @@ export const TOOLS: ToolItem[] = [
     available: true,
     category: 'ねじ・締結',
     keywords: ['ボルト', 'ナット', '座金', 'ピッチ', '3山'],
-    relatedArticleSlugs: ['coarse-thread', 'washer-role', 'three-threads', 'nut-basics', 'grip-length-basics', 'bolt-strength-class'],
+    relatedArticleSlugs: [
+      'coarse-thread',
+      'washer-role',
+      'three-threads',
+      'nut-basics',
+      'grip-length-basics',
+      'bolt-strength-class-selection',
+    ],
     diagramKey: 'bolt-length',
   },
   {
@@ -31,6 +38,7 @@ export const TOOLS: ToolItem[] = [
     category: '梁・断面',
     keywords: ['単純梁', 'たわみ', '曲げ応力', '断面係数', '断面二次モーメント'],
     relatedArticleSlugs: [
+      'simple-beam-reaction-basics',
       'section-modulus-basics',
       'allowable-stress-basics',
       'deflection-limit-l-over-n',
@@ -50,7 +58,6 @@ export const TOOLS: ToolItem[] = [
       'section-modulus-basics',
       'moment-of-inertia-basics',
       'h-beam-vs-channel-selection',
-      'tube-section-weight-comparison',
       'steel-material-properties',
     ],
     diagramKey: 'section-properties',
@@ -65,7 +72,7 @@ export const TOOLS: ToolItem[] = [
     keywords: ['片持ち梁', 'カンチレバー', 'たわみ', '曲げ応力', '固定端'],
     relatedArticleSlugs: [
       'cantilever-beam-basics',
-      'beam-deflection-formula',
+      'moment-of-inertia-basics',
       'allowable-stress-basics',
       'deflection-limit-l-over-n',
     ],
@@ -90,7 +97,11 @@ export const TOOLS: ToolItem[] = [
     available: true,
     category: 'ねじ・締結',
     keywords: ['ボルト', '引張耐力', 'せん断耐力', '強度区分', '相互作用'],
-    relatedArticleSlugs: ['bolt-strength-class', 'bolt-strength-class-selection', 'allowable-stress-basics', 'nut-basics'],
+    relatedArticleSlugs: [
+      'bolt-strength-class-selection',
+      'allowable-stress-basics',
+      'nut-basics',
+    ],
     diagramKey: 'bolt-strength',
   },
   {

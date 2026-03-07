@@ -2,7 +2,7 @@
 title: "ボルト強度区分（4.6/8.8/10.9）の選び方"
 description: "ボルトの強度区分の読み方、4.6・8.8・10.9・12.9の使い分け、ナットとの組み合わせルールを整理します。"
 publishedAt: "2026-03-04"
-updatedAt: "2026-03-04"
+updatedAt: "2026-03-07"
 category: "ねじ・締結"
 tags:
   - "強度区分"
@@ -10,7 +10,7 @@ tags:
   - "締結"
   - "JIS"
 toolRefs:
-  - "bolt-length"
+  - "bolt-strength"
 diagramKey: "bolt-strength-class-selection"
 faq:
   - q: "強度区分の数字は何を意味しますか？"
@@ -76,13 +76,22 @@ sources:
 | 10.9 | 10 | JIS B 1181 |
 | 12.9 | 12 | JIS B 1181 |
 
+## 選定の一次判断
+
+- 4.6: 仮止め、軽荷重、非構造用途。締結力よりコストと入手性を優先する場面です。
+- 8.8: 迷ったときの標準案。設備架台、一般機械、中荷重の一次選定に向きます。
+- 10.9: 小径で高軸力が必要、振動が強い、締付管理を確実に行える場合に限定して採用します。
+- 12.9: 特殊用途のみ。腐食環境、表面処理、水素脆化リスクまで管理できる前提が必要です。
+
+実務では「最も高い強度区分」ではなく、「必要性能を満たす最小限の強度区分」を選ぶ方が安全で説明もしやすくなります。
+
 ## 計算例（再現用）
 
-<a href="/tools/bolt-length" className="tool-item article-tool-item">
-  <CardDiagram variant="tool" diagramKey="bolt-length" className="tool-item-diagram" />
+<a href="/tools/bolt-strength" className="tool-item article-tool-item">
+  <CardDiagram variant="tool" diagramKey="bolt-strength" className="tool-item-diagram" />
   <span className="tool-item-body">
-    <span className="tool-item-title">ボルト長さ計算</span>
-    <span className="tool-item-desc">強度区分を選んだ後のボルト首下長さを算出。</span>
+    <span className="tool-item-title">ボルト引張・せん断耐力計算</span>
+    <span className="tool-item-desc">強度区分を切り替えて、許容引張・許容せん断耐力を比較。</span>
   </span>
   <span className="tool-item-arrow">›</span>
 </a>
@@ -110,11 +119,11 @@ sources:
 
 ## 関連ツール
 
-<a href="/tools/bolt-length" className="tool-item article-tool-item">
-  <CardDiagram variant="tool" diagramKey="bolt-length" className="tool-item-diagram" />
+<a href="/tools/bolt-strength" className="tool-item article-tool-item">
+  <CardDiagram variant="tool" diagramKey="bolt-strength" className="tool-item-diagram" />
   <span className="tool-item-body">
-    <span className="tool-item-title">ボルト長さ計算</span>
-    <span className="tool-item-desc">締結体厚さ・座金・ナットから必要な首下長さを算出。</span>
+    <span className="tool-item-title">ボルト引張・せん断耐力計算</span>
+    <span className="tool-item-desc">強度区分4.8/8.8/10.9ごとの耐力差をその場で比較。</span>
   </span>
   <span className="tool-item-arrow">›</span>
 </a>

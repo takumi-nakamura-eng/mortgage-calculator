@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import type React from 'react';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import ArticleViewTracker from '@/app/components/ArticleViewTracker';
 import ArticleEngagementTracker from '@/app/components/ArticleEngagementTracker';
 import Breadcrumbs from '@/app/components/Breadcrumbs';
@@ -22,6 +22,12 @@ import { SITE_NAME, SITE_URL } from '@/lib/site';
 import { buildMetadata } from '@/lib/seo';
 
 export const revalidate = 3600;
+
+const LEGACY_ARTICLE_REDIRECTS: Record<string, string> = {
+  'beam-deflection-formula': '/articles/simple-beam-reaction-basics',
+  'bolt-strength-class': '/articles/bolt-strength-class-selection',
+  'tube-section-weight-comparison': '/tools/section-properties',
+};
 
 export async function generateStaticParams() {
   const articles = await getAllArticles();
@@ -66,6 +72,9 @@ export default async function ArticleDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  const redirectPath = LEGACY_ARTICLE_REDIRECTS[slug];
+  if (redirectPath) permanentRedirect(redirectPath);
+
   const article = await getArticleBySlug(slug);
   if (!article) notFound();
 
