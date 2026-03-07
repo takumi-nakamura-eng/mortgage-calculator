@@ -1,8 +1,8 @@
 import { buildArticleDiagramStyle, type ArticleDiagramProps } from './shared';
 
 export function SimpleBeamReactionBasicsSvg({
-  width = 400,
-  height = 200,
+  width = 560,
+  height = 260,
   maxWidth,
   ariaLabel = '単純梁の支持条件と反力',
   role = 'img',
@@ -12,7 +12,7 @@ export function SimpleBeamReactionBasicsSvg({
 }: ArticleDiagramProps) {
   return (
     <svg
-      viewBox="0 0 400 200"
+      viewBox="0 0 560 260"
       preserveAspectRatio="xMidYMid meet"
       width={width}
       height={height}
@@ -22,23 +22,25 @@ export function SimpleBeamReactionBasicsSvg({
       className={className}
       style={buildArticleDiagramStyle({ maxWidth, framed })}
     >
-      <line x1="60" y1="80" x2="340" y2="80" stroke="#111827" strokeWidth="6" />
-      <polygon points="60,84 48,104 72,104" fill="#334155" />
-      <polygon points="340,84 328,104 352,104" fill="none" stroke="#334155" strokeWidth="2" />
-      <circle cx="340" cy="110" r="5" fill="none" stroke="#334155" strokeWidth="2" />
-      <line x1="200" y1="30" x2="200" y2="74" stroke="#dc2626" strokeWidth="2.5" />
-      <polygon points="200,80 194,70 206,70" fill="#dc2626" />
-      <text x="200" y="22" textAnchor="middle" fontSize="12" fill="#dc2626">P</text>
-      <line x1="60" y1="140" x2="60" y2="120" stroke="#2563eb" strokeWidth="2" />
-      <polygon points="60,118 54,128 66,128" fill="#2563eb" />
-      <text x="60" y="155" textAnchor="middle" fontSize="11" fill="#2563eb">R_A</text>
-      <line x1="340" y1="140" x2="340" y2="120" stroke="#2563eb" strokeWidth="2" />
-      <polygon points="340,118 334,128 346,128" fill="#2563eb" />
-      <text x="340" y="155" textAnchor="middle" fontSize="11" fill="#2563eb">R_B</text>
-      <text x="60" y="178" textAnchor="middle" fontSize="10" fill="#475569">ピン</text>
-      <text x="340" y="178" textAnchor="middle" fontSize="10" fill="#475569">ローラー</text>
-      <line x1="60" y1="190" x2="340" y2="190" stroke="#475569" strokeWidth="1" />
-      <text x="200" y="200" textAnchor="middle" fontSize="11" fill="#334155">L</text>
+      <text x="84" y="90" fontSize="30" fontWeight="700" fill="#214d92">
+        単純梁
+      </text>
+      <text x="86" y="122" fontSize="20" fontWeight="700" fill="#55759a">
+        reaction
+      </text>
+
+      <g transform="translate(206 26)">
+        <line x1="26" y1="116" x2="286" y2="116" stroke="#23415f" strokeWidth="12" strokeLinecap="round" />
+        <polygon points="54,116 40,140 68,140" fill="#6d87a6" />
+        <polygon points="258,116 246,138 270,138" fill="none" stroke="#6d87a6" strokeWidth="3" />
+        <circle cx="258" cy="145" r="5.5" fill="none" stroke="#6d87a6" strokeWidth="3" />
+        <line x1="156" y1="42" x2="156" y2="102" stroke="#d35d5d" strokeWidth="4" strokeLinecap="round" />
+        <polygon points="156,116 148,100 164,100" fill="#d35d5d" />
+        <line x1="54" y1="174" x2="54" y2="136" stroke="#5a86c6" strokeWidth="3.5" strokeLinecap="round" />
+        <polygon points="54,126 46,140 62,140" fill="#5a86c6" />
+        <line x1="258" y1="174" x2="258" y2="136" stroke="#5a86c6" strokeWidth="3.5" strokeLinecap="round" />
+        <polygon points="258,126 250,140 266,140" fill="#5a86c6" />
+      </g>
     </svg>
   );
 }

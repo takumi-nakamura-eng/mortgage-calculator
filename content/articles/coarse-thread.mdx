@@ -1,6 +1,6 @@
 ---
-title: "並目とは"
-description: "並目（メートル並目ねじ）の意味、細目との違い、ピッチの考え方を短く整理します。"
+title: "並目ねじとは: 細目との違いとピッチの見方"
+description: "メートル並目ねじの意味、細目との違い、ピッチの読み方、ボルト長さ計算で先端余長 3p にどう使うかを整理します。"
 publishedAt: "2026-02-22"
 updatedAt: "2026-03-04"
 category: "ねじ・締結"
@@ -12,52 +12,48 @@ tags:
 toolRefs:
   - "bolt-length"
 diagramKey: "coarse-thread"
+heroDiagram: true
 faq:
   - q: "並目が標準とされる理由は何ですか？"
     a: "流通量が多く入手しやすく、汎用的な締結で扱いやすいためです。"
   - q: "細目はどんなときに使いますか？"
     a: "微調整や薄肉部品、振動条件などで選定されることがあります。"
 sources:
-  - title: "JIS規格票・機械要素の基本"
-    url: "https://kikakurui.com/"
-    site: "規格一覧"
-    accessedAt: "2026-03-01"
-    note: "関連JISの用語と規格番号確認に使用"
   - title: "MISUMI 技術情報"
-    url: "https://jp.misumi-ec.com/tech-info/"
+    url: "https://jp.misumi-ec.com/tech-info/categories/technical_data/td01/c1678.html"
     site: "MISUMI"
     accessedAt: "2026-03-01"
     note: "機械部品の実務解説と選定観点"
-  - title: "SMC 技術資料"
-    url: "https://www.smcworld.com/webcatalog/ja/"
-    site: "SMC"
-    accessedAt: "2026-03-01"
-    note: "機械設計時の一般的な実務注意点の確認"
   - title: "JIS B 0205 メートル並目ねじ"
     url: "https://kikakurui.com/b0/B0205-4-2001-01.html"
     site: "規格一覧"
     accessedAt: "2026-03-04"
     note: "カテゴリ: 公的。メートル並目ねじのピッチ・基準寸法の規格原文"
+  - title: "JIS B 0101 ねじ用語"
+    url: "https://kikakurui.com/b0/B0101-2013-01.html"
+    site: "規格一覧"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: 公的。ピッチやねじ用語の定義確認に使用。"
 ---
 
-## この記事でわかること
+<h2><span aria-hidden="true">💡</span><span>この記事でわかること</span></h2>
+<ul>
+  <li>並目ねじと細目ねじの違い</li>
+  <li>ピッチ表記を図面上でどう読むか</li>
+  <li>ボルト長さ計算の <code>3p</code> にどうつながるか</li>
+</ul>
 
-メートル並目ねじのピッチの意味、並目と細目の選び方、そして実務での使い分けの判断基準がわかります。
+<h2><span aria-hidden="true">✅</span><span>結論</span></h2>
+<ul>
+  <li>ねじの呼び径に「×ピッチ」の表記がなければ並目（[JIS B 0205](https://kikakurui.com/b0/B0205-4-2001-01.html)）です。</li>
+  <li>並目は流通量が多く入手性に優れるため、特別な理由がない限り並目を選ぶのが実務の基本です。</li>
+  <li>細目を採用するのは、振動条件、微調整、薄肉部品など明確な理由がある場合に限ります。</li>
+  <li>ボルト長さ計算では <code>先端余長 = 3p</code> の <code>p</code> に採用ねじのピッチを使います。</li>
+</ul>
 
-## 結論
+使い分けの考え方は [JIS B 0205](https://kikakurui.com/b0/B0205-4-2001-01.html) の規格値と、実務上の選び分けを整理した [MISUMI 技術情報](https://jp.misumi-ec.com/tech-info/categories/technical_data/td01/c1678.html) を基にしています。
 
-ねじの呼び径に「×ピッチ」の表記がなければ並目（JIS B 0205）です。
-並目は流通量が多く入手性に優れるため、特別な理由がない限り並目を選ぶのが実務の基本です。
-細目を採用するのは「振動によるゆるみ対策」「微細な位置調整」「薄肉部品でのかかり長確保」など明確な理由がある場合に限ります。
-ピッチの数値は [JIS B 0205](https://kikakurui.com/b0/B0205-4-2001-01.html) に規定されており、ボルト長さ計算では `先端余長 = 3p` の `p` に並目ピッチを使います。
-
-## 図解
-
-<div className="diagram-card">
-  <Diagram diagramKey="coarse-thread" width="100%" maxWidth={560} />
-</div>
-
-## 比較表
+<h2><span aria-hidden="true">📊</span><span>比較表</span></h2>
 
 | 項目 | 並目 | 細目 |
 |---|---|---|
@@ -67,7 +63,7 @@ sources:
 | ゆるみやすさ | リード角が大きくゆるみやすい | リード角が小さくゆるみにくい |
 | 加工難度 | 容易（汎用タップで対応） | やや高い（細目専用タップが必要） |
 
-## 計算例（再現用）
+<h2><span aria-hidden="true">🧮</span><span>計算例</span></h2>
 
 <a href="/tools/bolt-length" className="tool-item article-tool-item">
   <CardDiagram variant="tool" diagramKey="bolt-length" className="tool-item-diagram" />
@@ -86,18 +82,18 @@ sources:
 
 結果: 先端余長は **4.5 mm**。この値をボルト長さ計算の式 `L = t + Hpw + Hsw + Hnut + 3p` に加算します。
 
-## 落とし穴
+<h2><span aria-hidden="true">⚠️</span><span>よくある見落とし</span></h2>
 
 - M10 の並目ピッチ `1.5 mm` と M12 の並目ピッチ `1.75 mm` を取り違えて、先端余長が 0.75 mm ずれる
 - 図面に「M10」とだけ記載されているとき、並目と細目の区別をせずに細目ピッチで計算してしまう
 - 細目ナットに並目ボルトを組み合わせて締結不良を起こす（ピッチが異なるとねじ山が噛み合わない）
 - 社内在庫の並目ボルトが欠品のとき、「ピッチが近い」という理由で細目を代用して強度不足になる
 
-## 判断基準
+<h2><span aria-hidden="true">🧭</span><span>判断基準</span></h2>
 
 `契約図書・組立図の指定 > JIS B 0205 並目ピッチ表 > メーカー推奨値 > 社内基準（競合時は保守側）`
 
-## 関連ツール
+<h2><span aria-hidden="true">🔗</span><span>次に確認するページ</span></h2>
 
 <a href="/tools/bolt-length" className="tool-item article-tool-item">
   <CardDiagram variant="tool" diagramKey="bolt-length" className="tool-item-diagram" />
@@ -107,8 +103,6 @@ sources:
   </span>
   <span className="tool-item-arrow">›</span>
 </a>
-
-## 関連記事
 
 <a href="/articles/three-threads" className="tool-item article-tool-item">
   <CardDiagram variant="article" diagramKey="three-threads" className="tool-item-diagram" />
@@ -128,10 +122,19 @@ sources:
   <span className="tool-item-arrow">›</span>
 </a>
 
-## FAQ
+<a href="/articles/grip-length-basics" className="tool-item article-tool-item">
+  <CardDiagram variant="article" diagramKey="grip-length-basics" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">ボルト長さの決め方</span>
+    <span className="tool-item-desc">ピッチを 3p へどう入れるかをまとめて確認。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
 
-### Q1. M表記だけなら並目ですか？
-A. 特記がない場合は並目扱いになるのが一般的です。図面に「M10×1.25」のようにピッチが明記されている場合のみ細目です。
+<h2><span aria-hidden="true">❓</span><span>FAQ</span></h2>
 
-### Q2. 並目と細目を混在できますか？
-A. できません。呼び径が同じでもピッチが異なれば締結不良になります。並目ボルトには並目ナット、細目ボルトには細目ナットを必ず組み合わせてください。
+<h3><span aria-hidden="true">💬</span><span>Q1. M表記だけなら並目ですか？</span></h3>
+<p>A. 特記がない場合は並目扱いになるのが一般的です。図面に「M10×1.25」のようにピッチが明記されている場合のみ細目です。</p>
+
+<h3><span aria-hidden="true">💬</span><span>Q2. 並目と細目を混在できますか？</span></h3>
+<p>A. できません。呼び径が同じでもピッチが異なれば締結不良になります。並目ボルトには並目ナット、細目ボルトには細目ナットを必ず組み合わせてください。</p>

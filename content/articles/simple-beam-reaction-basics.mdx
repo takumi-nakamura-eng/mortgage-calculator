@@ -1,6 +1,6 @@
 ---
 title: "単純梁の計算の流れ: 支持条件・反力・たわみ公式"
-description: "単純梁（単純支持梁）の支持条件、反力の求め方、中央集中荷重・等分布荷重・偏心荷重のたわみ公式を整理します。"
+description: "単純梁の支持条件、反力の求め方、中央集中荷重・等分布荷重で使う式の選び方を、一次判断の流れに沿って整理します。"
 publishedAt: "2026-03-04"
 updatedAt: "2026-03-07"
 category: "梁・断面"
@@ -13,80 +13,87 @@ tags:
 toolRefs:
   - "beam"
 diagramKey: "simple-beam-reaction-basics"
+heroDiagram: true
 faq:
   - q: "ピン支持とローラー支持の違いは何ですか？"
-    a: "ピン支持は鉛直・水平の反力を持ち、ローラー支持は鉛直反力のみです。単純梁ではこの組み合わせで静定構造になります。"
+    a: "ピン支持は鉛直と水平の反力を持ち、ローラー支持は鉛直反力のみを持ちます。単純梁はこの組み合わせで静定構造になります。"
   - q: "反力を間違えると何が起きますか？"
-    a: "曲げモーメント・せん断力の計算がすべてずれるため、断面選定・たわみ判定の結果も誤ります。"
+    a: "曲げモーメント、せん断力、応力、たわみがすべてずれるので、その後の断面選定も誤ります。"
   - q: "集中荷重が中央以外にかかる場合は？"
-    a: "偏心荷重の式に切り替えます。中央荷重の式を流用すると、反力もたわみもずれます。"
+    a: "偏心荷重の式に切り替えます。中央荷重の式を流用すると反力もたわみも誤ります。"
   - q: "梁の自重はどう考慮しますか？"
     a: "梁自重は等分布荷重として外力に加算します。断面重量から線荷重に換算し、重ね合わせで評価します。"
 sources:
   - title: "建築基準法施行令（e-Gov法令検索）"
     url: "https://elaws.e-gov.go.jp/document?lawid=325CO0000000338"
     site: "e-Gov法令検索"
-    accessedAt: "2026-03-04"
-    note: "カテゴリ: 公的。構造計算の根拠となる法令"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: 公的。構造計算の前提となる法令確認に使用。"
   - title: "日本建築学会 鋼構造設計規準（AIJ）"
     url: "https://www.aij.or.jp/paper/detail.html?productId=623"
     site: "日本建築学会"
-    accessedAt: "2026-03-04"
-    note: "カテゴリ: 学協会。梁の設計と支持条件の考え方"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: 学協会。梁設計と支持条件の考え方の確認に使用。"
   - title: "Engineering ToolBox: Beam Deflection and Stress Formula"
     url: "https://www.engineeringtoolbox.com/beam-stress-deflection-d_1312.html"
     site: "Engineering ToolBox"
-    accessedAt: "2026-03-04"
-    note: "カテゴリ: 工学技術資料。各荷重条件の反力・曲げモーメント式"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: 工学技術資料。単純梁の反力・曲げモーメント・たわみ公式の照合に使用。"
   - title: "MISUMI 技術情報"
-    url: "https://jp.misumi-ec.com/tech-info/"
+    url: "https://jp.misumi-ec.com/tech-info/categories/technical_data/td01/c1463.html"
     site: "MISUMI"
-    accessedAt: "2026-03-04"
-    note: "カテゴリ: メーカー技術資料。梁設計の実務確認観点"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: メーカー技術資料。材料力学と梁計算の実務整理に使用。"
 ---
 
-## この記事でわかること
+<h2><span aria-hidden="true">💡</span><span>この記事でわかること</span></h2>
+<ul>
+  <li>単純梁の支持条件をどう置くか</li>
+  <li>反力、曲げモーメント、たわみへ進む順番</li>
+  <li>中央集中荷重と等分布荷重で何の式を使うか</li>
+</ul>
 
-単純梁（単純支持梁）のピン・ローラー支持の意味、反力の求め方、中央集中荷重・等分布荷重・偏心荷重で使うたわみ公式の選び方がわかります。
+<h2><span aria-hidden="true">✅</span><span>結論</span></h2>
+<ul>
+  <li>単純梁は、片端ピン支持・片端ローラー支持の静定構造として扱うのが基本です。</li>
+  <li>最初に求めるべきなのは反力で、ここを間違えると応力もたわみも全部ずれます。</li>
+  <li>中央集中荷重なら <code>R_A = R_B = P/2</code>、等分布荷重なら <code>R_A = R_B = wL/2</code> が基本です。</li>
+  <li>たわみ式は荷重条件ごとに変わるので、支持条件と荷重の置き方を固定してから選びます。</li>
+</ul>
 
-## 結論
+この整理は、構造計算の前提確認として [建築基準法施行令](https://elaws.e-gov.go.jp/document?lawid=325CO0000000338)、梁設計の扱いとして [日本建築学会 鋼構造設計規準（AIJ）](https://www.aij.or.jp/paper/detail.html?productId=623)、公式の照合として [Engineering ToolBox](https://www.engineeringtoolbox.com/beam-stress-deflection-d_1312.html) を参照しています。計算の進め方自体は [MISUMI 技術情報](https://jp.misumi-ec.com/tech-info/categories/technical_data/td01/c1463.html) も実務向けの補助になります。
 
-単純梁は「片端ピン支持＋もう片端ローラー支持」の静定構造です。
-ピン支持は鉛直反力 `R_V` と水平反力 `R_H` を受け、ローラー支持は鉛直反力 `R_V` のみを受けます。
-反力は力のつり合い（`ΣF_V = 0`）とモーメントのつり合い（`ΣM = 0`）の2式で求めます。
-中央集中荷重 `P` の場合、左右の反力はそれぞれ `R_A = R_B = P / 2` です。
-等分布荷重 `w` の場合、`R_A = R_B = wL / 2` です。
-反力は曲げモーメント・せん断力計算の出発点なので、ここを間違えると以降のすべての判定（応力・たわみ）が狂います。
-たわみ式も荷重条件ごとに変わるため、「支持条件」と「荷重の置き方」を固定してから式を選ぶのが実務の基本です。
-
-## 図解
-
-<div className="diagram-card diagram-card--compact">
-  <Diagram diagramKey="simple-beam-reaction-basics" width="100%" maxWidth={400} />
+<h2><span aria-hidden="true">🧭</span><span>一次判断の流れ</span></h2>
+<div className="article-step-list">
+  <p>1. 支持条件が単純梁になっているか確認する</p>
+  <p>2. 荷重条件を中央集中、等分布、偏心集中のどれかに固定する</p>
+  <p>3. 反力をつり合い式で求める</p>
+  <p>4. 反力から最大曲げモーメントを出す</p>
+  <p>5. 応力とたわみの式を選び、Z判定とI判定へ進む</p>
 </div>
 
-## 比較表
+実務では、反力計算を飛ばしていきなりたわみ式を当てると、支持条件や荷重位置の誤りに気付きにくくなります。まず「どこで支えて、どこに何が載るか」を固定してください。
+
+<h2><span aria-hidden="true">📊</span><span>比較表</span></h2>
 
 | 荷重条件 | 反力 R_A | 反力 R_B | 最大曲げモーメント M_max | 最大たわみ δ_max |
 |---|---|---|---|---|
-| 中央集中荷重 P | `P/2` | `P/2` | `PL/4`（中央） | `PL³/(48EI)` |
-| 等分布荷重 w | `wL/2` | `wL/2` | `wL²/8`（中央） | `5wL⁴/(384EI)` |
-| 偏心集中荷重 P（aとb） | `Pb/L` | `Pa/L` | `Pab/L`（荷重点） | 荷重位置により変化 |
+| 中央集中荷重 `P` | `P/2` | `P/2` | `PL/4` | `PL³/(48EI)` |
+| 等分布荷重 `w` | `wL/2` | `wL/2` | `wL²/8` | `5wL⁴/(384EI)` |
+| 偏心集中荷重 `P` | `Pb/L` | `Pa/L` | 荷重点で最大 | 荷重位置ごとの式 |
 
-この式の導出は [Engineering ToolBox](https://www.engineeringtoolbox.com/beam-stress-deflection-d_1312.html) の梁公式集を参照しています。
+この表の反力式とたわみ式は [Engineering ToolBox](https://www.engineeringtoolbox.com/beam-stress-deflection-d_1312.html) の単純梁公式と照合しています。偏心荷重は中央荷重の式を流用せず、荷重点距離 `a`, `b` を含む式に切り替えるのが前提です。
 
-## たわみ公式の使い分け
+<h2><span aria-hidden="true">📏</span><span>式の使い分け</span></h2>
 
-単純梁では、荷重の置き方が変わると使う式も変わります。先に「支持条件が単純梁か」「荷重が集中か分布か」「作用位置が中央か偏心か」を固定してから式を選んでください。
-
-- 中央集中荷重: `δ_max = PL³ / (48EI)`。最も基本的な当たり付け用です。
-- 等分布荷重: `δ_max = 5wL⁴ / (384EI)`。自重を含む面荷重・線荷重の確認に使います。
-- 偏心集中荷重: 荷重点距離 `a`, `b` を使う式へ切り替えます。中央荷重の式を流用すると誤差が大きくなります。
-- 自重の扱い: 梁自重は `w_self` として等分布荷重に換算し、外力 `w_ext` と合算して `w = w_self + w_ext` で判定します。
+- 中央集中荷重は、設備架台や中間に一点荷重が乗る当たり付けで最もよく使います。
+- 等分布荷重は、自重、外装材、床荷重のようにスパン全体へ荷重が載るときに使います。
+- 偏心集中荷重は、吊り点や機器が中央からずれているときに使います。反力が左右で変わるので、中央集中荷重の式は使えません。
+- 梁自重は等分布荷重に換算して足します。断面重量を無視すると、たわみ側で余裕を見誤りやすくなります。
 
 固定端・自由端の片持ち梁は式が別系統なので、[片持ち梁の基本とたわみ公式・計算の流れ](/articles/cantilever-beam-basics) を参照してください。
 
-## 計算例（再現用）
+<h2><span aria-hidden="true">🧮</span><span>計算例</span></h2>
 
 <a href="/tools/beams/simple-supported" className="tool-item article-tool-item">
   <CardDiagram variant="tool" diagramKey="simple-supported" className="tool-item-diagram" />
@@ -97,48 +104,56 @@ sources:
   <span className="tool-item-arrow">›</span>
 </a>
 
-条件: スパン `L = 3000 mm`、中央集中荷重 `P = 10 kN`。
+条件:
+
+- スパン `L = 3000 mm`
+- 中央集中荷重 `P = 10 kN`
 
 反力:
-- `R_A = P / 2 = 10 / 2 = 5 kN`
+
+- `R_A = P / 2 = 5 kN`
 - `R_B = P / 2 = 5 kN`
 
-検算（ΣF_V = 0）: `R_A + R_B - P = 5 + 5 - 10 = 0` ✓
+検算:
+
+- `ΣF_V = 0`
+- `R_A + R_B - P = 5 + 5 - 10 = 0`
 
 最大曲げモーメント:
-- `M_max = PL / 4 = 10 × 3000 / 4 = 7500 N·m = 7.5 kN·m`
 
-この反力と曲げモーメントを使って、断面選定（Z判定）やたわみ判定（I判定）に進みます。
+- `M_max = PL / 4`
+- `M_max = 10 × 3000 / 4 = 7500 N·m = 7.5 kN·m`
 
-## 落とし穴
+結果:
 
-- 片持ち梁の反力式を単純梁に適用してしまう（支持条件が異なると式が全く異なる）
-- モーメントのつり合い式で荷重の作用点距離を取り違え、反力が左右で逆転する
-- 等分布荷重の合力を `wL` とすべきところを `w` だけで計算し、反力の単位が合わなくなる
-- 反力の検算（`ΣF_V = 0` の確認）をせず、数値の誤りに気付かないまま断面計算に進む
+- 左右反力は **5 kN**
+- 最大曲げモーメントは **7.5 kN·m**
 
-## 判断基準
+ここまで出せれば、次に断面係数 `Z` と断面二次モーメント `I` の判定へ進めます。
 
-`設計図の支持条件指定 > 法令/規準の荷重条件（建築基準法施行令等） > 学協会規準（AIJ等） > メーカー資料（競合時は荷重が大きい方）`
+<h2><span aria-hidden="true">⚠️</span><span>よくある見落とし</span></h2>
 
-## 関連ツール
+- 片持ち梁の式を単純梁へ流用する
+- 荷重点距離を取り違えて反力が左右逆になる
+- 等分布荷重の合力 `wL` を使わず、単位が合わないまま進める
+- `ΣF_V = 0` の検算をせず、反力ミスに気付かない
+
+<h2><span aria-hidden="true">🔗</span><span>次に確認するページ</span></h2>
 
 <a href="/tools/beams/simple-supported" className="tool-item article-tool-item">
   <CardDiagram variant="tool" diagramKey="simple-supported" className="tool-item-diagram" />
   <span className="tool-item-body">
     <span className="tool-item-title">単純梁（単純支持）計算</span>
-    <span className="tool-item-desc">曲げ応力と最大たわみを同時に確認。</span>
+    <span className="tool-item-desc">反力から応力・たわみまでを一度に確認。</span>
   </span>
   <span className="tool-item-arrow">›</span>
 </a>
-
-## 関連記事
 
 <a href="/articles/allowable-stress-basics" className="tool-item article-tool-item">
   <CardDiagram variant="article" diagramKey="allowable-stress-basics" className="tool-item-diagram" />
   <span className="tool-item-body">
     <span className="tool-item-title">許容曲げ応力の考え方</span>
-    <span className="tool-item-desc">反力から求めた曲げモーメントで応力判定する方法。</span>
+    <span className="tool-item-desc">反力から出した曲げモーメントを応力判定につなげる方法。</span>
   </span>
   <span className="tool-item-arrow">›</span>
 </a>
@@ -146,31 +161,31 @@ sources:
 <a href="/articles/deflection-limit-l-over-n" className="tool-item article-tool-item">
   <CardDiagram variant="article" diagramKey="deflection-limit-l-over-n" className="tool-item-diagram" />
   <span className="tool-item-body">
-    <span className="tool-item-title">L/200・L/300・L/400の選び分け</span>
-    <span className="tool-item-desc">反力計算後のたわみ判定で使う許容値の選び方。</span>
+    <span className="tool-item-title">L/200・L/300・L/400の選び方</span>
+    <span className="tool-item-desc">たわみ判定で使う許容値の置き方を整理。</span>
   </span>
   <span className="tool-item-arrow">›</span>
 </a>
 
 <a href="/articles/cantilever-beam-basics" className="tool-item article-tool-item">
-  <CardDiagram variant="article" diagramKey="cantilever-beam" className="tool-item-diagram" />
+  <CardDiagram variant="article" diagramKey="cantilever-beam-basics" className="tool-item-diagram" />
   <span className="tool-item-body">
     <span className="tool-item-title">片持ち梁の基本とたわみ公式・計算の流れ</span>
-    <span className="tool-item-desc">固定端・自由端の条件で使う別系統の式を確認。</span>
+    <span className="tool-item-desc">支持条件が違うと式がどう変わるかを比較。</span>
   </span>
   <span className="tool-item-arrow">›</span>
 </a>
 
-## FAQ
+<h2><span aria-hidden="true">❓</span><span>FAQ</span></h2>
 
-### Q1. ピン支持とローラー支持の違いは何ですか？
-A. ピン支持は鉛直方向と水平方向の両方の反力を受けます。ローラー支持は鉛直方向の反力のみで、水平方向には自由に変位できます。この組み合わせで静定構造（未知数3個＝つり合い式3本）になります。
+<h3><span aria-hidden="true">💬</span><span>Q1. ピン支持とローラー支持の違いは何ですか？</span></h3>
+<p>A. ピン支持は鉛直と水平の反力を持ち、ローラー支持は鉛直反力のみを持ちます。この組み合わせで静定構造になります。</p>
 
-### Q2. 反力を間違えると何が起きますか？
-A. 反力は曲げモーメント・せん断力計算の出発点です。反力が間違っていると断面係数Z・断面二次モーメントIの判定がすべてずれるため、必ず `ΣF_V = 0` で検算してから次のステップに進んでください。
+<h3><span aria-hidden="true">💬</span><span>Q2. 反力を間違えると何が起きますか？</span></h3>
+<p>A. 曲げモーメント、応力、たわみの出発点がずれるため、その後の断面選定もすべて誤ります。必ず検算してから進めてください。</p>
 
-### Q3. 集中荷重が中央以外にかかる場合は？
-A. 偏心荷重の式に切り替えます。左右反力は `R_A = Pb/L`、`R_B = Pa/L` で求め、たわみも荷重位置を含む式で評価してください。中央荷重の式をそのまま流用しないことが重要です。
+<h3><span aria-hidden="true">💬</span><span>Q3. 集中荷重が中央以外にかかる場合は？</span></h3>
+<p>A. 偏心荷重の式に切り替えます。左右反力は `R_A = Pb/L`、`R_B = Pa/L` で求め、たわみも荷重位置を含む式で評価します。</p>
 
-### Q4. 梁の自重はどう考慮しますか？
-A. 梁の単位重量から線荷重 `w_self` を求め、外力の等分布荷重 `w_ext` と合算して `w = w_self + w_ext` で評価します。自重を無視すると、たわみ側で余裕を見誤りやすくなります。
+<h3><span aria-hidden="true">💬</span><span>Q4. 梁の自重はどう考慮しますか？</span></h3>
+<p>A. 梁の単位重量から線荷重 `w_self` を求め、外力の等分布荷重 `w_ext` と合算して評価します。自重を無視すると、たわみ側の判断を誤りやすくなります。</p>

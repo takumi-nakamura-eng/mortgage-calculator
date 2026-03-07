@@ -2,9 +2,9 @@ import { buildArticleDiagramStyle, type ArticleDiagramProps } from './shared';
 
 export function GripLengthBasicsSvg({
   width = 560,
-  height = 220,
+  height = 260,
   maxWidth,
-  ariaLabel = 'グリップ長さの定義図',
+  ariaLabel = 'ボルト長さの決め方とグリップ長の見方',
   role = 'img',
   ariaHidden,
   framed = true,
@@ -12,7 +12,7 @@ export function GripLengthBasicsSvg({
 }: ArticleDiagramProps) {
   return (
     <svg
-      viewBox="0 0 560 220"
+      viewBox="0 0 560 260"
       preserveAspectRatio="xMidYMid meet"
       width={width}
       height={height}
@@ -22,35 +22,36 @@ export function GripLengthBasicsSvg({
       className={className}
       style={buildArticleDiagramStyle({ maxWidth, framed })}
     >
-      <rect x="250" y="20" width="60" height="20" fill="#64748b" stroke="#374151" strokeWidth="1.5" rx="2" />
-      <text x="280" y="14" textAnchor="middle" fontSize="10" fill="#374151">ボルト頭</text>
-      <rect x="272" y="40" width="16" height="160" fill="#94a3b8" rx="1" />
-      <rect x="255" y="40" width="50" height="8" fill="#bfdbfe" stroke="#1d4ed8" strokeWidth="1" />
-      <text x="320" y="48" fontSize="10" fill="#1d4ed8">平座金</text>
-      <rect x="258" y="48" width="44" height="7" fill="#fecaca" stroke="#ef4444" strokeWidth="1" />
-      <text x="320" y="58" fontSize="10" fill="#ef4444">ばね座金</text>
-      <rect x="230" y="55" width="100" height="40" fill="#e2e8f0" stroke="#64748b" strokeWidth="1" />
-      <text x="280" y="80" textAnchor="middle" fontSize="11" fill="#475569">板 t₁</text>
-      <rect x="230" y="95" width="100" height="40" fill="#f1f5f9" stroke="#64748b" strokeWidth="1" />
-      <text x="280" y="120" textAnchor="middle" fontSize="11" fill="#475569">板 t₂</text>
-      <rect x="255" y="135" width="50" height="20" fill="#dbeafe" stroke="#1d4ed8" strokeWidth="1.5" rx="2" />
-      <text x="320" y="148" fontSize="10" fill="#1d4ed8">ナット</text>
-      <line x1="280" y1="155" x2="280" y2="200" stroke="#94a3b8" strokeWidth="2" strokeDasharray="4 3" />
-      <text x="320" y="180" fontSize="10" fill="#374151">先端3山</text>
-      <line x1="215" y1="40" x2="215" y2="135" stroke="#16a34a" strokeWidth="2" />
-      <line x1="210" y1="40" x2="220" y2="40" stroke="#16a34a" strokeWidth="1.5" />
-      <line x1="210" y1="135" x2="220" y2="135" stroke="#16a34a" strokeWidth="1.5" />
-      <text
-        x="195"
-        y="92"
-        textAnchor="middle"
-        fontSize="11"
-        fontWeight="bold"
-        fill="#16a34a"
-        transform="rotate(-90, 195, 92)"
-      >
+      <text x="92" y="92" fontSize="32" fontWeight="700" fill="#214d92">
+        ボルト長さ
+      </text>
+      <text x="94" y="124" fontSize="20" fontWeight="700" fill="#55759a">
         グリップ長
       </text>
+
+      <g transform="translate(210 28)">
+        <rect x="94" y="18" width="78" height="22" rx="5" fill="#6b7c93" />
+        <rect x="124" y="40" width="18" height="150" rx="3" fill="#9aa9bc" />
+        <rect x="102" y="40" width="62" height="10" rx="2" fill="#dbeafe" stroke="#5b86c4" strokeWidth="1.5" />
+        <rect x="104" y="50" width="58" height="8" rx="2" fill="#fde2e2" stroke="#dd6b6b" strokeWidth="1.2" />
+        <rect x="74" y="58" width="118" height="44" fill="#e8eef5" stroke="#8aa0bb" strokeWidth="1.5" />
+        <rect x="74" y="102" width="118" height="44" fill="#f4f7fa" stroke="#8aa0bb" strokeWidth="1.5" />
+        <rect x="101" y="146" width="64" height="20" rx="4" fill="#d9e9fb" stroke="#5b86c4" strokeWidth="1.5" />
+        <line x1="50" y1="40" x2="50" y2="146" stroke="#45a06b" strokeWidth="3" />
+        <line x1="44" y1="40" x2="56" y2="40" stroke="#45a06b" strokeWidth="2" />
+        <line x1="44" y1="146" x2="56" y2="146" stroke="#45a06b" strokeWidth="2" />
+        <text
+          x="30"
+          y="93"
+          textAnchor="middle"
+          fontSize="13"
+          fontWeight="700"
+          fill="#2f7a52"
+          transform="rotate(-90, 30, 93)"
+        >
+          grip
+        </text>
+      </g>
     </svg>
   );
 }

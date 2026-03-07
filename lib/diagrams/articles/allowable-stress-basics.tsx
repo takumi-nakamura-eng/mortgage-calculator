@@ -2,7 +2,7 @@ import { buildArticleDiagramStyle, type ArticleDiagramProps } from './shared';
 
 export function AllowableStressBasicsSvg({
   width = 560,
-  height = 200,
+  height = 260,
   maxWidth,
   ariaLabel = '許容応力の図',
   role = 'img',
@@ -12,7 +12,7 @@ export function AllowableStressBasicsSvg({
 }: ArticleDiagramProps) {
   return (
     <svg
-      viewBox="0 0 560 200"
+      viewBox="0 0 560 260"
       preserveAspectRatio="xMidYMid meet"
       width={width}
       height={height}
@@ -22,12 +22,18 @@ export function AllowableStressBasicsSvg({
       className={className}
       style={buildArticleDiagramStyle({ maxWidth, framed })}
     >
-      <rect x="80" y="60" width="400" height="24" fill="#d1fae5" />
-      <rect x="80" y="96" width="300" height="24" fill="#bfdbfe" />
-      <text x="285" y="77" textAnchor="middle" fontSize="12">許容応力帯</text>
-      <text x="230" y="113" textAnchor="middle" fontSize="12">実応力</text>
-      <line x1="380" y1="96" x2="380" y2="150" stroke="#ef4444" strokeWidth="2" />
-      <text x="380" y="164" textAnchor="middle" fontSize="12">σmax ≤ σallow</text>
+      <text x="92" y="92" fontSize="30" fontWeight="700" fill="#214d92">
+        許容曲げ応力
+      </text>
+      <text x="94" y="124" fontSize="20" fontWeight="700" fill="#55759a">
+        σallow と判定
+      </text>
+      <g transform="translate(248 46)">
+        <rect x="0" y="46" width="206" height="26" rx="8" fill="#d9efe2" />
+        <rect x="0" y="94" width="148" height="26" rx="8" fill="#dbeafe" />
+        <line x1="148" y1="86" x2="148" y2="138" stroke="#d35d5d" strokeWidth="3" />
+        <text x="162" y="116" fontSize="18" fontWeight="700" fill="#d35d5d">≤</text>
+      </g>
     </svg>
   );
 }

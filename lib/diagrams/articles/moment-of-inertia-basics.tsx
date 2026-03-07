@@ -1,8 +1,8 @@
 import { buildArticleDiagramStyle, type ArticleDiagramProps } from './shared';
 
 export function MomentOfInertiaBasicsSvg({
-  width = 320,
-  height = 220,
+  width = 560,
+  height = 260,
   maxWidth,
   ariaLabel = '断面二次モーメントIとたわみの関係',
   role = 'img',
@@ -12,7 +12,7 @@ export function MomentOfInertiaBasicsSvg({
 }: ArticleDiagramProps) {
   return (
     <svg
-      viewBox="0 0 320 220"
+      viewBox="0 0 560 260"
       preserveAspectRatio="xMidYMid meet"
       width={width}
       height={height}
@@ -22,12 +22,18 @@ export function MomentOfInertiaBasicsSvg({
       className={className}
       style={buildArticleDiagramStyle({ maxWidth, framed })}
     >
-      <line x1="70" y1="88" x2="250" y2="88" stroke="#111827" strokeWidth="8" />
-      <path d="M70 88 Q160 48 250 88" fill="none" stroke="#ef4444" strokeWidth="3" />
-      <line x1="70" y1="164" x2="250" y2="164" stroke="#111827" strokeWidth="8" />
-      <path d="M70 164 Q160 142 250 164" fill="none" stroke="#2563eb" strokeWidth="3" />
-      <text x="160" y="34" textAnchor="middle" fontSize="12">Iが小さい: たわみ大</text>
-      <text x="160" y="204" textAnchor="middle" fontSize="12">Iが大きい: たわみ小</text>
+      <text x="92" y="92" fontSize="30" fontWeight="700" fill="#214d92">
+        断面二次モーメント
+      </text>
+      <text x="94" y="124" fontSize="20" fontWeight="700" fill="#55759a">
+        I とたわみ
+      </text>
+      <g transform="translate(244 36)">
+        <line x1="0" y1="78" x2="204" y2="78" stroke="#6c7f93" strokeWidth="12" strokeLinecap="round" />
+        <path d="M0 78 Q102 26 204 78" fill="none" stroke="#d35d5d" strokeWidth="4" strokeLinecap="round" />
+        <line x1="0" y1="162" x2="204" y2="162" stroke="#6c7f93" strokeWidth="12" strokeLinecap="round" />
+        <path d="M0 162 Q102 138 204 162" fill="none" stroke="#5b86c4" strokeWidth="4" strokeLinecap="round" />
+      </g>
     </svg>
   );
 }

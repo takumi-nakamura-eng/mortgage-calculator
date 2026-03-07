@@ -3,6 +3,7 @@ title: "許容曲げ応力の考え方"
 description: "許容曲げ応力の基本と、梁計算でOK/NG判定に使うときの注意点をまとめます。"
 publishedAt: "2026-03-03"
 updatedAt: "2026-03-04"
+heroDiagram: true
 category: "梁・断面"
 tags:
   - "許容応力"
@@ -17,21 +18,16 @@ faq:
   - q: "NG判定が出たら何を見直しますか？"
     a: "荷重条件、断面Z、支持条件、許容応力の根拠を優先して見直します。"
 sources:
-  - title: "JIS規格票・機械要素の基本"
-    url: "https://kikakurui.com/"
-    site: "規格一覧"
-    accessedAt: "2026-03-01"
-    note: "関連JISの用語と規格番号確認に使用"
+  - title: "日本建築学会 鋼構造設計規準（AIJ）"
+    url: "https://www.aij.or.jp/paper/detail.html?productId=623"
+    site: "日本建築学会"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: 学協会。許容応力と使用性・安全性の設計判断に使用。"
   - title: "MISUMI 技術情報"
-    url: "https://jp.misumi-ec.com/tech-info/"
+    url: "https://jp.misumi-ec.com/tech-info/basic_tech/basic_mech-engineering/mechanics-materials"
     site: "MISUMI"
-    accessedAt: "2026-03-01"
-    note: "機械部品の実務解説と選定観点"
-  - title: "SMC 技術資料"
-    url: "https://www.smcworld.com/webcatalog/ja/"
-    site: "SMC"
-    accessedAt: "2026-03-01"
-    note: "機械設計時の一般的な実務注意点の確認"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: メーカー技術資料。材料力学と許容応力の実務整理に使用。"
   - title: "JIS G 3101 一般構造用圧延鋼材"
     url: "https://kikakurui.com/g3/G3101-2020-01.html"
     site: "規格一覧"
@@ -39,25 +35,24 @@ sources:
     note: "カテゴリ: 公的。SS400等の降伏点・引張強さの規格原文"
 ---
 
-## この記事でわかること
+<h2><span aria-hidden="true">💡</span><span>この記事でわかること</span></h2>
+<ul>
+  <li>許容曲げ応力と安全率の基本関係</li>
+  <li>SS400 の代表値を一次検討でどう置くか</li>
+  <li>OK/NG 判定のあとに何を見直すか</li>
+</ul>
 
-許容曲げ応力の意味、安全率との関係、SS400の代表的な許容値、そして梁計算でのOK/NG判定の考え方がわかります。
+<h2><span aria-hidden="true">✅</span><span>結論</span></h2>
+<ul>
+  <li>許容曲げ応力 <code>σ_allow</code> は「この応力以下なら安全」と判断する設計上の上限値です。</li>
+  <li>基本の関係は <code>σ_allow = σ_y / S</code>（σ_y: 降伏応力、S: 安全率）です。</li>
+  <li>SS400（[JIS G 3101](https://kikakurui.com/g3/G3101-2020-01.html)）では、板厚 16 mm 以下なら降伏点 245 MPa を基準に一次検討しやすいです。</li>
+  <li>梁の設計判定は <code>σ_max = M / Z</code> を求め、<code>σ_max ≤ σ_allow</code> なら OK、超えれば NG です。</li>
+</ul>
 
-## 結論
+許容応力の考え方は [AIJ 鋼構造設計規準](https://www.aij.or.jp/paper/detail.html?productId=623) の設計整理と、実務向けの材料力学の基礎整理（[MISUMI 技術情報](https://jp.misumi-ec.com/tech-info/basic_tech/basic_mech-engineering/mechanics-materials)）を前提にしています。
 
-許容曲げ応力 `σ_allow` は「この応力以下なら安全」と判断する設計上の上限値です。
-基本の関係は `σ_allow = σ_y / S`（σ_y: 降伏応力、S: 安全率）で、材料の降伏点を安全率で割って求めます。
-SS400（[JIS G 3101](https://kikakurui.com/g3/G3101-2020-01.html)）の場合、降伏点 σ_y = 245 MPa（板厚16mm以下）で、建築鉄骨では長期許容曲げ応力が `σ_allow = 245 / 1.5 ≒ 156 MPa` 前後になります。
-梁の設計判定は `σ_max = M / Z` を求め、`σ_max ≤ σ_allow` なら OK、超えれば NG です。
-安全率は荷重条件によって変わり、静荷重で1.5〜2.0、繰返し荷重で2.0〜4.0が目安です。
-
-## 図解
-
-<div className="diagram-card">
-  <Diagram diagramKey="allowable-stress-basics" width="100%" maxWidth={560} />
-</div>
-
-## 比較表
+<h2><span aria-hidden="true">📊</span><span>比較表</span></h2>
 
 | ケース | σmax (MPa) | σallow (MPa) | 判定 | コメント |
 |---|---:|---:|---|---|
@@ -73,7 +68,9 @@ SS400の代表的な許容応力値（参考）:
 | 16〜40 mm | 235 | 157 | 118 |
 | 40〜100 mm | 215 | 143 | 108 |
 
-## 計算例（再現用）
+SS400 の板厚別降伏点は [JIS G 3101](https://kikakurui.com/g3/G3101-2020-01.html) を基準にしています。ここでの `σ_allow` は規格の直接値ではなく、一次検討用の代表値です。
+
+<h2><span aria-hidden="true">🧮</span><span>計算例</span></h2>
 
 <a href="/tools/beams/simple-supported" className="tool-item article-tool-item">
   <CardDiagram variant="tool" diagramKey="simple-supported" className="tool-item-diagram" />
@@ -95,18 +92,18 @@ SS400の代表的な許容応力値（参考）:
 
 判定: `150 ≤ 156` → **OK**（余裕率 4%）。余裕が小さいため、荷重の変動や将来の増設を考慮するなら断面サイズアップを検討します。
 
-## 落とし穴
+<h2><span aria-hidden="true">⚠️</span><span>よくある見落とし</span></h2>
 
 - 材料の降伏点と引張強さを混同し、許容応力を過大に見積もる（SS400の引張強さ400 MPaで計算してしまう）
 - 静荷重用の安全率1.5を繰返し荷重にそのまま適用し、疲労破壊のリスクを見落とす
 - 板厚による降伏点の違い（16mm以下: 245 MPa、40mm超: 215 MPa）を無視して一律245 MPaで計算
 - 許容応力の根拠（どの規格・どの安全率）を記録せず、レビュー時に説明できなくなる
 
-## 判断基準
+<h2><span aria-hidden="true">🧭</span><span>判断基準</span></h2>
 
 `契約図書・法令/規格の許容値 > 学協会規準（AIJ鋼構造設計規準等） > メーカー推奨値 > 社内基準（競合時は安全率が大きい方）`
 
-## 関連ツール
+<h2><span aria-hidden="true">🔗</span><span>次に確認するページ</span></h2>
 
 <a href="/tools/beams/simple-supported" className="tool-item article-tool-item">
   <CardDiagram variant="tool" diagramKey="simple-supported" className="tool-item-diagram" />
@@ -126,8 +123,6 @@ SS400の代表的な許容応力値（参考）:
   <span className="tool-item-arrow">›</span>
 </a>
 
-## 関連記事
-
 <a href="/articles/moment-of-inertia-basics" className="tool-item article-tool-item">
   <CardDiagram variant="article" diagramKey="moment-of-inertia-basics" className="tool-item-diagram" />
   <span className="tool-item-body">
@@ -146,10 +141,19 @@ SS400の代表的な許容応力値（参考）:
   <span className="tool-item-arrow">›</span>
 </a>
 
-## FAQ
+<a href="/articles/steel-material-properties" className="tool-item article-tool-item">
+  <CardDiagram variant="article" diagramKey="steel-material-properties" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">鋼材の機械的性質まとめ</span>
+    <span className="tool-item-desc">許容応力の元になる材料入力値と板厚差を確認。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
 
-### Q1. 余裕率はどの程度必要ですか？
-A. 社内基準や適用規格に依存します。一般的に10〜30%の余裕を持たせますが、境界値付近は荷重変動や施工誤差を考慮して断面サイズアップを検討します。
+<h2><span aria-hidden="true">❓</span><span>FAQ</span></h2>
 
-### Q2. ツールの初期値をそのまま使ってよいですか？
-A. 初期値は目安です。許容応力は必ず案件の適用規格・材料・荷重条件に合わせて設定してください。根拠を記録に残すことも重要です。
+<h3><span aria-hidden="true">💬</span><span>Q1. 余裕率はどの程度必要ですか？</span></h3>
+<p>A. 社内基準や適用規格に依存します。一般的に10〜30%の余裕を持たせますが、境界値付近は荷重変動や施工誤差を考慮して断面サイズアップを検討します。</p>
+
+<h3><span aria-hidden="true">💬</span><span>Q2. ツールの初期値をそのまま使ってよいですか？</span></h3>
+<p>A. 初期値は目安です。許容応力は必ず案件の適用規格・材料・荷重条件に合わせて設定してください。根拠を記録に残すことも重要です。</p>

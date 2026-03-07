@@ -2,7 +2,7 @@ import { buildArticleDiagramStyle, type ArticleDiagramProps } from './shared';
 
 export function WasherRoleSvg({
   width = 560,
-  height = 220,
+  height = 260,
   maxWidth,
   ariaLabel = '座金の配置と種類の説明図',
   role = 'img',
@@ -12,7 +12,7 @@ export function WasherRoleSvg({
 }: ArticleDiagramProps) {
   return (
     <svg
-      viewBox="0 0 560 220"
+      viewBox="0 0 560 260"
       preserveAspectRatio="xMidYMid meet"
       width={width}
       height={height}
@@ -22,20 +22,22 @@ export function WasherRoleSvg({
       className={className}
       style={buildArticleDiagramStyle({ maxWidth, framed })}
     >
-      <rect x="80" y="140" width="400" height="30" fill="#e2e8f0" stroke="#64748b" strokeWidth="1" />
-      <text x="280" y="160" textAnchor="middle" fontSize="11" fill="#475569">母材</text>
-      <rect x="272" y="30" width="16" height="110" fill="#94a3b8" rx="2" />
-      <rect x="245" y="120" width="70" height="12" fill="#bfdbfe" stroke="#1d4ed8" strokeWidth="1.5" rx="1" />
-      <text x="340" y="130" fontSize="11" fill="#1d4ed8" fontWeight="bold">平座金 t₁</text>
-      <rect x="255" y="105" width="50" height="12" fill="#fecaca" stroke="#ef4444" strokeWidth="1.5" rx="1" />
-      <text x="340" y="115" fontSize="11" fill="#ef4444" fontWeight="bold">ばね座金 t₂</text>
-      <line x1="230" y1="105" x2="230" y2="140" stroke="#374151" strokeWidth="1" />
-      <line x1="225" y1="105" x2="235" y2="105" stroke="#374151" strokeWidth="1" />
-      <line x1="225" y1="140" x2="235" y2="140" stroke="#374151" strokeWidth="1" />
-      <text x="210" y="126" textAnchor="middle" fontSize="10" fill="#374151">合計厚</text>
-      <rect x="258" y="90" width="44" height="15" fill="#64748b" stroke="#374151" strokeWidth="1" rx="2" />
-      <text x="280" y="84" textAnchor="middle" fontSize="10" fill="#374151">ボルト頭</text>
-      <text x="280" y="20" textAnchor="middle" fontSize="12" fontWeight="bold">座金の配置</text>
+      <text x="92" y="92" fontSize="30" fontWeight="700" fill="#214d92">
+        座金の役割
+      </text>
+      <text x="94" y="124" fontSize="20" fontWeight="700" fill="#55759a">
+        平座金とばね座金
+      </text>
+
+      <g transform="translate(248 30)">
+        <rect x="0" y="154" width="180" height="28" rx="8" fill="#e2e8f0" />
+        <rect x="76" y="16" width="28" height="138" rx="7" fill="#b9c7d7" />
+        <rect x="56" y="132" width="68" height="12" rx="6" fill="#f6d3d3" stroke="#d35d5d" strokeWidth="2" />
+        <rect x="44" y="144" width="92" height="12" rx="6" fill="#dbeafe" stroke="#5b86c4" strokeWidth="2" />
+        <rect x="70" y="6" width="40" height="14" rx="7" fill="#6c7f93" />
+        <text x="150" y="140" fontSize="18" fontWeight="700" fill="#d35d5d">ばね</text>
+        <text x="150" y="158" fontSize="18" fontWeight="700" fill="#5b86c4">平座金</text>
+      </g>
     </svg>
   );
 }

@@ -1,8 +1,8 @@
 import { buildArticleDiagramStyle, type ArticleDiagramProps } from './shared';
 
 export function BoltStrengthClassSelectionSvg({
-  width = 400,
-  height = 200,
+  width = 560,
+  height = 260,
   maxWidth,
   ariaLabel = 'ボルト強度区分の読み方',
   role = 'img',
@@ -12,7 +12,7 @@ export function BoltStrengthClassSelectionSvg({
 }: ArticleDiagramProps) {
   return (
     <svg
-      viewBox="0 0 400 200"
+      viewBox="0 0 560 260"
       preserveAspectRatio="xMidYMid meet"
       width={width}
       height={height}
@@ -22,17 +22,25 @@ export function BoltStrengthClassSelectionSvg({
       className={className}
       style={buildArticleDiagramStyle({ maxWidth, framed })}
     >
-      <rect x="40" y="30" width="320" height="140" rx="12" fill="#f8fafc" stroke="#cbd5e1" />
-      <text x="200" y="60" textAnchor="middle" fontSize="28" fontWeight="700" fill="#1d4ed8">8 . 8</text>
-      <line x1="160" y1="72" x2="160" y2="100" stroke="#334155" strokeWidth="1.5" />
-      <line x1="230" y1="72" x2="230" y2="100" stroke="#334155" strokeWidth="1.5" />
-      <text x="160" y="118" textAnchor="middle" fontSize="11" fill="#334155">引張強さ ×100</text>
-      <text x="160" y="133" textAnchor="middle" fontSize="11" fill="#64748b">= 800 MPa</text>
-      <text x="230" y="118" textAnchor="middle" fontSize="11" fill="#334155">降伏比 ×10</text>
-      <text x="230" y="133" textAnchor="middle" fontSize="11" fill="#64748b">= 0.8</text>
-      <text x="200" y="160" textAnchor="middle" fontSize="12" fontWeight="600" fill="#dc2626">
-        降伏点 = 800 × 0.8 = 640 MPa
+      <text x="92" y="92" fontSize="30" fontWeight="700" fill="#214d92">
+        強度区分
       </text>
+      <text x="94" y="124" fontSize="20" fontWeight="700" fill="#55759a">
+        8.8 の見方
+      </text>
+
+      <g transform="translate(246 36)">
+        <rect x="16" y="54" width="138" height="26" rx="8" fill="#dbeafe" stroke="#5b86c4" strokeWidth="2" />
+        <rect x="68" y="80" width="34" height="110" rx="6" fill="#b9c7d7" />
+        <rect x="28" y="190" width="114" height="20" rx="8" fill="#d6e4f4" />
+        <text x="84" y="42" textAnchor="middle" fontSize="36" fontWeight="700" fill="#244a84">
+          8.8
+        </text>
+        <line x1="57" y1="46" x2="57" y2="18" stroke="#d35d5d" strokeWidth="2.5" strokeLinecap="round" />
+        <line x1="112" y1="46" x2="112" y2="18" stroke="#5a86c6" strokeWidth="2.5" strokeLinecap="round" />
+        <circle cx="57" cy="15" r="6" fill="#f8d3d3" stroke="#d35d5d" strokeWidth="2" />
+        <circle cx="112" cy="15" r="6" fill="#dbeafe" stroke="#5a86c6" strokeWidth="2" />
+      </g>
     </svg>
   );
 }

@@ -1,8 +1,8 @@
 ---
-title: "座金の役割"
-description: "座金の役割を平座金・ばね座金・歯付き座金で整理し、M8〜M12の厚さ値とボルト長さ計算への組み込み方を解説します。"
+title: "座金の役割: 平座金・ばね座金をどこで使い分けるか"
+description: "平座金、ばね座金、歯付き座金の役割と、ボルト長さ計算で厚さをどう扱うかを実務向けに整理します。"
 publishedAt: "2026-02-24"
-updatedAt: "2026-03-04"
+updatedAt: "2026-03-07"
 category: "ねじ・締結"
 tags:
   - "座金"
@@ -13,75 +13,130 @@ tags:
 toolRefs:
   - "bolt-length"
 diagramKey: "washer-role"
+heroDiagram: true
 faq:
   - q: "平座金とばね座金は併用すべきですか？"
     a: "用途次第です。座面保護とゆるみ対策を同時に狙う場合は併用されます。"
   - q: "ばね座金だけでゆるみ止めは十分ですか？"
-    a: "振動条件によっては不十分なため、他の対策と併用を検討します。"
+    a: "高振動条件では不十分なことが多く、戻り止めナットなど別手段との併用も検討します。"
   - q: "歯付き座金はどんな用途で使いますか？"
-    a: "電気接地（アース）の確保や、塗装面・樹脂面での回転防止に使用します。ゆるみ止め効果もあります。"
-  - q: "ばね座金を省略してよいケースはありますか？"
-    a: "ハードロックナットやナイロンナットなどの戻り止め機構付きナットを使う場合は省略できることがあります。設計基準を確認してください。"
+    a: "接地確保、塗装面の回転防止、電気的接触の確保などで使います。"
 sources:
   - title: "JIS B 1256 平座金"
-    url: "https://kikakurui.com/"
+    url: "https://kikakurui.com/b1/B1256-2008-01.html"
     site: "規格一覧"
-    accessedAt: "2026-03-01"
-    note: "平座金の外径・内径・厚さの規格確認に使用"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: 公的。平座金の寸法確認に使用。"
+  - title: "JIS B 1251 ばね座金"
+    url: "https://kikakurui.com/b1/B1251-2018-01.html"
+    site: "規格一覧"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: 公的。ばね座金の寸法確認に使用。"
   - title: "MISUMI 技術情報"
-    url: "https://jp.misumi-ec.com/tech-info/"
+    url: "https://jp.misumi-ec.com/tech-info/categories/technical_data/td01/c1685.html"
     site: "MISUMI"
-    accessedAt: "2026-03-01"
-    note: "座金の種類別選定と実務寸法の確認"
-  - title: "SMC 技術資料"
-    url: "https://www.smcworld.com/webcatalog/ja/"
-    site: "SMC"
-    accessedAt: "2026-03-01"
-    note: "機械設計時の一般的な実務注意点の確認"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: メーカー技術資料。座金選定とボルト長さ計算の整理に使用。"
 ---
 
-座金（ワッシャー）は、ボルト・ナット締結で**面圧を分散**し、座面を保護する役割を持ちます。面圧とは単位面積あたりの力のことで、座金なしでは母材の柔らかい部分に荷重が集中し、陥没やゆるみの原因になります。ボルト長さ計算では座金の厚さ分を必ずグリップ長に加算してください。
+<h2><span aria-hidden="true">💡</span><span>この記事でわかること</span></h2>
+<ul>
+  <li>平座金・ばね座金・歯付き座金の主な役割</li>
+  <li>どの用途でどれを選ぶか</li>
+  <li>ボルト長さ計算に厚さをどう入れるか</li>
+</ul>
 
-## 図解
+<h2><span aria-hidden="true">✅</span><span>結論</span></h2>
+<ul>
+  <li>平座金は面圧分散と座面保護、ばね座金はゆるみ抑制補助、歯付き座金は接地や回転防止が主目的です。</li>
+  <li>座金は「入れるかどうか」だけでなく、「厚さをボルト長さへ足すか」が重要です。</li>
+  <li>ボルト長さを決めるときは、平座金・ばね座金の厚さをグリップ長へ加算してください。</li>
+</ul>
 
-<div className="diagram-card">
-  <Diagram diagramKey="washer-role" width="100%" maxWidth={560} />
+寸法確認の基準は [JIS B 1256](https://kikakurui.com/b1/B1256-2008-01.html) と [JIS B 1251](https://kikakurui.com/b1/B1251-2018-01.html) で、使い分けの実務整理は [MISUMI 技術情報](https://jp.misumi-ec.com/tech-info/categories/technical_data/td01/c1685.html) を補助にしています。
+
+<h2><span aria-hidden="true">📊</span><span>比較表</span></h2>
+
+| 種類 | 主目的 | 代表厚さ | 向く場面 | 注意点 |
+|---|---|---:|---|---|
+| 平座金 | 面圧分散・座面保護 | M10で約2.0 mm | 柔らかい母材、座面保護 | 単体ではゆるみ止め効果なし |
+| ばね座金 | ゆるみ抑制補助 | M10で約2.5 mm | 軽い振動、補助的なゆるみ対策 | 高振動では過信しない |
+| 歯付き座金 | 接地・回転防止 | 薄い | アース、塗装面、樹脂面 | 母材を傷付けることがある |
+
+厚さは呼び径や規格系列で変わるため、実際の寸法は採用品番か規格票で確認してください。
+
+<h2><span aria-hidden="true">🧭</span><span>一次判断の流れ</span></h2>
+<div className="article-step-list">
+  <p>1. まず座面保護が必要か確認する</p>
+  <p>2. ゆるみ対策が必要なら別手段も含めて考える</p>
+  <p>3. 接地や回転防止が必要なら歯付き座金を候補にする</p>
+  <p>4. 採用した座金の厚さをグリップ長へ加える</p>
+  <p>5. 規格寸法でボルト長さを再計算する</p>
 </div>
 
-## 比較表
+<h2><span aria-hidden="true">🧮</span><span>計算例</span></h2>
 
-| 種類 | 主目的 | M8 厚さ (mm) | M10 厚さ (mm) | M12 厚さ (mm) | 注意点 |
-|---|---|---:|---:|---:|---|
-| 平座金（並級） | 面圧分散・座面保護 | 1.6 | 2.0 | 2.5 | JIS B 1256。単体ではゆるみ止め効果なし |
-| ばね座金 | ゆるみ抑制補助 | 2.0 | 2.5 | 3.0 | JIS B 1251。高振動では過信しない |
-| 歯付き座金（外歯） | 接地確保・回転防止 | 0.6 | 0.7 | 0.8 | 塗装面やアース接続に使用 |
-| 角座金 | 木構造・鉄骨接合 | — | — | 4.5 | JIS B 1258。大径座面で木材陥没を防止 |
+条件:
 
-※ 厚さは代表値。メーカー・規格版によって若干異なります。
-
-## 計算例
-
-条件: M12ボルト、平座金1枚 `Hpw = 2.5 mm`、ばね座金1枚 `Hsw = 3.0 mm`、被締結材 `t = 25 mm`、ナット1種 `Hnut = 10.8 mm`、並目ピッチ `P = 1.75 mm`。
-
-式: 座金分厚さ `= Hpw + Hsw`
+- M12
+- 平座金 `2.5 mm`
+- ばね座金 `3.0 mm`
+- 被締結材 `25 mm`
+- ナット高さ `10.8 mm`
+- ピッチ `1.75 mm`
 
 計算:
+
 - 座金合計 `= 2.5 + 3.0 = 5.5 mm`
-- グリップ長 `= t + 座金合計 = 25 + 5.5 = 30.5 mm`
+- グリップ長 `= 25 + 5.5 = 30.5 mm`
 - 必要ボルト長さ `= 30.5 + 10.8 + 3×1.75 = 46.55 mm`
 
-結果: 座金分の厚さは **5.5 mm**。ボルト長さ計算では **46.55 mm** → 規格長さ **50 mm** を選定。
+結果:
 
-## FAQ
+- 規格長さは **50 mm**
 
-### Q1. 柔らかい母材で平座金は必須ですか？
-A. アルミや樹脂などの柔らかい母材では、面圧集中による陥没を防ぐためほぼ必須です。鋼材同士でも座面の仕上げ状態が悪い場合は使用を推奨します。
+<h2><span aria-hidden="true">⚠️</span><span>よくある見落とし</span></h2>
 
-### Q2. 座金厚さは計算に含めるべきですか？
-A. はい。ボルト長さ選定ではグリップ長に座金厚さを必ず合算してください。省略するとボルトが短くなり、先端3山を確保できません。
+- 平座金を入れているのにボルト長さへ足していない
+- ばね座金だけで十分なゆるみ止めになると考える
+- 歯付き座金の相手面を考えずに使う
 
-### Q3. 歯付き座金はどこに入れますか？
-A. 通常はボルト頭またはナットの直下に配置します。電気的接地を取りたい面に歯が接するようにします。
+<h2><span aria-hidden="true">🔗</span><span>次に確認するページ</span></h2>
 
-### Q4. ばね座金を省略できる条件は？
-A. ハードロックナット、ナイロンインサートナット、接着剤（ロックタイト）などのゆるみ止め手段を別途採用している場合に省略できます。ただし設計基準で座金併用が義務付けられている場合は従ってください。
+<a href="/articles/grip-length-basics" className="tool-item article-tool-item">
+  <CardDiagram variant="article" diagramKey="grip-length-basics" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">ボルト長さの決め方</span>
+    <span className="tool-item-desc">座金厚さをグリップ長へどう加算するかを確認。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+<a href="/tools/bolt-length" className="tool-item article-tool-item">
+  <CardDiagram variant="tool" diagramKey="bolt-length" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">ボルト長さ計算</span>
+    <span className="tool-item-desc">座金枚数を含めた規格長さをその場で確認。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+<a href="/articles/nut-basics" className="tool-item article-tool-item">
+  <CardDiagram variant="article" diagramKey="nut-basics" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">ナットの基礎知識</span>
+    <span className="tool-item-desc">座金と合わせて確認したいナット高さの基本を整理。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+<h2><span aria-hidden="true">❓</span><span>FAQ</span></h2>
+
+<h3><span aria-hidden="true">💬</span><span>Q1. 平座金とばね座金は併用すべきですか？</span></h3>
+<p>A. 用途次第です。座面保護とゆるみ対策を同時に狙う場合は併用されます。</p>
+
+<h3><span aria-hidden="true">💬</span><span>Q2. ばね座金だけでゆるみ止めは十分ですか？</span></h3>
+<p>A. 高振動条件では不十分なことが多く、戻り止めナットなど別手段との併用も検討します。</p>
+
+<h3><span aria-hidden="true">💬</span><span>Q3. 歯付き座金はどんな用途で使いますか？</span></h3>
+<p>A. 接地確保、塗装面の回転防止、電気的接触の確保などで使います。</p>

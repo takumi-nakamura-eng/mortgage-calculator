@@ -1,8 +1,8 @@
 ---
-title: "H形鋼とチャンネルの選び方"
-description: "H形鋼とチャンネルの使い分けを、断面性能・重量・施工性の観点で比較します。"
+title: "H形鋼とチャンネルの選び方: 断面性能と取り合いでどう分けるか"
+description: "H形鋼とチャンネルを、剛性、ねじれ、取り合い性、施工性の観点で比較し、一次判断でどう使い分けるかを整理します。"
 publishedAt: "2026-03-04"
-updatedAt: "2026-03-04"
+updatedAt: "2026-03-07"
 category: "梁・断面"
 tags:
   - "H形鋼"
@@ -12,57 +12,129 @@ toolRefs:
   - "beam"
   - "section-properties"
 diagramKey: "h-beam-vs-channel-selection"
+heroDiagram: true
 faq:
   - q: "同重量ならどちらが有利ですか？"
-    a: "一般にH形鋼は強軸曲げで有利になりやすいです。"
+    a: "強軸曲げだけを見るなら H形鋼が有利になりやすいです。"
   - q: "チャンネルを使う理由は何ですか？"
-    a: "片側開放形状の取り合い性や施工性を優先する場面で有効です。"
+    a: "片側開放の取り合い、接合のしやすさ、既存部材との納まりを優先するときに有効です。"
+  - q: "チャンネルの注意点は何ですか？"
+    a: "偏心とねじれの影響を受けやすいので、単純な強軸比較だけで決めないことです。"
 sources:
-  - title: "JIS規格票・機械要素の基本"
-    url: "https://kikakurui.com/"
+  - title: "JIS G 3192 熱間圧延形鋼の形状・寸法・質量"
+    url: "https://kikakurui.com/g3/G3192-2014-01.html"
     site: "規格一覧"
-    accessedAt: "2026-03-01"
-    note: "関連JISの用語と規格番号確認に使用"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: 公的。H形鋼と溝形鋼の寸法確認に使用。"
+  - title: "日本建築学会 鋼構造設計規準（AIJ）"
+    url: "https://www.aij.or.jp/paper/detail.html?productId=623"
+    site: "日本建築学会"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: 学協会。断面性能と使用性確認の考え方に使用。"
   - title: "MISUMI 技術情報"
-    url: "https://jp.misumi-ec.com/tech-info/"
+    url: "https://jp.misumi-ec.com/tech-info/categories/technical_data/td01/c1463.html"
     site: "MISUMI"
-    accessedAt: "2026-03-01"
-    note: "機械部品の実務解説と選定観点"
-  - title: "SMC 技術資料"
-    url: "https://www.smcworld.com/webcatalog/ja/"
-    site: "SMC"
-    accessedAt: "2026-03-01"
-    note: "機械設計時の一般的な実務注意点の確認"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: メーカー技術資料。断面選定の実務観点整理に使用。"
 ---
 
-## 図解
+<h2><span aria-hidden="true">💡</span><span>この記事でわかること</span></h2>
+<ul>
+  <li>H形鋼とチャンネルの基本的な違い</li>
+  <li>剛性だけでなく取り合いやねじれまで含めた見方</li>
+  <li>一次判断でどちらを当てるか</li>
+</ul>
 
-<div className="diagram-card">
-  <Diagram diagramKey="h-beam-vs-channel-selection" width="100%" maxWidth={560} />
-</div>
+<h2><span aria-hidden="true">✅</span><span>結論</span></h2>
+<ul>
+  <li>強軸曲げとねじれに対しては、一般に H形鋼の方が有利です。</li>
+  <li>片側開放の取り合いや接合のしやすさでは、チャンネルが有利なことがあります。</li>
+  <li>最初の当たり付けは H形鋼、納まりや片側接合の理由があるときにチャンネルを検討すると整理しやすいです。</li>
+</ul>
 
-## 比較表
+形状と寸法の基準は [JIS G 3192](https://kikakurui.com/g3/G3192-2014-01.html)、断面性能の見方は [日本建築学会 鋼構造設計規準（AIJ）](https://www.aij.or.jp/paper/detail.html?productId=623) を前提にしています。取り合いや施工側の判断は [MISUMI 技術情報](https://jp.misumi-ec.com/tech-info/categories/technical_data/td01/c1463.html) の整理も参考になります。
+
+<h2><span aria-hidden="true">📊</span><span>比較表</span></h2>
 
 | 項目 | H形鋼 | チャンネル |
 |---|---|---|
 | 強軸剛性 | 高い | 中程度 |
-| 取り合い性 | 標準 | 片側開放で有利 |
 | ねじれ耐性 | 比較的高い | 低め |
+| 取り合い性 | 標準 | 片側開放で有利 |
+| 偏心に対する扱いやすさ | 高い | 注意が必要 |
 
-## 計算例
+断面性能だけでなく、荷重位置が断面のせん断中心からずれるとチャンネルは不利になりやすい点も、一次判断で見落とさない方が安全です。
 
-条件: 候補A(H)の `Ix = 8.5×10^7 mm⁴`、候補B(C)の `Ix = 6.0×10^7 mm⁴`。
+<h2><span aria-hidden="true">🧭</span><span>一次判断の流れ</span></h2>
+<div className="article-step-list">
+  <p>1. 強度・たわみだけで済む部材か確認する</p>
+  <p>2. 偏心、ねじれ、片側接合の有無を確認する</p>
+  <p>3. まず H形鋼で当たりを付ける</p>
+  <p>4. 納まりや施工で有利ならチャンネルを比較候補にする</p>
+  <p>5. 断面性能と取り合いの両方で決める</p>
+</div>
 
-式: たわみ比 `δB / δA = IxA / IxB`
+<h2><span aria-hidden="true">🧮</span><span>計算例</span></h2>
 
-計算: `δB / δA = 8.5 / 6.0 = 1.42`
+条件:
 
-結果: 同条件ならチャンネル案は **約1.4倍たわみやすい**。
+- 候補A(H) `Ix = 8.5×10^7 mm⁴`
+- 候補B(C) `Ix = 6.0×10^7 mm⁴`
 
-## FAQ
+式:
 
-### Q1. 最初の当たり付けはどうしますか？
-A. 断面性能計算でI/Zを比較し、梁計算で応力・たわみを同時確認します。
+- たわみ比 `δ_B / δ_A = Ix_A / Ix_B`
 
-### Q2. チャンネルの注意点は？
-A. ねじれや偏心取り付けの影響を見落とさないことが重要です。
+計算:
+
+- `δ_B / δ_A = 8.5 / 6.0 = 1.42`
+
+結果:
+
+- 同条件ならチャンネル案は **約1.4倍たわみやすい**
+
+<h2><span aria-hidden="true">⚠️</span><span>よくある見落とし</span></h2>
+
+- 重量だけで比較して、ねじれを見ていない
+- チャンネルの片側開放形状による偏心を無視する
+- 施工性だけで選んで断面性能が不足する
+
+<h2><span aria-hidden="true">🔗</span><span>次に確認するページ</span></h2>
+
+<a href="/tools/section-properties" className="tool-item article-tool-item">
+  <CardDiagram variant="tool" diagramKey="section-properties" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">断面性能比較ツール</span>
+    <span className="tool-item-desc">H形鋼とチャンネルの I・Z・重量を並べて比較。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+<a href="/articles/section-modulus-basics" className="tool-item article-tool-item">
+  <CardDiagram variant="article" diagramKey="section-modulus-basics" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">断面係数Zの使い方</span>
+    <span className="tool-item-desc">断面比較を強度判定へつなげる基本を確認。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+<a href="/articles/moment-of-inertia-basics" className="tool-item article-tool-item">
+  <CardDiagram variant="article" diagramKey="moment-of-inertia-basics" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">断面二次モーメントIの使い方</span>
+    <span className="tool-item-desc">たわみ比較で H とチャンネルを見分ける基準を整理。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+<h2><span aria-hidden="true">❓</span><span>FAQ</span></h2>
+
+<h3><span aria-hidden="true">💬</span><span>Q1. 同重量ならどちらが有利ですか？</span></h3>
+<p>A. 強軸曲げだけを見るなら H形鋼が有利になりやすいです。</p>
+
+<h3><span aria-hidden="true">💬</span><span>Q2. チャンネルを使う理由は何ですか？</span></h3>
+<p>A. 片側開放の取り合い、接合のしやすさ、既存部材との納まりを優先するときに有効です。</p>
+
+<h3><span aria-hidden="true">💬</span><span>Q3. チャンネルの注意点は何ですか？</span></h3>
+<p>A. 偏心とねじれの影響を受けやすいので、単純な強軸比較だけで決めないことです。</p>

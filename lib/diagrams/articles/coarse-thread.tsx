@@ -2,7 +2,7 @@ import { buildArticleDiagramStyle, type ArticleDiagramProps } from './shared';
 
 export function CoarseThreadSvg({
   width = 560,
-  height = 180,
+  height = 260,
   maxWidth,
   ariaLabel = '並目と細目のイメージ',
   role = 'img',
@@ -12,7 +12,7 @@ export function CoarseThreadSvg({
 }: ArticleDiagramProps) {
   return (
     <svg
-      viewBox="0 0 560 180"
+      viewBox="0 0 560 260"
       preserveAspectRatio="xMidYMid meet"
       width={width}
       height={height}
@@ -22,20 +22,30 @@ export function CoarseThreadSvg({
       className={className}
       style={buildArticleDiagramStyle({ maxWidth, framed })}
     >
-      <polyline
-        points="60,120 90,90 120,120 150,90 180,120 210,90 240,120"
-        fill="none"
-        stroke="#1d4ed8"
-        strokeWidth="3"
-      />
-      <polyline
-        points="320,120 335,90 350,120 365,90 380,120 395,90 410,120 425,90 440,120"
-        fill="none"
-        stroke="#dc2626"
-        strokeWidth="3"
-      />
-      <text x="150" y="145" textAnchor="middle" fontSize="12">並目（ピッチ大）</text>
-      <text x="380" y="145" textAnchor="middle" fontSize="12">細目（ピッチ小）</text>
+      <text x="92" y="92" fontSize="30" fontWeight="700" fill="#214d92">
+        並目ねじ
+      </text>
+      <text x="94" y="124" fontSize="20" fontWeight="700" fill="#55759a">
+        pitch の違い
+      </text>
+      <g transform="translate(248 52)">
+        <polyline
+          points="0,112 34,78 68,112 102,78 136,112 170,78 204,112"
+          fill="none"
+          stroke="#5b86c4"
+          strokeWidth="5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <polyline
+          points="120,164 140,132 160,164 180,132 200,164 220,132 240,164 260,132 280,164"
+          fill="none"
+          stroke="#d35d5d"
+          strokeWidth="5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </g>
     </svg>
   );
 }

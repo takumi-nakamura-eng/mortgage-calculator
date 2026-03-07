@@ -45,7 +45,7 @@ function threadLineMarkup(x: number): string {
 
 export function ThreeThreadsSvg({
   width = 560,
-  height = 180,
+  height = 260,
   maxWidth,
   ariaLabel = 'ナットから先端3山以上を出すボルト締結の概略図',
   role = 'img',
@@ -57,7 +57,7 @@ export function ThreeThreadsSvg({
 
   return (
     <svg
-      viewBox="0 0 560 180"
+      viewBox="0 0 560 260"
       preserveAspectRatio="xMidYMid meet"
       width={width}
       height={height}
@@ -67,37 +67,22 @@ export function ThreeThreadsSvg({
       className={className}
       style={style}
     >
-      <line x1="56" y1="130" x2="504" y2="130" stroke={THREE_THREADS_COLORS.guide} strokeDasharray="4 4" />
-      <rect x="88" y="118" width="300" height="24" rx="4" fill={THREE_THREADS_COLORS.body} stroke={THREE_THREADS_COLORS.stroke} />
-      <rect x="184" y="96" width="92" height="68" rx="6" fill={THREE_THREADS_COLORS.nutFill} stroke={THREE_THREADS_COLORS.nutStroke} strokeWidth="1.4" />
-
-      {[388, 402, 416, 430, 444].map((x) => (
-        <line key={x} x1={x} y1="118" x2={x} y2="142" stroke={THREE_THREADS_COLORS.threadFill} strokeWidth="1.2" />
-      ))}
-
-      <line x1="276" y1="84" x2="388" y2="84" stroke={THREE_THREADS_COLORS.stroke} strokeWidth="1" />
-      <line x1="276" y1="80" x2="276" y2="88" stroke={THREE_THREADS_COLORS.stroke} strokeWidth="1" />
-      <line x1="388" y1="80" x2="388" y2="88" stroke={THREE_THREADS_COLORS.stroke} strokeWidth="1" />
-      <text x="332" y="72" textAnchor="middle" fontSize="12" fill={THREE_THREADS_COLORS.text} fontWeight={700}>
-        ナット高さ
+      <text x="92" y="92" fontSize="30" fontWeight="700" fill="#214d92">
+        先端 3山
       </text>
-
-      <line x1="388" y1="94" x2="444" y2="94" stroke={THREE_THREADS_COLORS.caution} strokeWidth="2.5" />
-      <line x1="388" y1="88" x2="388" y2="100" stroke={THREE_THREADS_COLORS.caution} strokeWidth="2" />
-      <line x1="444" y1="88" x2="444" y2="100" stroke={THREE_THREADS_COLORS.caution} strokeWidth="2" />
-      <text x="416" y="80" textAnchor="middle" fontSize="12" fill={THREE_THREADS_COLORS.caution} fontWeight={700}>
-        3山以上
-      </text>
-
-      <text x="230" y="148" textAnchor="middle" fontSize="12" fill={THREE_THREADS_COLORS.nutStroke} fontWeight={700}>
-        ナット
-      </text>
-      <text x="426" y="148" textAnchor="middle" fontSize="12" fill={THREE_THREADS_COLORS.text} fontWeight={700}>
+      <text x="94" y="124" fontSize="20" fontWeight="700" fill="#55759a">
         余長 3p
       </text>
-      <text x="90" y="108" fontSize="11" fill={THREE_THREADS_COLORS.subtleText}>
-        不完全ねじ部をナット外へ逃がす
-      </text>
+      <g transform="translate(242 52)">
+        <rect x="0" y="86" width="250" height="24" rx="6" fill={THREE_THREADS_COLORS.body} stroke={THREE_THREADS_COLORS.stroke} />
+        <rect x="86" y="64" width="88" height="68" rx="8" fill={THREE_THREADS_COLORS.nutFill} stroke={THREE_THREADS_COLORS.nutStroke} strokeWidth="1.6" />
+        {[250, 264, 278, 292].map((x) => (
+          <line key={x} x1={x} y1="86" x2={x} y2="110" stroke={THREE_THREADS_COLORS.threadFill} strokeWidth="1.5" />
+        ))}
+        <line x1="174" y1="54" x2="292" y2="54" stroke={THREE_THREADS_COLORS.caution} strokeWidth="2.5" />
+        <line x1="174" y1="48" x2="174" y2="60" stroke={THREE_THREADS_COLORS.caution} strokeWidth="2" />
+        <line x1="292" y1="48" x2="292" y2="60" stroke={THREE_THREADS_COLORS.caution} strokeWidth="2" />
+      </g>
     </svg>
   );
 }
@@ -119,21 +104,16 @@ export function getThreeThreadsSvgMarkup(options: ThreeThreadsSvgMarkupOptions =
   const maxWidthStyle = maxWidth !== undefined ? `;max-width:${maxWidth}px` : ';max-width:100%';
   const xmlns = includeXmlns ? ' xmlns="http://www.w3.org/2000/svg"' : '';
 
-  return `<svg viewBox="0 0 560 180" preserveAspectRatio="xMidYMid meet"${xmlns} width="${width}" height="${height}" aria-label="ナットから先端3山以上を出すボルト締結の概略図" style="display:block${maxWidthStyle};background:${THREE_THREADS_COLORS.frameFill};border:1px solid ${THREE_THREADS_COLORS.frameStroke};border-radius:6px;">
-  <line x1="56" y1="130" x2="504" y2="130" stroke="${THREE_THREADS_COLORS.guide}" stroke-dasharray="4 4"/>
-  <rect x="88" y="118" width="300" height="24" rx="4" fill="${THREE_THREADS_COLORS.body}" stroke="${THREE_THREADS_COLORS.stroke}"/>
-  <rect x="184" y="96" width="92" height="68" rx="6" fill="${THREE_THREADS_COLORS.nutFill}" stroke="${THREE_THREADS_COLORS.nutStroke}" stroke-width="1.4"/>
-  ${[388, 402, 416, 430, 444].map(threadLineMarkup).join('\n  ')}
-  <line x1="276" y1="84" x2="388" y2="84" stroke="${THREE_THREADS_COLORS.stroke}" stroke-width="1"/>
-  <line x1="276" y1="80" x2="276" y2="88" stroke="${THREE_THREADS_COLORS.stroke}" stroke-width="1"/>
-  <line x1="388" y1="80" x2="388" y2="88" stroke="${THREE_THREADS_COLORS.stroke}" stroke-width="1"/>
-  <text x="332" y="72" text-anchor="middle" font-size="12" fill="${THREE_THREADS_COLORS.text}" font-weight="700">ナット高さ</text>
-  <line x1="388" y1="94" x2="444" y2="94" stroke="${THREE_THREADS_COLORS.caution}" stroke-width="2.5"/>
-  <line x1="388" y1="88" x2="388" y2="100" stroke="${THREE_THREADS_COLORS.caution}" stroke-width="2"/>
-  <line x1="444" y1="88" x2="444" y2="100" stroke="${THREE_THREADS_COLORS.caution}" stroke-width="2"/>
-  <text x="416" y="80" text-anchor="middle" font-size="12" fill="${THREE_THREADS_COLORS.caution}" font-weight="700">3山以上</text>
-  <text x="230" y="148" text-anchor="middle" font-size="12" fill="${THREE_THREADS_COLORS.nutStroke}" font-weight="700">ナット</text>
-  <text x="426" y="148" text-anchor="middle" font-size="12" fill="${THREE_THREADS_COLORS.text}" font-weight="700">余長 3p</text>
-  <text x="90" y="108" font-size="11" fill="${THREE_THREADS_COLORS.subtleText}">不完全ねじ部をナット外へ逃がす</text>
+  return `<svg viewBox="0 0 560 260" preserveAspectRatio="xMidYMid meet"${xmlns} width="${width}" height="${height}" aria-label="ナットから先端3山以上を出すボルト締結の概略図" style="display:block${maxWidthStyle};background:${THREE_THREADS_COLORS.frameFill};border:1px solid ${THREE_THREADS_COLORS.frameStroke};border-radius:6px;">
+  <text x="92" y="92" font-size="30" font-weight="700" fill="#214d92">先端 3山</text>
+  <text x="94" y="124" font-size="20" font-weight="700" fill="#55759a">余長 3p</text>
+  <g transform="translate(242 52)">
+  <rect x="0" y="86" width="250" height="24" rx="6" fill="${THREE_THREADS_COLORS.body}" stroke="${THREE_THREADS_COLORS.stroke}"/>
+  <rect x="86" y="64" width="88" height="68" rx="8" fill="${THREE_THREADS_COLORS.nutFill}" stroke="${THREE_THREADS_COLORS.nutStroke}" stroke-width="1.6"/>
+  ${[250, 264, 278, 292].map(threadLineMarkup).join('\n  ')}
+  <line x1="174" y1="54" x2="292" y2="54" stroke="${THREE_THREADS_COLORS.caution}" stroke-width="2.5"/>
+  <line x1="174" y1="48" x2="174" y2="60" stroke="${THREE_THREADS_COLORS.caution}" stroke-width="2"/>
+  <line x1="292" y1="48" x2="292" y2="60" stroke="${THREE_THREADS_COLORS.caution}" stroke-width="2"/>
+  </g>
   </svg>`;
 }

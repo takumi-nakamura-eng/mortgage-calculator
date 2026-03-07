@@ -3,6 +3,7 @@ title: "断面係数Zの使い方: 必要値の逆算と選定"
 description: "断面係数Zの意味、必要Zの逆算、OK/NG判定までを分岐表と再現例で短く整理します。"
 publishedAt: "2026-03-02"
 updatedAt: "2026-03-02"
+heroDiagram: true
 category: "梁・断面"
 tags:
   - "断面係数"
@@ -19,11 +20,11 @@ faq:
   - q: "許容応力が資料ごとに違うときはどうしますか？"
     a: "契約図書・適用規格・メーカー資料・社内標準の優先順で照合し、競合時は保守側を採用します。"
 sources:
-  - title: "機械設計便覧（日本機械学会）"
-    url: "https://www.jsme.or.jp/"
-    site: "日本機械学会"
+  - title: "日本建築学会 鋼構造設計規準（AIJ）"
+    url: "https://www.aij.or.jp/paper/detail.html?productId=623"
+    site: "日本建築学会"
     accessedAt: "2026-03-02"
-    note: "カテゴリ: 学協会。Quote: 曲げ応力は断面性能と曲げモーメントの関係で評価する。"
+    note: "カテゴリ: 学協会。曲げ応力評価と一次設計の考え方に使用。"
   - title: "建築基準法施行令（e-Gov法令検索）"
     url: "https://elaws.e-gov.go.jp/document?lawid=325CO0000000338"
     site: "e-Gov法令検索"
@@ -35,31 +36,30 @@ sources:
     accessedAt: "2026-03-02"
     note: "カテゴリ: 工学技術資料。Quote: 曲げ応力は section modulus を用いて算定できる。"
   - title: "MISUMI 技術情報"
-    url: "https://jp.misumi-ec.com/tech-info/"
+    url: "https://jp.misumi-ec.com/tech-info/basic_tech/basic_mech-engineering/mechanics-materials"
     site: "MISUMI"
     accessedAt: "2026-03-02"
     note: "カテゴリ: メーカー技術資料。Quote: 実務では剛性・取付条件を同時に確認する。"
 ---
 
-## この記事でわかること
+<h2><span aria-hidden="true">💡</span><span>この記事でわかること</span></h2>
+<ul>
+  <li>断面係数 Z をどの判定で使うか</li>
+  <li>必要 Z の逆算と候補比較のしかた</li>
+  <li>Z 判定のあとに I と接合をどう重ねるか</li>
+</ul>
 
-断面係数Zの意味、必要Zの逆算、OK/NG判定までを分岐表と再現例で短く整理します。
+<h2><span aria-hidden="true">✅</span><span>結論</span></h2>
+<ul>
+  <li>曲げ強度の一次判定は <code>σ = M / Z</code> で即答できます。</li>
+  <li>最初に「想定最大モーメント」と「許容応力」を置き、<code>必要Z = M / σ_allow</code> を逆算してください。</li>
+  <li>候補断面の <code>Z</code> が必要値以上なら強度側は一旦OKです。</li>
+  <li>ただし最終採用は、たわみ（<code>I</code>）と接合条件を加えて判断します。</li>
+</ul>
 
-## 結論
+この優先順は、法令で求める安全確保の前提（[建築基準法施行令](https://elaws.e-gov.go.jp/document?lawid=325CO0000000338)）、学協会規準の整理（[AIJ 鋼構造設計規準](https://www.aij.or.jp/paper/detail.html?productId=623)）、材料力学の実務整理（[MISUMI 技術情報](https://jp.misumi-ec.com/tech-info/basic_tech/basic_mech-engineering/mechanics-materials)）に沿っています。
 
-曲げ強度の一次判定は `σ = M / Z` で即答できます。  
-最初に「想定最大モーメント」と「許容応力」を置き、`必要Z = M / σ_allow` を逆算してください。  
-候補断面の `Z` が必要値以上なら強度側は一旦OKです。  
-ただし最終採用は、たわみ（`I`）と接合条件を加えて判断します。  
-この優先順は、法令で求める安全確保の前提（[建築基準法施行令](https://elaws.e-gov.go.jp/document?lawid=325CO0000000338)）と、実務資料の「強度と剛性を併せて確認する」整理（[MISUMI 技術情報](https://jp.misumi-ec.com/tech-info/)）を引用して整理しています。
-
-## 図解
-
-<div className="diagram-card diagram-card--compact">
-  <Diagram diagramKey="section-modulus-basics" width="100%" maxWidth={560} />
-</div>
-
-## 比較表
+<h2><span aria-hidden="true">📊</span><span>比較表</span></h2>
 
 | 状況 | 最初に置く値 | 使う判定 | 次にやること |
 |---|---|---|---|
@@ -68,9 +68,9 @@ sources:
 | 断面候補が複数ある | 各候補の `Z` を並べる | `σ = M/Z` で横比較 | `I` と重量・コストを併記 |
 | 強度は通るが不安が残る | `Z` 判定は維持 | 強度OKのまま | たわみ・座屈・接合を追加確認 |
 
-この分岐は、曲げ応力評価の基本整理（[日本機械学会](https://www.jsme.or.jp/)）と、断面係数を使う実用式の説明（[Engineering ToolBox](https://www.engineeringtoolbox.com/beam-stress-deflection-d_1312.html)）を引用して組んでいます。
+この分岐は、曲げ応力評価の基本整理（[AIJ 鋼構造設計規準](https://www.aij.or.jp/paper/detail.html?productId=623)）と、断面係数を使う実用式の説明（[Engineering ToolBox](https://www.engineeringtoolbox.com/beam-stress-deflection-d_1312.html)）を照合して組んでいます。
 
-## 計算例（再現用）
+<h2><span aria-hidden="true">🧮</span><span>計算例</span></h2>
 
 入力例（単位をそろえてそのまま再現可能）:
 
@@ -101,20 +101,20 @@ sources:
 - 断面B: **OK（余裕あり）** `52.9 <= 70`
 - 推奨レンジ: 将来荷重増や条件ぶれを見込むなら、`Z_req` の 1.1〜1.3 倍を初期候補にすると再設計が減ります。
 
-## 落とし穴
+<h2><span aria-hidden="true">⚠️</span><span>よくある見落とし</span></h2>
 
 - `kN·m` と `N·mm` を混在させ、応力が 1000 倍ずれる
 - `Z` が `cm³` のまま式に入って単位不整合になる
 - 強度OKだけで採用し、たわみ（`I`）で後戻りする
 - 許容応力の出典が混在し、後で根拠説明できなくなる
 
-## 判断基準
+<h2><span aria-hidden="true">🧭</span><span>判断基準</span></h2>
 
 優先順位は次で固定します。  
 `契約図書・法令/規格 > メーカー資料 > 社内基準 > 仮置き値`  
 値が競合したら、より厳しい値（保守側）を採用してください。
 
-## 関連ツール
+<h2><span aria-hidden="true">🔗</span><span>次に確認するページ</span></h2>
 
 <a href="/tools/section-properties" className="tool-item article-tool-item">
   <CardDiagram variant="tool" diagramKey="section-properties" className="tool-item-diagram" />
@@ -143,8 +143,6 @@ sources:
   <span className="tool-item-arrow">›</span>
 </a>
 
-## 関連記事
-
 <a href="/articles/moment-of-inertia-basics" className="tool-item article-tool-item">
   <CardDiagram variant="article" diagramKey="moment-of-inertia-basics" className="tool-item-diagram" />
   <span className="tool-item-body">
@@ -163,10 +161,10 @@ sources:
   <span className="tool-item-arrow">›</span>
 </a>
 
-## FAQ
+<h2><span aria-hidden="true">❓</span><span>FAQ</span></h2>
 
-### Q1. 必要Zを満たせば、その断面で確定してよいですか？
-A. まだ早いです。強度一次判定としては有効ですが、たわみ・接合・座屈・施工性を通して最終確定します。
+<h3><span aria-hidden="true">💬</span><span>Q1. 必要Zを満たせば、その断面で確定してよいですか？</span></h3>
+<p>A. まだ早いです。強度一次判定としては有効ですが、たわみ・接合・座屈・施工性を通して最終確定します。</p>
 
-### Q2. 断面AとBがどちらもOKなら、何で決めますか？
-A. まず仕様適合を満たしたうえで、`I`（たわみ余裕）・重量・入手性・加工性の順で比較すると判断がぶれにくくなります。
+<h3><span aria-hidden="true">💬</span><span>Q2. 断面AとBがどちらもOKなら、何で決めますか？</span></h3>
+<p>A. まず仕様適合を満たしたうえで、`I`（たわみ余裕）・重量・入手性・加工性の順で比較すると判断がぶれにくくなります。</p>

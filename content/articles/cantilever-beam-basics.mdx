@@ -1,6 +1,6 @@
 ---
 title: "片持ち梁の基本とたわみ公式・計算の流れ"
-description: "片持ち梁（カンチレバー）の支持条件、先端集中荷重・等分布荷重のたわみ公式、固定端モーメントの見方を整理します。"
+description: "片持ち梁の支持条件、先端集中荷重・等分布荷重の公式、固定端モーメントと自由端たわみの見方を一次判断向けに整理します。"
 publishedAt: "2026-03-04"
 updatedAt: "2026-03-07"
 category: "梁・断面"
@@ -12,127 +12,165 @@ tags:
 toolRefs:
   - "cantilever"
 diagramKey: "cantilever-beam-basics"
+heroDiagram: true
 faq:
   - q: "片持ち梁と単純梁はどちらがたわみやすいですか？"
-    a: "同じスパン・荷重条件なら片持ち梁の方がたわみが大きくなります。集中荷重先端で約16倍の差があります。"
-  - q: "片持ち梁の許容たわみ基準はどう決めますか？"
-    a: "用途によりますが、一般にL/150〜L/250が目安です。先端に精密機器がある場合はL/300以上にすることもあります。"
+    a: "同じ荷重とスパンなら片持ち梁の方がたわみやすく、先端集中荷重では単純梁中央集中の約16倍になります。"
+  - q: "片持ち梁の許容たわみはどう決めますか？"
+    a: "用途によりますが、見た目や据付精度に効く場合は厳しめに見ます。単純梁の基準をそのまま流用せず、用途で判断してください。"
   - q: "複数荷重が同時にかかる場合はどうしますか？"
-    a: "弾性範囲では重ね合わせが使えます。先端集中荷重と等分布荷重を個別に計算し、最大たわみと最大モーメントを合算します。"
+    a: "弾性範囲では重ね合わせが使えます。先端集中荷重と等分布荷重を個別に計算し、モーメントとたわみを合算します。"
 sources:
-  - title: "JIS規格票・構造設計の基本"
-    url: "https://kikakurui.com/"
-    site: "規格一覧"
-    accessedAt: "2026-03-01"
-    note: "梁の設計に関するJIS用語の確認に使用"
-  - title: "MISUMI 技術情報"
-    url: "https://jp.misumi-ec.com/tech-info/"
-    site: "MISUMI"
-    accessedAt: "2026-03-01"
-    note: "片持ち梁の実務設計例と選定の確認"
-  - title: "鋼構造設計規準（AIJ）"
-    url: "https://www.aij.or.jp/"
+  - title: "建築基準法施行令（e-Gov法令検索）"
+    url: "https://elaws.e-gov.go.jp/document?lawid=325CO0000000338"
+    site: "e-Gov法令検索"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: 公的。構造計算の前提となる法令確認に使用。"
+  - title: "日本建築学会 鋼構造設計規準（AIJ）"
+    url: "https://www.aij.or.jp/paper/detail.html?productId=623"
     site: "日本建築学会"
-    accessedAt: "2026-03-01"
-    note: "許容たわみ・許容応力の根拠規準の確認"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: 学協会。片持ち梁の使用性と許容値の考え方の確認に使用。"
+  - title: "Engineering ToolBox: Beam Deflection and Stress Formula"
+    url: "https://www.engineeringtoolbox.com/beam-stress-deflection-d_1312.html"
+    site: "Engineering ToolBox"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: 工学技術資料。片持ち梁のモーメント・たわみ公式の照合に使用。"
 ---
 
-## この記事でわかること
+<h2><span aria-hidden="true">💡</span><span>この記事でわかること</span></h2>
+<ul>
+  <li>片持ち梁を最初にどう見分けるか</li>
+  <li>先端集中荷重と等分布荷重で何の式を使うか</li>
+  <li>固定端モーメントと自由端たわみをどう一次判定につなげるか</li>
+</ul>
 
-片持ち梁の支持条件、先端集中荷重・等分布荷重の公式の使い分け、固定端モーメントと自由端たわみの一次判定の流れがわかります。
+<h2><span aria-hidden="true">✅</span><span>結論</span></h2>
+<ul>
+  <li>片持ち梁は、同じ荷重・スパンでも単純梁より不利です。</li>
+  <li>先端集中荷重なら最大曲げモーメントは <code>PL</code>、最大たわみは <code>PL³/(3EI)</code> です。</li>
+  <li>最初に「片持ち梁かどうか」を固定し、固定端接合まで含めて成立しているか確認するのが先です。</li>
+  <li>強度だけでなく、自由端たわみを早めに確認した方が手戻りが減ります。</li>
+</ul>
 
-## 結論
+この比較の考え方は [日本建築学会 鋼構造設計規準（AIJ）](https://www.aij.or.jp/paper/detail.html?productId=623) の使用性確認と、公式の照合元である [Engineering ToolBox](https://www.engineeringtoolbox.com/beam-stress-deflection-d_1312.html) を前提にしています。
 
-片持ち梁は、同じ荷重・スパンでも単純梁より不利です。先端集中荷重なら最大曲げモーメントは `PL`、最大たわみは `PL³/(3EI)` で、中央集中の単純梁に対してそれぞれ4倍・16倍になります。
-したがって実務では、「片持ち梁かどうかを最初に固定する」「固定端の接合を含めて見る」「たわみを強度より先に確認する」の順に進めると手戻りが減ります。
-
-## 図解
-
-<div className="diagram-card">
-  <Diagram diagramKey="cantilever-beam-basics" width="100%" maxWidth={560} />
+<h2><span aria-hidden="true">🧭</span><span>一次判断の流れ</span></h2>
+<div className="article-step-list">
+  <p>1. 支持条件が固定端・自由端の片持ち梁か確認する</p>
+  <p>2. 荷重条件を先端集中か等分布かで固定する</p>
+  <p>3. 固定端モーメントを求める</p>
+  <p>4. 断面係数 Z で応力を確認する</p>
+  <p>5. 断面二次モーメント I で自由端たわみを確認する</p>
 </div>
 
-## 比較表
+<h2><span aria-hidden="true">📊</span><span>比較表</span></h2>
 
 | 項目 | 単純梁（中央集中） | 片持ち梁（先端集中） | 倍率 |
 |---|---|---|---|
-| 最大曲げモーメント | PL/4 | PL | 4倍 |
-| 最大たわみ | PL³/48EI | PL³/3EI | 16倍 |
+| 最大曲げモーメント | `PL/4` | `PL` | 4倍 |
+| 最大たわみ | `PL³/(48EI)` | `PL³/(3EI)` | 16倍 |
 | モーメント位置 | スパン中央 | 固定端 | — |
 | たわみ位置 | スパン中央 | 自由端 | — |
 
-## 代表公式の早見
-
-| 荷重条件 | 最大曲げモーメント | 最大たわみ | まず確認すること |
+| 荷重条件 | 最大曲げモーメント | 最大たわみ | 主な場面 |
 |---|---|---|---|
-| 先端集中荷重 `P` | `PL` | `PL³/(3EI)` | ブラケット、アーム、看板支持など先端に荷重が集まるケース |
-| 等分布荷重 `w` | `wL²/2` | `wL⁴/(8EI)` | 自重、外装材、ケーブル支持などスパン全体に荷重が載るケース |
+| 先端集中荷重 `P` | `PL` | `PL³/(3EI)` | ブラケット、アーム、看板支持 |
+| 等分布荷重 `w` | `wL²/2` | `wL⁴/(8EI)` | 自重、ケーブル支持、外装材 |
 
-片持ち梁に自重がある場合は、断面重量から `w_self` を求めて等分布荷重へ加算します。先端荷重と等分布荷重が同時に載る場合は、弾性範囲では重ね合わせで評価できます。
+<h2><span aria-hidden="true">📏</span><span>単純梁との違い</span></h2>
 
-## 計算例
+先端集中荷重の片持ち梁は、中央集中荷重の単純梁より曲げモーメントで4倍、たわみで16倍不利です。この比較は [Engineering ToolBox](https://www.engineeringtoolbox.com/beam-stress-deflection-d_1312.html) の公式と照合しています。つまり、単純梁感覚のまま断面を選ぶと、片持ち梁ではすぐ不足します。
+
+- モーメントの支配点は固定端です。
+- たわみの支配点は自由端です。
+- 固定端接合が弱いと、計算上の片持ち梁が実際には成立しません。
+
+<h2><span aria-hidden="true">🧮</span><span>計算例</span></h2>
 
 <a href="/tools/beams/cantilever" className="tool-item article-tool-item">
   <CardDiagram variant="tool" diagramKey="cantilever" className="tool-item-diagram" />
   <span className="tool-item-body">
     <span className="tool-item-title">片持ち梁（カンチレバー）計算</span>
-    <span className="tool-item-desc">先端集中荷重・等分布荷重の応力とたわみをその場で確認。</span>
+    <span className="tool-item-desc">先端集中荷重・等分布荷重の応力とたわみを確認。</span>
   </span>
   <span className="tool-item-arrow">›</span>
 </a>
 
-条件: 先端集中荷重 `P = 5 kN = 5000 N`、スパン `L = 1000 mm`、`E = 205 GPa = 205000 MPa`、`I = 1640 cm⁴ = 16400000 mm⁴`、`Z = 219 cm³ = 219000 mm³`。
+条件:
+
+- 先端集中荷重 `P = 5 kN`
+- スパン `L = 1000 mm`
+- `E = 205 GPa`
+- `I = 1640 cm⁴`
+- `Z = 219 cm³`
 
 式:
+
 - `M_max = P × L`
 - `σ_max = M_max / Z`
-- `δ_max = P × L³ / (3 × E × I)`
+- `δ_max = P × L³ / (3EI)`
 
-計算:
-- `M_max = 5000 × 1000 = 5000000 N·mm = 5.0 kN·m`
-- `σ_max = 5000000 / 219000 = 22.8 MPa`
-- `δ_max = 5000 × 1000³ / (3 × 205000 × 16400000) = 0.50 mm`
+結果:
 
-結果: σ_max = **22.8 MPa**（許容150MPaならOK）、δ_max = **0.50 mm**。
+- `M_max = 5.0 kN·m`
+- `σ_max = 22.8 MPa`
+- `δ_max = 0.50 mm`
 
-## 関連ツール
+この順番で見れば、強度もたわみも一度に当たり付けできます。
+
+<h2><span aria-hidden="true">⚠️</span><span>よくある見落とし</span></h2>
+
+- 片持ち梁なのに単純梁の式を使う
+- 固定端接合の剛性不足を無視する
+- 先端荷重と自重を分けずに扱って式を混ぜる
+- たわみを後回しにして、見た目や据付不良が先に問題化する
+
+<h2><span aria-hidden="true">🔗</span><span>次に確認するページ</span></h2>
 
 <a href="/tools/beams/cantilever" className="tool-item article-tool-item">
   <CardDiagram variant="tool" diagramKey="cantilever" className="tool-item-diagram" />
   <span className="tool-item-body">
     <span className="tool-item-title">片持ち梁（カンチレバー）計算</span>
-    <span className="tool-item-desc">固定端モーメント・曲げ応力・自由端たわみを一度に確認。</span>
+    <span className="tool-item-desc">固定端モーメント・曲げ応力・自由端たわみを確認。</span>
   </span>
   <span className="tool-item-arrow">›</span>
 </a>
 
-## 関連記事
-
 <a href="/articles/simple-beam-reaction-basics" className="tool-item article-tool-item">
-  <CardDiagram variant="article" diagramKey="beam-reaction" className="tool-item-diagram" />
+  <CardDiagram variant="article" diagramKey="simple-beam-reaction-basics" className="tool-item-diagram" />
   <span className="tool-item-body">
     <span className="tool-item-title">単純梁の計算の流れ</span>
-    <span className="tool-item-desc">単純支持の反力・たわみ公式と片持ち梁との違いを比較。</span>
+    <span className="tool-item-desc">支持条件が変わると式がどう変わるかを比較。</span>
   </span>
   <span className="tool-item-arrow">›</span>
 </a>
 
 <a href="/articles/deflection-limit-l-over-n" className="tool-item article-tool-item">
-  <CardDiagram variant="article" diagramKey="deflection-limit" className="tool-item-diagram" />
+  <CardDiagram variant="article" diagramKey="deflection-limit-l-over-n" className="tool-item-diagram" />
   <span className="tool-item-body">
-    <span className="tool-item-title">L/200・L/300・L/400の選び分け</span>
-    <span className="tool-item-desc">片持ち梁のたわみ判定で置く許容値の考え方。</span>
+    <span className="tool-item-title">L/200・L/300・L/400の選び方</span>
+    <span className="tool-item-desc">たわみ判定で置く許容値の考え方を整理。</span>
   </span>
   <span className="tool-item-arrow">›</span>
 </a>
 
-## FAQ
+<a href="/articles/moment-of-inertia-basics" className="tool-item article-tool-item">
+  <CardDiagram variant="article" diagramKey="moment-of-inertia-basics" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">断面二次モーメントIの使い方</span>
+    <span className="tool-item-desc">自由端たわみを抑えるために必要な I の見方を確認。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
 
-### Q1. 片持ち梁でたわみが大きすぎるときの対策は？
-A. 断面二次モーメント I を上げる（断面サイズアップ）、スパンを短くする、支持条件を変える（中間サポート追加で単純梁化）のいずれかが有効です。
+<h2><span aria-hidden="true">❓</span><span>FAQ</span></h2>
 
-### Q2. 等分布荷重の場合の公式は？
-A. `M_max = wL²/2`（固定端）、`δ_max = wL⁴/(8EI)`（自由端）です。w は線荷重 [N/mm] で、総荷重 W を L で割って求めます。
+<h3><span aria-hidden="true">💬</span><span>Q1. 片持ち梁と単純梁はどちらがたわみやすいですか？</span></h3>
+<p>A. 同じ荷重とスパンなら片持ち梁の方が大きくたわみます。先端集中荷重では単純梁中央集中の約16倍です。</p>
 
-### Q3. 複数荷重が同時にかかる場合はどうしますか？
-A. 弾性範囲では重ね合わせが使えます。先端集中荷重と等分布荷重を個別に計算し、最大曲げモーメントと最大たわみを合算してください。自重も等分布荷重として同じ扱いです。
+<h3><span aria-hidden="true">💬</span><span>Q2. 片持ち梁の許容たわみはどう決めますか？</span></h3>
+<p>A. 用途次第です。見た目、据付精度、振動、クリアランスに効く場合は厳しめに見てください。</p>
+
+<h3><span aria-hidden="true">💬</span><span>Q3. 複数荷重が同時にかかる場合はどうしますか？</span></h3>
+<p>A. 弾性範囲では重ね合わせが使えます。先端集中荷重と等分布荷重を個別に計算し、モーメントとたわみを合算します。</p>

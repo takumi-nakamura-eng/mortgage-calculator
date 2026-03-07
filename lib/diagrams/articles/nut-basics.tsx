@@ -2,7 +2,7 @@ import { buildArticleDiagramStyle, type ArticleDiagramProps } from './shared';
 
 export function NutBasicsSvg({
   width = 560,
-  height = 200,
+  height = 260,
   maxWidth,
   ariaLabel = 'ナット断面と高さ寸法の説明図',
   role = 'img',
@@ -12,7 +12,7 @@ export function NutBasicsSvg({
 }: ArticleDiagramProps) {
   return (
     <svg
-      viewBox="0 0 560 200"
+      viewBox="0 0 560 260"
       preserveAspectRatio="xMidYMid meet"
       width={width}
       height={height}
@@ -22,23 +22,19 @@ export function NutBasicsSvg({
       className={className}
       style={buildArticleDiagramStyle({ maxWidth, framed })}
     >
-      <polygon points="140,50 200,50 230,90 200,130 140,130 110,90" fill="#dbeafe" stroke="#1d4ed8" strokeWidth="2" />
-      <circle cx="170" cy="90" r="22" fill="#f0f9ff" stroke="#64748b" strokeWidth="1.5" strokeDasharray="4 3" />
-      <text x="170" y="94" textAnchor="middle" fontSize="10" fill="#64748b">ねじ穴</text>
-      <line x1="250" y1="50" x2="250" y2="130" stroke="#ef4444" strokeWidth="2" />
-      <line x1="240" y1="50" x2="260" y2="50" stroke="#ef4444" strokeWidth="1.5" />
-      <line x1="240" y1="130" x2="260" y2="130" stroke="#ef4444" strokeWidth="1.5" />
-      <text x="270" y="94" fontSize="13" fontWeight="bold" fill="#ef4444">高さ m</text>
-      <line x1="110" y1="148" x2="230" y2="148" stroke="#374151" strokeWidth="1" />
-      <line x1="110" y1="143" x2="110" y2="153" stroke="#374151" strokeWidth="1" />
-      <line x1="230" y1="143" x2="230" y2="153" stroke="#374151" strokeWidth="1" />
-      <text x="170" y="165" textAnchor="middle" fontSize="11" fill="#374151">二面幅 s</text>
-      <text x="170" y="38" textAnchor="middle" fontSize="12" fontWeight="bold">六角ナット断面</text>
-      <rect x="340" y="50" width="60" height="80" fill="#dbeafe" stroke="#1d4ed8" strokeWidth="1.5" rx="2" />
-      <text x="370" y="95" textAnchor="middle" fontSize="11">1種</text>
-      <rect x="430" y="80" width="60" height="50" fill="#e0f2fe" stroke="#1d4ed8" strokeWidth="1.5" rx="2" />
-      <text x="460" y="110" textAnchor="middle" fontSize="11">3種</text>
-      <text x="415" y="38" textAnchor="middle" fontSize="11" fontWeight="bold">高さの違い</text>
+      <text x="92" y="92" fontSize="30" fontWeight="700" fill="#214d92">
+        六角ナット
+      </text>
+      <text x="94" y="124" fontSize="20" fontWeight="700" fill="#55759a">
+        1種と3種
+      </text>
+      <g transform="translate(250 32)">
+        <polygon points="0,72 34,28 92,28 126,72 92,116 34,116" fill="#dbeafe" stroke="#5b86c4" strokeWidth="2" />
+        <circle cx="63" cy="72" r="20" fill="#f8fbff" stroke="#8ea4bd" strokeWidth="2" />
+        <line x1="144" y1="28" x2="144" y2="116" stroke="#d35d5d" strokeWidth="3" />
+        <rect x="188" y="38" width="58" height="78" rx="6" fill="#dbeafe" stroke="#5b86c4" strokeWidth="2" />
+        <rect x="264" y="62" width="58" height="54" rx="6" fill="#eef3f8" stroke="#8ea4bd" strokeWidth="2" />
+      </g>
     </svg>
   );
 }

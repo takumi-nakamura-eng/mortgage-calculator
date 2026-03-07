@@ -1,6 +1,6 @@
 ---
-title: "ナットの基礎知識"
-description: "六角ナット（JIS B 1181）の基礎知識。1種・3種の高さの違い、M8〜M12の実寸値、ボルト長さ計算でのナット分の扱いを解説します。"
+title: "ナットの基礎知識: 1種・3種の高さとボルト長さへの影響"
+description: "六角ナット（JIS B 1181）の1種・3種の高さの違い、強度区分との合わせ方、ボルト長さ計算でナット分をどう扱うかを整理します。"
 publishedAt: "2026-02-20"
 updatedAt: "2026-03-04"
 category: "ねじ・締結"
@@ -12,6 +12,7 @@ tags:
 toolRefs:
   - "bolt-length"
 diagramKey: "nut-basics"
+heroDiagram: true
 faq:
   - q: "1種と3種は何で使い分けますか？"
     a: "高さと必要締結力で使い分けます。1種は一般用途、3種は省スペースやロックナット用途です。"
@@ -23,31 +24,39 @@ faq:
     a: "フランジ付きナットは座面が広いため平座金を省略できる場合がありますが、ナット高さ自体は通常ナットと異なるため寸法表で確認してください。"
 sources:
   - title: "JIS B 1181 六角ナット"
-    url: "https://kikakurui.com/"
+    url: "https://kikakurui.com/b1/B1181-2014-01.html"
     site: "規格一覧"
     accessedAt: "2026-03-01"
     note: "六角ナットの種類・高さ寸法の規格確認に使用"
   - title: "MISUMI 技術情報"
-    url: "https://jp.misumi-ec.com/tech-info/"
+    url: "https://jp.misumi-ec.com/tech-info/categories/technical_data/td01/c1678.html"
     site: "MISUMI"
     accessedAt: "2026-03-01"
     note: "ナットの実務選定と寸法一覧の確認"
-  - title: "SMC 技術資料"
-    url: "https://www.smcworld.com/webcatalog/ja/"
-    site: "SMC"
-    accessedAt: "2026-03-01"
-    note: "機械設計時の一般的な実務注意点の確認"
+  - title: "JIS B 1083 ねじの締付け通則"
+    url: "https://kikakurui.com/b1/B1083-2008-01.html"
+    site: "規格一覧"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: 公的。締結設計で必要なねじかかりと組合せの考え方確認に使用。"
 ---
 
-ナットはボルト締結の相手部品であり、**有効ねじかかり長**（ナット高さのうち実際にねじ山が噛み合う長さ）を確保することが締結強度の基本です。JIS B 1181 では高さの異なる1種・3種が規定されており、用途に応じて使い分けます。ボルト長さ計算では、ナット高さ分を必ず加算する必要があります。
+<h2><span aria-hidden="true">💡</span><span>この記事でわかること</span></h2>
+<ul>
+  <li>1種・3種の高さの違いと向く用途</li>
+  <li>ナット高さがボルト長さ計算へどう効くか</li>
+  <li>強度区分と省スペース性の見分け方</li>
+</ul>
 
-## 図解
+<h2><span aria-hidden="true">✅</span><span>結論</span></h2>
+<ul>
+  <li>一般用途では 1種ナットを基準に置くのが最も扱いやすいです。</li>
+  <li>3種は省スペースやロック用途で有効ですが、高さが低い分だけ有効ねじかかり長に余裕がありません。</li>
+  <li>ボルト長さ計算では、採用ナットの実高さを必ず加算します。</li>
+</ul>
 
-<div className="diagram-card">
-  <Diagram diagramKey="nut-basics" width="100%" maxWidth={560} />
-</div>
+有効ねじかかり長と寸法の基準は [JIS B 1181](https://kikakurui.com/b1/B1181-2014-01.html) を前提にし、実務での選び分けは [MISUMI 技術情報](https://jp.misumi-ec.com/tech-info/categories/technical_data/td01/c1678.html) の整理も参考になります。
 
-## 比較表
+<h2><span aria-hidden="true">📊</span><span>比較表</span></h2>
 
 | 呼び径 | 1種 高さ m (mm) | 3種 高さ m (mm) | 二面幅 s (mm) | 主な使いどころ |
 |---|---:|---:|---:|---|
@@ -56,9 +65,9 @@ sources:
 | M12 | 10.8 | 6.0 | 19 | 構造部材・架台 |
 | M16 | 14.1 | 8.0 | 24 | 重機・大型架台 |
 
-※ JIS B 1181 に基づく参考値。2種は現行JISでは削除されています。
+※ 寸法は [JIS B 1181](https://kikakurui.com/b1/B1181-2014-01.html) に基づく参考値です。2種は現行JISでは削除されています。
 
-## 計算例
+<h2><span aria-hidden="true">🧮</span><span>計算例</span></h2>
 
 条件: M12ボルト、被締結材厚 `t = 20 mm`、平座金1枚 `Hpw = 2.5 mm`、ばね座金1枚 `Hsw = 3.0 mm`、ナット1種1個 `Hnut = 10.8 mm`、並目ピッチ `P = 1.75 mm`。
 
@@ -72,16 +81,45 @@ sources:
 
 結果: 必要ボルト長さ **41.55 mm** → 規格長さ **45 mm** を選定。
 
-## FAQ
+<h2><span aria-hidden="true">🔗</span><span>次に確認するページ</span></h2>
 
-### Q1. 呼び径違いのナットを流用できますか？
-A. できません。呼び径が一致しないとねじ山が噛み合わず、締結力を発揮できません。
+<a href="/tools/bolt-length" className="tool-item article-tool-item">
+  <CardDiagram variant="tool" diagramKey="bolt-length" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">ボルト長さ計算</span>
+    <span className="tool-item-desc">ナット高さと先端余長を含めた規格長さを確認。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
 
-### Q2. 強度区分の組み合わせを間違えるとどうなりますか？
-A. ナットの強度が不足するとねじ山がせん断破壊し、ボルトが抜けます。JIS B 1052-2 に従い、ボルト強度区分に対応したナット保証荷重等級を選定してください。
+<a href="/articles/bolt-strength-class-selection" className="tool-item article-tool-item">
+  <CardDiagram variant="article" diagramKey="bolt-strength-class-selection" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">ボルト強度区分の選び方</span>
+    <span className="tool-item-desc">ナットの強度区分を何に合わせるかを整理。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
 
-### Q3. フランジナットはどんなときに使いますか？
-A. 座面が広いため面圧を分散でき、座金を省略したい場合や振動環境でのゆるみ抑制に使います。ただしナット高さは通常ナットと異なるため、ボルト長さ計算時は寸法表を確認してください。
+<a href="/articles/grip-length-basics" className="tool-item article-tool-item">
+  <CardDiagram variant="article" diagramKey="grip-length-basics" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">ボルト長さの決め方</span>
+    <span className="tool-item-desc">ナット高さをどの式へ入れるかをまとめて確認。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
 
-### Q4. 3種（薄形）ナットの注意点は？
-A. 高さが低い分、有効ねじかかり長が短くなります。高い軸力が必要な用途には不向きです。ロックナット（ダブルナットの下ナット）として使うのが一般的です。
+<h2><span aria-hidden="true">❓</span><span>FAQ</span></h2>
+
+<h3><span aria-hidden="true">💬</span><span>Q1. 呼び径違いのナットを流用できますか？</span></h3>
+<p>A. できません。呼び径が一致しないとねじ山が噛み合わず、締結力を発揮できません。</p>
+
+<h3><span aria-hidden="true">💬</span><span>Q2. 強度区分の組み合わせを間違えるとどうなりますか？</span></h3>
+<p>A. ナットの強度が不足するとねじ山がせん断破壊し、ボルトが抜けます。JIS B 1052-2 に従い、ボルト強度区分に対応したナット保証荷重等級を選定してください。</p>
+
+<h3><span aria-hidden="true">💬</span><span>Q3. フランジナットはどんなときに使いますか？</span></h3>
+<p>A. 座面が広いため面圧を分散でき、座金を省略したい場合や振動環境でのゆるみ抑制に使います。ただしナット高さは通常ナットと異なるため、ボルト長さ計算時は寸法表を確認してください。</p>
+
+<h3><span aria-hidden="true">💬</span><span>Q4. 3種（薄形）ナットの注意点は？</span></h3>
+<p>A. 高さが低い分、有効ねじかかり長が短くなります。高い軸力が必要な用途には不向きです。ロックナット（ダブルナットの下ナット）として使うのが一般的です。</p>

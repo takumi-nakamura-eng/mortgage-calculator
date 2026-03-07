@@ -1,75 +1,177 @@
 ---
-title: "グリップ長さの決め方と実務の注意点"
-description: "ボルト長さ計算で最も重要なグリップ長さの定義・測り方・間違いやすいポイントを解説します。"
+title: "ボルト長さの決め方: グリップ長と座金厚さの見方"
+description: "ボルト長さを決めるときに、グリップ長に何を含めるか、座金やガスケットをどこまで足すか、実務で間違えやすい点を整理します。"
 publishedAt: "2026-03-04"
-updatedAt: "2026-03-04"
+updatedAt: "2026-03-07"
 category: "ねじ・締結"
 tags:
   - "グリップ長"
   - "ボルト長さ"
   - "締結"
   - "座金"
+  - "ガスケット"
 toolRefs:
   - "bolt-length"
 diagramKey: "grip-length-basics"
+heroDiagram: true
 faq:
   - q: "グリップ長さに座金厚さは含めますか？"
-    a: "はい。ボルト頭の座面からナット座面までの全厚がグリップ長です。被締結材＋座金すべてを含みます。"
+    a: "含めます。ボルト頭の座面からナット座面までに挟まる部材は、平座金・ばね座金を含めて合算します。"
   - q: "ガスケットやパッキンはグリップ長に入れますか？"
-    a: "はい。締結時に挟まれるすべての部材の厚さを合算してください。"
+    a: "入れます。締結時に圧縮される部材でも、選定時は挟まる厚さとして見込み、最終的には圧縮後厚みとの差も確認します。"
+  - q: "塗装やメッキも加えるべきですか？"
+    a: "薄いメッキや一般的な塗膜は無視できることが多いですが、厚膜塗装やライニングは加算した方が安全です。"
 sources:
   - title: "JIS B 1083 ねじの締付け通則"
-    url: "https://kikakurui.com/"
+    url: "https://kikakurui.com/b1/B1083-2008-01.html"
     site: "規格一覧"
-    accessedAt: "2026-03-01"
-    note: "グリップ長の定義とねじ締結の設計通則"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: 公的。ねじ締結体の設計・締付け通則の確認に使用。"
+  - title: "JIS B 1256 平座金"
+    url: "https://kikakurui.com/b1/B1256-2008-01.html"
+    site: "規格一覧"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: 公的。平座金の呼び・寸法・厚さの確認に使用。"
+  - title: "JIS B 1251 ばね座金"
+    url: "https://kikakurui.com/b1/B1251-2018-01.html"
+    site: "規格一覧"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: 公的。ばね座金の寸法と適用確認に使用。"
   - title: "MISUMI 技術情報"
-    url: "https://jp.misumi-ec.com/tech-info/"
+    url: "https://jp.misumi-ec.com/tech-info/categories/technical_data/td01/c1685.html"
     site: "MISUMI"
-    accessedAt: "2026-03-01"
-    note: "ボルト選定時のグリップ長の実務的な考え方"
-  - title: "SMC 技術資料"
-    url: "https://www.smcworld.com/webcatalog/ja/"
-    site: "SMC"
-    accessedAt: "2026-03-01"
-    note: "機械組立時の締結に関する実務注意点"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: メーカー技術資料。ボルト長さ選定と座金・ナットの扱いの整理に使用。"
 ---
 
-グリップ長さとは、ボルト頭の座面からナット座面までの間に挟まれる**すべての部材の合計厚さ**です。被締結材（板、フランジ等）に加え、平座金・ばね座金・ガスケットなども含みます。ボルト長さ計算で最も間違いやすいポイントがこのグリップ長の把握です。
+<h2><span aria-hidden="true">💡</span><span>この記事でわかること</span></h2>
+<ul>
+  <li>グリップ長さに何を含めるか</li>
+  <li>座金、ガスケット、塗膜をどこまで足すか</li>
+  <li>ボルト長さを決める前に見落としやすい点</li>
+</ul>
 
-## 図解
+<h2><span aria-hidden="true">✅</span><span>結論</span></h2>
+<ul>
+  <li>グリップ長さは、ボルト頭の座面からナット座面までに挟まる部材の合計厚さです。</li>
+  <li>被締結材だけでなく、<strong>平座金・ばね座金・ガスケット・スペーサ</strong> も通常は含めます。</li>
+  <li>グリップ長さを小さく見積もると、必要ボルト長さが足りず、先端3山を確保できません。</li>
+  <li>迷ったときは「締結時に実際に挟まっているか」で判断し、図面値より現物優先で確認します。</li>
+</ul>
 
-<div className="diagram-card">
-  <Diagram diagramKey="grip-length-basics" width="100%" maxWidth={560} />
+この考え方は、ねじ締結体の設計通則を示す [JIS B 1083](https://kikakurui.com/b1/B1083-2008-01.html) と、座金寸法の基準になる [JIS B 1256](https://kikakurui.com/b1/B1256-2008-01.html)、[JIS B 1251](https://kikakurui.com/b1/B1251-2018-01.html) を前提にしています。実務上のボルト長さ選定の流れは [MISUMI 技術情報](https://jp.misumi-ec.com/tech-info/categories/technical_data/td01/c1685.html) も参考になります。
+
+<h2><span aria-hidden="true">🧭</span><span>一次判断の流れ</span></h2>
+<div className="article-step-list">
+  <p>1. どこからどこまでを締結座面と見るか決める</p>
+  <p>2. 挟まる部材を上から順に洗い出す</p>
+  <p>3. 座金、ガスケット、スペーサを厚さに加える</p>
+  <p>4. 圧縮や沈み込みが大きい部材は、圧縮後厚みも別途確認する</p>
+  <p>5. グリップ長をもとにナット高さと先端余長を足して規格長さへ丸める</p>
 </div>
 
-## 比較表
+ここで重要なのは、グリップ長さが「板厚の合計」ではないことです。座面の間にあるものは、ねじ部にかかる実効厚さとして原則すべて入れます。
 
-| 構成要素 | M10 例 (mm) | M12 例 (mm) | 計算に含める？ |
-|---|---:|---:|---|
-| 被締結材（板1） | 12.0 | 16.0 | 必須 |
-| 被締結材（板2） | 10.0 | 12.0 | 必須 |
-| 平座金 | 2.0 | 2.5 | 必須 |
-| ばね座金 | 2.5 | 3.0 | 必須 |
-| ガスケット | 1.5 | 1.5 | あれば必須 |
-| グリップ長合計 | 28.0 | 35.0 | — |
+<h2><span aria-hidden="true">📊</span><span>比較表</span></h2>
 
-## 計算例
+| 構成要素 | 代表例 | グリップ長に含めるか | 補足 |
+|---|---|---|---|
+| 被締結材 | 板、フランジ、ブラケット | 含める | 基本となる厚さ |
+| 平座金 | 並形、特寸 | 含める | [JIS B 1256](https://kikakurui.com/b1/B1256-2008-01.html) の厚さを確認 |
+| ばね座金 | 1枚使用 | 含める | [JIS B 1251](https://kikakurui.com/b1/B1251-2018-01.html) の厚さを確認 |
+| ガスケット・パッキン | フランジ間シール | 含める | 圧縮後厚みとの差も別途確認 |
+| 厚膜塗装・ライニング | 樹脂被覆、ゴム貼り | 条件付きで含める | 厚い場合は無視しない |
+| 薄いメッキ・一般塗膜 | 亜鉛めっき、薄膜塗装 | 通常は含めない | 数十μm程度なら影響が小さい |
 
-条件: M12、板1 `t₁ = 16 mm`、板2 `t₂ = 12 mm`、平座金 `Hpw = 2.5 mm`、ばね座金 `Hsw = 3.0 mm`。
+「含めるか迷う部材」は、締結後に座面間へ残るかどうかで判断すると整理しやすくなります。
 
-式: グリップ長 `L_grip = t₁ + t₂ + Hpw + Hsw`
+<h2><span aria-hidden="true">📏</span><span>どこまで足すかの実務判断</span></h2>
 
-計算: `L_grip = 16 + 12 + 2.5 + 3.0 = 33.5 mm`
+- 平座金は座面保護と面圧分散のために入るので、厚さもそのまま加算します。厚さ確認は [JIS B 1256](https://kikakurui.com/b1/B1256-2008-01.html) を基準にするとブレにくいです。
+- ばね座金はゆるみ止め補助でも、締結体の一部である点は同じなので厚さに含めます。寸法は [JIS B 1251](https://kikakurui.com/b1/B1251-2018-01.html) を確認してください。
+- ガスケットは圧縮される前提でも、選定初期は名目厚みで足しておき、シール設計側で圧縮後の残厚と照合します。
+- 現場で追加されやすいシムやスペーサは図面から漏れやすいので、仮組み前に部品表まで確認します。
 
-ボルト長さ: `L_bolt = L_grip + Hnut + 3P = 33.5 + 10.8 + 5.25 = 49.55 mm` → 規格長さ **50 mm**。
+<h2><span aria-hidden="true">🧮</span><span>計算例</span></h2>
 
-結果: グリップ長は **33.5 mm**。
+<a href="/tools/bolt-length" className="tool-item article-tool-item">
+  <CardDiagram variant="tool" diagramKey="bolt-length" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">ボルト長さ計算</span>
+    <span className="tool-item-desc">グリップ長、ナット高さ、先端余長をまとめて確認。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
 
-## FAQ
+条件:
 
-### Q1. 塗装やメッキの厚さも考慮すべきですか？
-A. 一般的な薄膜（数十μm）は無視できますが、厚膜塗装（0.5 mm以上）やライニングがある場合は加算してください。
+- M12 並目
+- 板1 `t₁ = 16.0 mm`
+- 板2 `t₂ = 12.0 mm`
+- 平座金 `2.5 mm`
+- ばね座金 `3.0 mm`
+- 六角ナット1種 `10.8 mm`
+- ピッチ `P = 1.75 mm`
 
-### Q2. 測定が難しいときはどうしますか？
-A. 仮組みしてボルトを通し、ナット座面までの実測値を取るのが確実です。図面値と現物に差がある場合は現物優先です。
+グリップ長:
+
+- `L_grip = 16.0 + 12.0 + 2.5 + 3.0 = 33.5 mm`
+
+必要ボルト長さ:
+
+- `L_bolt = L_grip + H_nut + 3P`
+- `L_bolt = 33.5 + 10.8 + 5.25 = 49.55 mm`
+
+結果:
+
+- グリップ長は **33.5 mm**
+- 規格長さは **50 mm** を選定
+
+この「座金2枚を足し忘れると 44.05 mm となり、45 mm を選んでしまう」差分が、実務で最も起きやすいミスです。
+
+<h2><span aria-hidden="true">⚠️</span><span>よくある見落とし</span></h2>
+
+- 被締結材だけを足して、座金を加算していない
+- ガスケットを別系統の部品と見て、グリップ長から外している
+- 厚膜塗装や樹脂ライニングを無視して、実物でねじ余長が不足する
+- 図面値だけを信じて、現場追加のシムや座金枚数変更を見落とす
+
+<h2><span aria-hidden="true">🔗</span><span>次に確認するページ</span></h2>
+
+<a href="/tools/bolt-length" className="tool-item article-tool-item">
+  <CardDiagram variant="tool" diagramKey="bolt-length" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">ボルト長さ計算</span>
+    <span className="tool-item-desc">グリップ長から規格長さをその場で確認。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+<a href="/articles/washer-role" className="tool-item article-tool-item">
+  <CardDiagram variant="article" diagramKey="washer-role" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">座金の役割</span>
+    <span className="tool-item-desc">平座金・ばね座金をなぜ加算するかを整理。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+<a href="/articles/three-threads" className="tool-item article-tool-item">
+  <CardDiagram variant="article" diagramKey="three-threads" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">先端3山出しの意味</span>
+    <span className="tool-item-desc">グリップ長から先端余長へつなぐ判断を確認。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+<h2><span aria-hidden="true">❓</span><span>FAQ</span></h2>
+
+<h3><span aria-hidden="true">💬</span><span>Q1. グリップ長さに座金厚さは含めますか？</span></h3>
+<p>A. 含めます。ボルト頭の座面からナット座面までに挟まる部材なので、平座金・ばね座金を含めて合算してください。</p>
+
+<h3><span aria-hidden="true">💬</span><span>Q2. ガスケットやパッキンはグリップ長に入れますか？</span></h3>
+<p>A. 入れます。選定初期は名目厚みを足し、シール設計側で圧縮後厚みとの差を確認すると安全です。</p>
+
+<h3><span aria-hidden="true">💬</span><span>Q3. 塗装やメッキの厚さも考慮すべきですか？</span></h3>
+<p>A. 一般的な薄膜は無視できることが多いですが、厚膜塗装やライニングは無視しないでください。数 mm 単位でボルト長さが変わることがあります。</p>

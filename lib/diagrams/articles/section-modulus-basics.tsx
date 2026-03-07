@@ -2,7 +2,7 @@ import { buildArticleDiagramStyle, type ArticleDiagramProps } from './shared';
 
 export function SectionModulusBasicsSvg({
   width = 560,
-  height = 200,
+  height = 260,
   maxWidth,
   ariaLabel = '断面係数の図',
   role = 'img',
@@ -12,7 +12,7 @@ export function SectionModulusBasicsSvg({
 }: ArticleDiagramProps) {
   return (
     <svg
-      viewBox="0 0 560 200"
+      viewBox="0 0 560 260"
       preserveAspectRatio="xMidYMid meet"
       width={width}
       height={height}
@@ -22,12 +22,18 @@ export function SectionModulusBasicsSvg({
       className={className}
       style={buildArticleDiagramStyle({ maxWidth, framed })}
     >
-      <rect x="80" y="40" width="120" height="120" fill="#e0f2fe" stroke="#0284c7" strokeWidth="2" />
-      <line x1="80" y1="100" x2="200" y2="100" stroke="#ef4444" strokeWidth="2" strokeDasharray="6 4" />
-      <line x1="300" y1="120" x2="460" y2="120" stroke="#111827" strokeWidth="8" />
-      <line x1="380" y1="120" x2="380" y2="70" stroke="#ef4444" strokeWidth="3" />
-      <text x="140" y="95" textAnchor="middle" fontSize="12">中立軸</text>
-      <text x="380" y="60" textAnchor="middle" fontSize="12">σ = M / Z</text>
+      <text x="92" y="92" fontSize="30" fontWeight="700" fill="#214d92">
+        断面係数
+      </text>
+      <text x="94" y="124" fontSize="20" fontWeight="700" fill="#55759a">
+        Z と曲げ応力
+      </text>
+      <g transform="translate(250 34)">
+        <rect x="0" y="24" width="112" height="132" rx="8" fill="#dbeafe" stroke="#5b86c4" strokeWidth="2" />
+        <line x1="0" y1="90" x2="112" y2="90" stroke="#d35d5d" strokeWidth="3" strokeDasharray="8 7" />
+        <line x1="166" y1="134" x2="262" y2="134" stroke="#6c7f93" strokeWidth="12" strokeLinecap="round" />
+        <line x1="214" y1="134" x2="214" y2="76" stroke="#d35d5d" strokeWidth="4" strokeLinecap="round" />
+      </g>
     </svg>
   );
 }

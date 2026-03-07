@@ -1,6 +1,6 @@
 ---
-title: "先端3山出しの意味"
-description: "ボルト締結で「ナットからねじ山を3山出す」と言われる理由を製造面の観点から整理します。"
+title: "先端3山出しの意味: ボルト長さで3pを足す理由"
+description: "ボルト締結で「ナットから3山出す」と言われる理由を、不完全ねじ部、余長 3p、ダブルナット時の考え方まで整理します。"
 publishedAt: "2026-02-26"
 updatedAt: "2026-03-04"
 category: "ねじ・締結"
@@ -11,52 +11,48 @@ tags:
 toolRefs:
   - "bolt-length"
 diagramKey: "three-threads"
+heroDiagram: true
 faq:
   - q: "3山は規格で固定ですか？"
     a: "厳密な最小値として固定されているわけではなく、実務上の目安として使われます。"
   - q: "3山出ないと必ずNGですか？"
     a: "条件により判断は変わりますが、かかり長不足リスクが高まるため再検討が推奨です。"
 sources:
-  - title: "JIS規格票・機械要素の基本"
-    url: "https://kikakurui.com/"
-    site: "規格一覧"
-    accessedAt: "2026-03-01"
-    note: "関連JISの用語と規格番号確認に使用"
   - title: "MISUMI 技術情報"
-    url: "https://jp.misumi-ec.com/tech-info/"
+    url: "https://jp.misumi-ec.com/tech-info/categories/technical_data/td01/c1678.html"
     site: "MISUMI"
     accessedAt: "2026-03-01"
     note: "機械部品の実務解説と選定観点"
-  - title: "SMC 技術資料"
-    url: "https://www.smcworld.com/webcatalog/ja/"
-    site: "SMC"
-    accessedAt: "2026-03-01"
-    note: "機械設計時の一般的な実務注意点の確認"
   - title: "JIS B 0101 ねじ用語"
     url: "https://kikakurui.com/b0/B0101-2013-01.html"
     site: "規格一覧"
     accessedAt: "2026-03-04"
     note: "カテゴリ: 公的。不完全ねじ部・有効ねじ長さ等の用語定義"
+  - title: "JIS B 0205 メートル並目ねじ"
+    url: "https://kikakurui.com/b0/B0205-4-2001-01.html"
+    site: "規格一覧"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: 公的。3p に使う並目ピッチの基準値確認に使用。"
 ---
 
-## この記事でわかること
+<h2><span aria-hidden="true">💡</span><span>この記事でわかること</span></h2>
+<ul>
+  <li>先端 3山出しが実務で使われる理由</li>
+  <li>不完全ねじ部と有効かかり長の関係</li>
+  <li>ボルト長さ計算の <code>3p</code> にどうつながるか</li>
+</ul>
 
-「先端3山出し」がなぜ実務で使われるのか、不完全ねじ部との関係、そしてダブルナットや特殊条件で余長計算がどう変わるかがわかります。
+<h2><span aria-hidden="true">✅</span><span>結論</span></h2>
+<ul>
+  <li>「ナットから3山出す」とは、ナット端面からボルト先端までにピッチ3山分（<code>3p</code>）の余長を確保することです。</li>
+  <li>この慣例が定着した理由は、ボルト先端の不完全ねじ部（[JIS B 0101](https://kikakurui.com/b0/B0101-2013-01.html)）がナット内に収まらないと有効かかり長が不足しやすいためです。</li>
+  <li>不完全ねじ部は製造上避けられず、残りは組立誤差と目視確認のためのマージンとして扱うと整理しやすいです。</li>
+  <li>ボルト長さ計算では <code>L = t + Hpw + Hsw + Hnut + 3p</code> の最後の項 <code>3p</code> がこの余長に相当します。</li>
+</ul>
 
-## 結論
+この説明は [JIS B 0101](https://kikakurui.com/b0/B0101-2013-01.html) の用語整理と、実務的な長さ選定を補助する [MISUMI 技術情報](https://jp.misumi-ec.com/tech-info/categories/technical_data/td01/c1678.html) を前提にしています。
 
-「ナットから3山出す」とは、ナット端面からボルト先端までにピッチ3山分（`3p`）の余長を確保することです。
-この慣例が定着した理由は、ボルト先端の不完全ねじ部（[JIS B 0101](https://kikakurui.com/b0/B0101-2013-01.html)）がナット内に収まらないと有効かかり長が不足し、締結力が確保できなくなるためです。
-不完全ねじ部は製造上避けられない部分で、通常1.5〜2山分あります。残り1〜1.5山は組立時の誤差吸収と目視確認のためのマージンです。
-ボルト長さ計算では `L = t + Hpw + Hsw + Hnut + 3p` の最後の項 `3p` がこの余長に相当します。
-
-## 図解
-
-<div className="diagram-card">
-  <Diagram diagramKey="three-threads" width="100%" maxWidth={560} />
-</div>
-
-## 比較表
+<h2><span aria-hidden="true">📊</span><span>比較表</span></h2>
 
 | 状態 | 先端余長 | リスク | コメント |
 |---|---|---|---|
@@ -64,7 +60,7 @@ sources:
 | B: 3山出し | `3p` | 低い | 不完全ねじ部＋誤差マージンを確保。目視確認も可能 |
 | C: 5山出し | `5p` | 低い | 締結上は問題ないが、余長過多で周辺部材への干渉注意 |
 
-## 計算例（再現用）
+<h2><span aria-hidden="true">🧮</span><span>計算例</span></h2>
 
 <a href="/tools/bolt-length" className="tool-item article-tool-item">
   <CardDiagram variant="tool" diagramKey="bolt-length" className="tool-item-diagram" />
@@ -85,18 +81,18 @@ sources:
 
 ダブルナットの場合: `L = t + Hpw + Hsw + Hnut1 + Hnut2 + 3p` となり、ナット2枚分の高さを加算した上で余長 `3p` を確保します。
 
-## 落とし穴
+<h2><span aria-hidden="true">⚠️</span><span>よくある見落とし</span></h2>
 
 - ダブルナット使用時にナット2枚分の高さを加算し忘れ、3山の余長がナット内に埋もれる
 - 不完全ねじ部を考慮せずに「3山」を「余分な出っ張り」と誤解し、余長をゼロにする
 - ボルト長さを JIS 規格長さに丸める際に、余長 3p を切り捨てて短い方を選んでしまう
 - 組立後に目視で「3山出ている」ことを確認しない（施工管理のチェック漏れ）
 
-## 判断基準
+<h2><span aria-hidden="true">🧭</span><span>判断基準</span></h2>
 
 `契約図書・施工要領書の指定 > JIS B 0101 不完全ねじ部の定義 > 3p 余長の実務慣例 > メーカー推奨値（競合時は長い方）`
 
-## 関連ツール
+<h2><span aria-hidden="true">🔗</span><span>次に確認するページ</span></h2>
 
 <a href="/tools/bolt-length" className="tool-item article-tool-item">
   <CardDiagram variant="tool" diagramKey="bolt-length" className="tool-item-diagram" />
@@ -106,8 +102,6 @@ sources:
   </span>
   <span className="tool-item-arrow">›</span>
 </a>
-
-## 関連記事
 
 <a href="/articles/coarse-thread" className="tool-item article-tool-item">
   <CardDiagram variant="article" diagramKey="coarse-thread" className="tool-item-diagram" />
@@ -127,10 +121,19 @@ sources:
   <span className="tool-item-arrow">›</span>
 </a>
 
-## FAQ
+<a href="/articles/grip-length-basics" className="tool-item article-tool-item">
+  <CardDiagram variant="article" diagramKey="grip-length-basics" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">ボルト長さの決め方</span>
+    <span className="tool-item-desc">3p を含めて規格長さへどう丸めるかを確認。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
 
-### Q1. 余長が長すぎる問題はありますか？
-A. 周辺部材への干渉、見た目の問題、組立時にボルト先端が邪魔になるケースがあります。5山以上出る場合はボルト長さの見直しを検討します。
+<h2><span aria-hidden="true">❓</span><span>FAQ</span></h2>
 
-### Q2. ダブルナット時の考え方は？
-A. ナット2枚分の高さ（`Hnut1 + Hnut2`）をボルト長さの式に加算した上で、余長 `3p` を確保します。ナット1枚の計算をそのまま流用すると余長不足になります。
+<h3><span aria-hidden="true">💬</span><span>Q1. 余長が長すぎる問題はありますか？</span></h3>
+<p>A. 周辺部材への干渉、見た目の問題、組立時にボルト先端が邪魔になるケースがあります。5山以上出る場合はボルト長さの見直しを検討します。</p>
+
+<h3><span aria-hidden="true">💬</span><span>Q2. ダブルナット時の考え方は？</span></h3>
+<p>A. ナット2枚分の高さ（`Hnut1 + Hnut2`）をボルト長さの式に加算した上で、余長 `3p` を確保します。ナット1枚の計算をそのまま流用すると余長不足になります。</p>
