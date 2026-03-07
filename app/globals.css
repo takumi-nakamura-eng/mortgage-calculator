@@ -780,8 +780,8 @@ body {
 
 .article-hero__title {
   margin-bottom: 0;
-  max-width: 10.8em;
-  font-size: clamp(2.35rem, 4.15vw, 3.35rem);
+  max-width: none;
+  font-size: clamp(1.9rem, 3.4vw, 2.4rem);
   line-height: 1.16;
   letter-spacing: -0.045em;
 }
