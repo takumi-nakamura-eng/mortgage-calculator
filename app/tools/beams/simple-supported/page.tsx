@@ -69,7 +69,6 @@ export default async function SimpleSupportedPage() {
           description: article.description,
           href: article.href,
           diagramKey: article.diagramKey,
-          thumbnailSvg: article.thumbnailSvg,
         }))}
       />
     </main>

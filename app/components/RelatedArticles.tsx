@@ -10,7 +10,6 @@ export interface RelatedArticleItem {
   description: string;
   href: string;
   diagramKey: string;
-  thumbnailSvg?: string;
 }
 
 export default function RelatedArticles({
@@ -43,7 +42,6 @@ export default function RelatedArticles({
               <CardDiagram
                 variant="article"
                 diagramKey={article.diagramKey}
-                svgMarkup={article.thumbnailSvg}
                 className="portal-card-diagram"
               />
               <span className="portal-card-title">{article.title}</span>

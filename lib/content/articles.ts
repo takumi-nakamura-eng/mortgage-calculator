@@ -35,7 +35,6 @@ export interface ArticleMeta {
   diagramKey: string;
   faq: ArticleFaqItem[];
   sources: ArticleSource[];
-  thumbnailSvg?: string;
   href: string;
   hideHeaderDescription?: boolean;
 }
@@ -352,7 +351,7 @@ function validateArticleContent(slug: string, meta: ParsedFrontmatter, body: str
     missing.push('faq(2件以上)');
   }
 
-  if (!/^##\s+図解/m.test(body) || !/<svg[\s>]/m.test(body)) {
+  if (!/^##\s+図解/m.test(body) || !/(<svg[\s>]|<Diagram[\s/>]|<[A-Z][A-Za-z0-9]*Svg[\s/>])/m.test(body)) {
     missing.push('図解(SVG)');
   }
 
@@ -373,11 +372,6 @@ function validateArticleContent(slug: string, meta: ParsedFrontmatter, body: str
   }
 }
 
-function extractFirstSvg(body: string): string | undefined {
-  const match = body.match(/<svg[\s\S]*?<\/svg>/);
-  return match ? match[0] : undefined;
-}
-
 async function readArticleFile(slug: string): Promise<Article | null> {
   const filePath = path.join(ARTICLES_DIR, `${slug}.mdx`);
   const source = await fs.readFile(filePath, 'utf8');
@@ -388,7 +382,6 @@ async function readArticleFile(slug: string): Promise<Article | null> {
     meta: {
       slug,
       href: `/articles/${slug}`,
-      thumbnailSvg: extractFirstSvg(body),
       ...data,
     },
     body,

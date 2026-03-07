@@ -11,7 +11,7 @@ tags:
   - "梁設計"
 toolRefs:
   - "beam"
-diagramKey: "beam-reaction"
+diagramKey: "simple-beam-reaction-basics"
 faq:
   - q: "ピン支持とローラー支持の違いは何ですか？"
     a: "ピン支持は鉛直・水平の反力を持ち、ローラー支持は鉛直反力のみです。単純梁ではこの組み合わせで静定構造になります。"
@@ -56,25 +56,7 @@ sources:
 ## 図解
 
 <div className="diagram-card diagram-card--compact">
-<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="単純梁の支持条件と反力">
-  <line x1="60" y1="80" x2="340" y2="80" stroke="#111827" strokeWidth="6" />
-  <polygon points="60,84 48,104 72,104" fill="#334155" />
-  <polygon points="340,84 328,104 352,104" fill="none" stroke="#334155" strokeWidth="2" />
-  <circle cx="340" cy="110" r="5" fill="none" stroke="#334155" strokeWidth="2" />
-  <line x1="200" y1="30" x2="200" y2="74" stroke="#dc2626" strokeWidth="2.5" />
-  <polygon points="200,80 194,70 206,70" fill="#dc2626" />
-  <text x="200" y="22" textAnchor="middle" fontSize="12" fill="#dc2626">P</text>
-  <line x1="60" y1="140" x2="60" y2="120" stroke="#2563eb" strokeWidth="2" />
-  <polygon points="60,118 54,128 66,128" fill="#2563eb" />
-  <text x="60" y="155" textAnchor="middle" fontSize="11" fill="#2563eb">R_A</text>
-  <line x1="340" y1="140" x2="340" y2="120" stroke="#2563eb" strokeWidth="2" />
-  <polygon points="340,118 334,128 346,128" fill="#2563eb" />
-  <text x="340" y="155" textAnchor="middle" fontSize="11" fill="#2563eb">R_B</text>
-  <text x="60" y="178" textAnchor="middle" fontSize="10" fill="#475569">ピン</text>
-  <text x="340" y="178" textAnchor="middle" fontSize="10" fill="#475569">ローラー</text>
-  <line x1="60" y1="190" x2="340" y2="190" stroke="#475569" strokeWidth="1" />
-  <text x="200" y="200" textAnchor="middle" fontSize="11" fill="#334155">L</text>
-</svg>
+  <Diagram diagramKey="simple-beam-reaction-basics" width="100%" maxWidth={400} />
 </div>
 
 ## 比較表
@@ -90,7 +72,7 @@ sources:
 ## 計算例（再現用）
 
 <a href="/tools/beams/simple-supported" className="tool-item article-tool-item">
-  <CardDiagram variant="tool" diagramKey="beam" className="tool-item-diagram" />
+  <CardDiagram variant="tool" diagramKey="simple-supported" className="tool-item-diagram" />
   <span className="tool-item-body">
     <span className="tool-item-title">単純梁（単純支持）計算</span>
     <span className="tool-item-desc">反力・曲げモーメント・たわみを条件固定で再現確認。</span>
@@ -125,7 +107,7 @@ sources:
 ## 関連ツール
 
 <a href="/tools/beams/simple-supported" className="tool-item article-tool-item">
-  <CardDiagram variant="tool" diagramKey="beam" className="tool-item-diagram" />
+  <CardDiagram variant="tool" diagramKey="simple-supported" className="tool-item-diagram" />
   <span className="tool-item-body">
     <span className="tool-item-title">単純梁（単純支持）計算</span>
     <span className="tool-item-desc">曲げ応力と最大たわみを同時に確認。</span>
@@ -136,7 +118,7 @@ sources:
 ## 関連記事
 
 <a href="/articles/allowable-stress-basics" className="tool-item article-tool-item">
-  <CardDiagram variant="article" diagramKey="allowable-stress" className="tool-item-diagram" />
+  <CardDiagram variant="article" diagramKey="allowable-stress-basics" className="tool-item-diagram" />
   <span className="tool-item-body">
     <span className="tool-item-title">許容曲げ応力の考え方</span>
     <span className="tool-item-desc">反力から求めた曲げモーメントで応力判定する方法。</span>
@@ -145,7 +127,7 @@ sources:
 </a>
 
 <a href="/articles/deflection-limit-l-over-n" className="tool-item article-tool-item">
-  <CardDiagram variant="article" diagramKey="deflection-limit" className="tool-item-diagram" />
+  <CardDiagram variant="article" diagramKey="deflection-limit-l-over-n" className="tool-item-diagram" />
   <span className="tool-item-body">
     <span className="tool-item-title">L/200・L/300・L/400の選び分け</span>
     <span className="tool-item-desc">反力計算後のたわみ判定で使う許容値の選び方。</span>

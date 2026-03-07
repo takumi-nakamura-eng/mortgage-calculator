@@ -26,12 +26,20 @@
 ### Tool Rules
 
 - 計算ロジックは `lib/` に純粋関数として置く。式や判定条件を page-level UI に埋め込まない。
-- ツール構成は原則として、`app/tools/<link>/page.tsx` をページ枠、`app/tools/<link>/<Name>Calculator.tsx` を UI、`lib/<domain>/<feature>.ts` を計算ロジック、`lib/diagrams/<link>.tsx` を正規 SVG とする。
-- 可能な限り `href`、`diagramKey`、図ファイル名は link slug に揃える。例: `bolt-length` -> `lib/diagrams/bolt-length.tsx`
-- 図はツールごとに正規ソースを 1 つにする。本体ページとカードは同じ React SVG コンポーネントを再利用し、印刷・出力用ヘルパーはそこから派生させる。
+- ツール構成は原則として、`app/tools/<link>/page.tsx` をページ枠、`app/tools/<link>/<Name>Calculator.tsx` を UI、`lib/<domain>/<feature>.ts` を計算ロジック、`lib/diagrams/tools/<link>.tsx` を正規 SVG とする。
+- ツールの `href`、`diagramKey`、図ファイル名は可能な限り link slug に揃える。例: `bolt-length` -> `diagramKey: "bolt-length"` -> `lib/diagrams/tools/bolt-length.tsx`
+- ツール図はツールごとに正規ソースを 1 つにする。本体ページ、カード、印刷・出力用ヘルパーは同じ React SVG コンポーネントから派生させる。
 - ツールページは `buildMetadata()`、`Breadcrumbs`、`SoftwareApplication` JSON-LD、関連解説導線を標準構成とする。
 - 結果は数値だけでなく、単位、判定文脈、入力条件を保持する。
 - 明示的に必要な場合を除き、履歴、PDF/印刷、関連導線を壊さない。
+
+### Diagram Rules
+
+- 図の正規ソースは `lib/diagrams/tools/` と `lib/diagrams/articles/` に分ける。ツール図と記事図を同じ名前空間で混ぜない。
+- `diagramKey` は最終的な図の入口として使い、記事とツールで別々に解決する。記事カードがツール図を直接拾う実装に戻さない。
+- 記事の `diagramKey` は可能な限り記事 slug に揃える。例: `/articles/three-threads` -> `diagramKey: "three-threads"` -> `lib/diagrams/articles/three-threads.tsx`
+- 本文、カード、関連表示の図は共通の図レジストリ経由で描画する。個別ページに図コンポーネント import を増やし続けない。
+- `thumbnailSvg` のような本文からの生 `<svg>` 抽出には依存しない。図の再利用は正規 SVG コンポーネントを基準に行う。
 
 ### UI Rules
 

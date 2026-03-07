@@ -12,7 +12,7 @@ tags:
 toolRefs:
   - "beam"
   - "section-properties"
-diagramKey: "section-modulus"
+diagramKey: "section-modulus-basics"
 faq:
   - q: "まずZだけ見て断面を決めてもよいですか？"
     a: "一次選定では有効ですが、最終判断はたわみ（I）・接合条件・座屈条件を含めて行います。"
@@ -56,14 +56,7 @@ sources:
 ## 図解
 
 <div className="diagram-card diagram-card--compact">
-<svg viewBox="0 0 560 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="断面係数の図">
-  <rect x="80" y="40" width="120" height="120" fill="#e0f2fe" stroke="#0284c7" strokeWidth="2" />
-  <line x1="80" y1="100" x2="200" y2="100" stroke="#ef4444" strokeWidth="2" strokeDasharray="6 4" />
-  <line x1="300" y1="120" x2="460" y2="120" stroke="#111827" strokeWidth="8" />
-  <line x1="380" y1="120" x2="380" y2="70" stroke="#ef4444" strokeWidth="3" />
-  <text x="140" y="95" textAnchor="middle" fontSize="12">中立軸</text>
-  <text x="380" y="60" textAnchor="middle" fontSize="12">σ = M / Z</text>
-</svg>
+  <Diagram diagramKey="section-modulus-basics" width="100%" maxWidth={560} />
 </div>
 
 ## 比較表
@@ -82,7 +75,7 @@ sources:
 入力例（単位をそろえてそのまま再現可能）:
 
 <a href="/tools/beams/simple-supported" className="tool-item article-tool-item">
-  <CardDiagram variant="tool" diagramKey="beam" className="tool-item-diagram" />
+  <CardDiagram variant="tool" diagramKey="simple-supported" className="tool-item-diagram" />
   <span className="tool-item-body">
     <span className="tool-item-title">単純梁（単純支持）計算</span>
     <span className="tool-item-desc">断面係数 Z の候補比較に使う曲げモーメント条件を先に確認。</span>
@@ -133,7 +126,7 @@ sources:
 </a>
 
 <a href="/tools/beams/simple-supported" className="tool-item article-tool-item">
-  <CardDiagram variant="tool" diagramKey="beam" className="tool-item-diagram" />
+  <CardDiagram variant="tool" diagramKey="simple-supported" className="tool-item-diagram" />
   <span className="tool-item-body">
     <span className="tool-item-title">単純梁（単純支持）計算</span>
     <span className="tool-item-desc">曲げモーメント・たわみを含めて一次判定。</span>
@@ -142,7 +135,7 @@ sources:
 </a>
 
 <a href="/tools/beams" className="tool-item article-tool-item">
-  <CardDiagram variant="tool" diagramKey="beam" className="tool-item-diagram" />
+  <CardDiagram variant="tool" diagramKey="simple-supported" className="tool-item-diagram" />
   <span className="tool-item-body">
     <span className="tool-item-title">梁計算ツール一覧</span>
     <span className="tool-item-desc">条件に応じて適切な梁計算へ分岐。</span>
@@ -153,7 +146,7 @@ sources:
 ## 関連記事
 
 <a href="/articles/moment-of-inertia-basics" className="tool-item article-tool-item">
-  <CardDiagram variant="article" diagramKey="moment-of-inertia" className="tool-item-diagram" />
+  <CardDiagram variant="article" diagramKey="moment-of-inertia-basics" className="tool-item-diagram" />
   <span className="tool-item-body">
     <span className="tool-item-title">断面二次モーメントIの基礎</span>
     <span className="tool-item-desc">たわみ側（I）の見方と Z との役割分担。</span>
@@ -162,7 +155,7 @@ sources:
 </a>
 
 <a href="/articles/deflection-limit-l-over-n" className="tool-item article-tool-item">
-  <CardDiagram variant="article" diagramKey="deflection-limit" className="tool-item-diagram" />
+  <CardDiagram variant="article" diagramKey="deflection-limit-l-over-n" className="tool-item-diagram" />
   <span className="tool-item-body">
     <span className="tool-item-title">L/200・L/300・L/400の選び分け</span>
     <span className="tool-item-desc">たわみ許容を用途で分岐し、最終判定へつなぐ。</span>

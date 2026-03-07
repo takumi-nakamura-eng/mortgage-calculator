@@ -36,7 +36,7 @@ export const TOOLS: ToolItem[] = [
       'deflection-limit-l-over-n',
       'h-beam-vs-channel-selection',
     ],
-    diagramKey: 'beam',
+    diagramKey: 'simple-supported',
   },
   {
     id: 'section-properties',

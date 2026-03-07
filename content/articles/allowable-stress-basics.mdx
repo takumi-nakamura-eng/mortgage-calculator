@@ -10,7 +10,7 @@ tags:
   - "曲げ応力"
 toolRefs:
   - "beam"
-diagramKey: "allowable-stress"
+diagramKey: "allowable-stress-basics"
 faq:
   - q: "許容応力は固定値で使ってよいですか？"
     a: "用途・規格・荷重条件で変わるため固定値の流用は避け、基準値を都度確認してください。"
@@ -54,14 +54,7 @@ SS400（[JIS G 3101](https://kikakurui.com/g3/G3101-2020-01.html)）の場合、
 ## 図解
 
 <div className="diagram-card">
-<svg viewBox="0 0 560 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="許容応力の図">
-  <rect x="80" y="60" width="400" height="24" fill="#d1fae5" />
-  <rect x="80" y="96" width="300" height="24" fill="#bfdbfe" />
-  <text x="285" y="77" text-anchor="middle" font-size="12">許容応力帯</text>
-  <text x="230" y="113" text-anchor="middle" font-size="12">実応力</text>
-  <line x1="380" y1="96" x2="380" y2="150" stroke="#ef4444" stroke-width="2" />
-  <text x="380" y="164" text-anchor="middle" font-size="12">σmax ≤ σallow</text>
-</svg>
+  <Diagram diagramKey="allowable-stress-basics" width="100%" maxWidth={560} />
 </div>
 
 ## 比較表
@@ -83,7 +76,7 @@ SS400の代表的な許容応力値（参考）:
 ## 計算例（再現用）
 
 <a href="/tools/beams/simple-supported" className="tool-item article-tool-item">
-  <CardDiagram variant="tool" diagramKey="beam" className="tool-item-diagram" />
+  <CardDiagram variant="tool" diagramKey="simple-supported" className="tool-item-diagram" />
   <span className="tool-item-body">
     <span className="tool-item-title">単純梁（単純支持）計算</span>
     <span className="tool-item-desc">曲げ応力 σmax と許容応力の OK/NG 判定を再現確認。</span>
@@ -116,7 +109,7 @@ SS400の代表的な許容応力値（参考）:
 ## 関連ツール
 
 <a href="/tools/beams/simple-supported" className="tool-item article-tool-item">
-  <CardDiagram variant="tool" diagramKey="beam" className="tool-item-diagram" />
+  <CardDiagram variant="tool" diagramKey="simple-supported" className="tool-item-diagram" />
   <span className="tool-item-body">
     <span className="tool-item-title">単純梁（単純支持）計算</span>
     <span className="tool-item-desc">曲げ応力と最大たわみを同時に確認。</span>
@@ -136,7 +129,7 @@ SS400の代表的な許容応力値（参考）:
 ## 関連記事
 
 <a href="/articles/moment-of-inertia-basics" className="tool-item article-tool-item">
-  <CardDiagram variant="article" diagramKey="moment-of-inertia" className="tool-item-diagram" />
+  <CardDiagram variant="article" diagramKey="moment-of-inertia-basics" className="tool-item-diagram" />
   <span className="tool-item-body">
     <span className="tool-item-title">断面二次モーメントIの使い方</span>
     <span className="tool-item-desc">たわみ側（I）の一次判定と必要Iの逆算方法。</span>
@@ -145,7 +138,7 @@ SS400の代表的な許容応力値（参考）:
 </a>
 
 <a href="/articles/section-modulus-basics" className="tool-item article-tool-item">
-  <CardDiagram variant="article" diagramKey="section-modulus" className="tool-item-diagram" />
+  <CardDiagram variant="article" diagramKey="section-modulus-basics" className="tool-item-diagram" />
   <span className="tool-item-body">
     <span className="tool-item-title">断面係数Zの使い方</span>
     <span className="tool-item-desc">強度側（Z）の一次判定と許容応力との関係。</span>
