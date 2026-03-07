@@ -698,6 +698,15 @@ body {
   font-size: 0.9375rem;
 }
 
+.static-content ol {
+  padding-left: 1.7rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.9375rem;
+  list-style-position: outside;
+}
+
 .static-content p {
   font-size: 0.9375rem;
 }
@@ -785,6 +794,12 @@ body {
   }
 }
 
+@media (max-width: 640px) {
+  .static-content ol {
+    padding-left: 1.5rem;
+  }
+}
+
 .article-content .article-table {
   width: 100%;
   display: block;
@@ -814,6 +829,17 @@ body {
 .article-content p,
 .article-content li {
   line-height: 1.9;
+}
+
+.article-content .article-step-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding-left: 0.5rem;
+}
+
+.article-content .article-step-list p {
+  margin: 0;
 }
 
 .article-content h3 {

@@ -2,9 +2,9 @@ import { buildArticleDiagramStyle, type ArticleDiagramProps } from './shared';
 
 export function DeflectionLimitLOverNSvg({
   width = 560,
-  height = 210,
+  height = 200,
   maxWidth,
-  ariaLabel = '許容たわみL/nの見方',
+  ariaLabel = '許容たわみ L/200・L/300・L/400 の選び方',
   role = 'img',
   ariaHidden,
   framed = true,
@@ -12,7 +12,7 @@ export function DeflectionLimitLOverNSvg({
 }: ArticleDiagramProps) {
   return (
     <svg
-      viewBox="0 0 560 210"
+      viewBox="0 0 560 200"
       preserveAspectRatio="xMidYMid meet"
       width={width}
       height={height}
@@ -22,14 +22,19 @@ export function DeflectionLimitLOverNSvg({
       className={className}
       style={buildArticleDiagramStyle({ maxWidth, framed })}
     >
-      <line x1="60" y1="118" x2="500" y2="118" stroke="#111827" strokeWidth="8" />
-      <line x1="60" y1="160" x2="500" y2="160" stroke="#9ca3af" strokeWidth="1" strokeDasharray="5 5" />
-      <path d="M60 118 Q280 72 500 118" fill="none" stroke="#2563eb" strokeWidth="3" />
-      <line x1="280" y1="118" x2="280" y2="160" stroke="#dc2626" strokeWidth="2" />
-      <text x="280" y="182" textAnchor="middle" fontSize="12">δ_allow = L / n</text>
-      <text x="280" y="198" textAnchor="middle" fontSize="12">
-        nが大きいほど許容たわみは小さい（厳しい）
+      <rect x="0" y="0" width="560" height="200" fill="#f8fafc" />
+      <rect x="20" y="18" width="520" height="164" rx="18" fill="#ffffff" stroke="#cbd5e1" />
+
+      <text x="280" y="72" textAnchor="middle" fontSize="22" fontWeight="700" fill="#0f172a">
+        L/200・L/300・L/400 の選び方
       </text>
+
+      <line x1="72" y1="136" x2="488" y2="136" stroke="#0f172a" strokeWidth="8" strokeLinecap="round" />
+      <polygon points="92,136 80,154 104,154" fill="#334155" />
+      <polygon points="468,136 456,154 480,154" fill="none" stroke="#334155" strokeWidth="2" />
+      <circle cx="468" cy="160" r="4" fill="none" stroke="#334155" strokeWidth="2" />
+
+      <path d="M72 136 Q280 102 488 136" fill="none" stroke="#2563eb" strokeWidth="3.5" />
     </svg>
   );
 }
