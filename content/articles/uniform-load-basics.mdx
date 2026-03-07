@@ -1,0 +1,113 @@
+---
+title: "等分布荷重とは: kN/m の意味と梁計算への入れ方"
+description: "等分布荷重の意味、kN/m の見方、自重や床荷重を梁計算へどう入れるかを、単純梁の一次判断向けに整理します。"
+publishedAt: "2026-03-07"
+updatedAt: "2026-03-07"
+category: "梁・断面"
+tags:
+  - "等分布荷重"
+  - "kN/m"
+  - "梁計算"
+toolRefs:
+  - "beam"
+diagramKey: "uniform-load-basics"
+heroDiagram: true
+faq:
+  - q: "等分布荷重とは何ですか？"
+    a: "梁の長さ方向に均一に載る荷重を、1m当たりの荷重で表したものです。"
+  - q: "kN/m はどうやって作りますか？"
+    a: "面荷重や重量を、支配幅や長さで線荷重へ変換して作ります。"
+  - q: "自重も等分布荷重ですか？"
+    a: "はい。梁の自重は通常、等分布荷重として加算します。"
+sources:
+  - title: "Engineering ToolBox: Beam Deflection and Stress Formula"
+    url: "https://www.engineeringtoolbox.com/beam-stress-deflection-d_1312.html"
+    site: "Engineering ToolBox"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: 工学技術資料。等分布荷重の梁式確認に使用。"
+  - title: "日本建築学会 鋼構造設計規準（AIJ）"
+    url: "https://www.aij.or.jp/paper/detail.html?productId=623"
+    site: "日本建築学会"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: 学協会。荷重条件を含む設計整理に使用。"
+  - title: "MISUMI 技術情報"
+    url: "https://jp.misumi-ec.com/tech-info/basic_tech/basic_mech-engineering/mechanics-materials"
+    site: "MISUMI"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: メーカー技術資料。材料力学の実務整理に使用。"
+---
+
+<h2><span aria-hidden="true">💡</span><span>この記事でわかること</span></h2>
+<ul>
+  <li>等分布荷重の意味</li>
+  <li>kN/m をどう作るか</li>
+  <li>単純梁へどう入れるか</li>
+</ul>
+
+<h2><span aria-hidden="true">✅</span><span>結論</span></h2>
+<ul>
+  <li>等分布荷重は、梁の長さ方向に均一に載る線荷重です。</li>
+  <li>面荷重や自重は、支配幅や重量換算を使って <code>kN/m</code> に直してから梁計算へ入れます。</li>
+  <li>集中荷重と混同せず、荷重条件を先に固定するのが大事です。</li>
+</ul>
+
+この整理は [Engineering ToolBox](https://www.engineeringtoolbox.com/beam-stress-deflection-d_1312.html) の梁式、[AIJ 鋼構造設計規準](https://www.aij.or.jp/paper/detail.html?productId=623) の設計整理、[MISUMI 技術情報](https://jp.misumi-ec.com/tech-info/basic_tech/basic_mech-engineering/mechanics-materials) の材料力学基礎を前提にしています。
+
+<h2><span aria-hidden="true">📊</span><span>比較表</span></h2>
+
+| 荷重の元 | 変換前 | 梁へ入れる形 |
+|---|---|---|
+| 梁自重 | kg/m | kN/m へ換算 |
+| 床や外装材 | kN/m² | 支配幅を掛けて kN/m |
+| ケーブルや配管群 | 総重量 | 長さで割って kN/m |
+
+<h2><span aria-hidden="true">🧮</span><span>計算例</span></h2>
+
+- 床荷重 `2.0 kN/m²`
+- 支配幅 `1.2 m`
+
+線荷重:
+
+- `w = 2.0 × 1.2 = 2.4 kN/m`
+
+この `w` を等分布荷重として梁式へ入れます。
+
+<h2><span aria-hidden="true">🔗</span><span>次に確認するページ</span></h2>
+
+<a href="/tools/beams/simple-supported" className="tool-item article-tool-item">
+  <CardDiagram variant="tool" diagramKey="simple-supported" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">単純梁（単純支持）計算</span>
+    <span className="tool-item-desc">等分布荷重をそのまま入れて確認。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+<a href="/articles/point-vs-uniform-load" className="tool-item article-tool-item">
+  <CardDiagram variant="article" diagramKey="point-vs-uniform-load" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">集中荷重と等分布荷重の違い</span>
+    <span className="tool-item-desc">式を使い分けたいときの整理。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+<a href="/articles/beam-self-weight-calculation" className="tool-item article-tool-item">
+  <CardDiagram variant="article" diagramKey="beam-self-weight-calculation" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">梁の自重計算のやり方</span>
+    <span className="tool-item-desc">自重を等分布荷重へ直す具体例。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+<h2><span aria-hidden="true">❓</span><span>FAQ</span></h2>
+
+<h3><span aria-hidden="true">💬</span><span>Q1. 等分布荷重とは何ですか？</span></h3>
+<p>A. 梁の長さ方向に均一に載る荷重を、1m当たりの荷重で表したものです。</p>
+
+<h3><span aria-hidden="true">💬</span><span>Q2. kN/m はどうやって作りますか？</span></h3>
+<p>A. 面荷重や重量を、支配幅や長さで線荷重へ変換して作ります。</p>
+
+<h3><span aria-hidden="true">💬</span><span>Q3. 自重も等分布荷重ですか？</span></h3>
+<p>A. はい。梁の自重は通常、等分布荷重として加算します。</p>

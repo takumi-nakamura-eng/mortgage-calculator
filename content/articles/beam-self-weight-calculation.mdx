@@ -1,0 +1,115 @@
+---
+title: "梁の自重計算のやり方: 断面重量から kN/m に直す方法"
+description: "梁の自重を計算するときに、kg/m を kN/m に換算して梁計算へ入れる手順を、断面重量と線荷重の関係から整理します。"
+publishedAt: "2026-03-07"
+updatedAt: "2026-03-07"
+category: "梁・断面"
+tags:
+  - "自重"
+  - "梁"
+  - "kN/m"
+  - "鋼材重量"
+toolRefs:
+  - "steel-weight"
+  - "beam"
+diagramKey: "beam-self-weight-calculation"
+heroDiagram: true
+faq:
+  - q: "kg/m を kN/m に直すには？"
+    a: "kg/m に重力加速度を掛け、1000 で割って kN/m にします。"
+  - q: "自重はどの荷重条件に入りますか？"
+    a: "通常は等分布荷重として外力へ加算します。"
+  - q: "自重は無視してもよいですか？"
+    a: "長スパンや重量断面では効きやすいので、初期検討でも入れておく方が安全です。"
+sources:
+  - title: "Engineering ToolBox: Beam Deflection and Stress Formula"
+    url: "https://www.engineeringtoolbox.com/beam-stress-deflection-d_1312.html"
+    site: "Engineering ToolBox"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: 工学技術資料。等分布荷重としての梁自重確認に使用。"
+  - title: "Engineering ToolBox: Metal Alloys - Densities"
+    url: "https://www.engineeringtoolbox.com/metal-alloys-densities-d_50.html"
+    site: "Engineering ToolBox"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: 工学技術資料。鋼材密度整理に使用。"
+  - title: "JIS G 3192 熱間圧延形鋼の形状・寸法・質量"
+    url: "https://kikakurui.com/g3/G3192-2014-01.html"
+    site: "規格一覧"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: 公的。形鋼質量表確認に使用。"
+---
+
+<h2><span aria-hidden="true">💡</span><span>この記事でわかること</span></h2>
+<ul>
+  <li>梁自重をどう計算するか</li>
+  <li>kg/m を kN/m へ変換する方法</li>
+  <li>梁計算へどこで加えるか</li>
+</ul>
+
+<h2><span aria-hidden="true">✅</span><span>結論</span></h2>
+<ul>
+  <li>梁自重は、断面重量を <code>kg/m</code> で出してから <code>kN/m</code> へ直すのが基本です。</li>
+  <li>鋼材なら、自重は長スパンほど効きやすいので初期検討でも入れる方が安全です。</li>
+  <li>梁計算では、自重を等分布荷重として外力へ加算してください。</li>
+</ul>
+
+この整理は [JIS G 3192](https://kikakurui.com/g3/G3192-2014-01.html) の質量表、[Engineering ToolBox の密度整理](https://www.engineeringtoolbox.com/metal-alloys-densities-d_50.html)、[梁式の整理](https://www.engineeringtoolbox.com/beam-stress-deflection-d_1312.html) を前提にしています。
+
+<h2><span aria-hidden="true">📊</span><span>比較表</span></h2>
+
+| 入力の形 | 何を掛けるか | 最終単位 |
+|---|---|---|
+| kg/m | 9.80665 / 1000 | kN/m |
+| kg/本 | 本数とスパンで割る | kN/m |
+| 断面積と密度 | 体積×密度 | kg/m → kN/m |
+
+<h2><span aria-hidden="true">🧮</span><span>計算例</span></h2>
+
+- 断面重量 `15.7 kg/m`
+
+換算:
+
+- `15.7 × 9.8 = 153.86 N/m`
+- `153.86 / 1000 = 0.154 kN/m`
+
+この `0.154 kN/m` を等分布荷重として梁計算へ加えます。
+
+<h2><span aria-hidden="true">🔗</span><span>次に確認するページ</span></h2>
+
+<a href="/tools/steel-weight" className="tool-item article-tool-item">
+  <CardDiagram variant="tool" diagramKey="steel-weight" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">鋼材重量計算</span>
+    <span className="tool-item-desc">まず kg/m を出したいときの入口。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+<a href="/tools/beams/simple-supported" className="tool-item article-tool-item">
+  <CardDiagram variant="tool" diagramKey="simple-supported" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">単純梁（単純支持）計算</span>
+    <span className="tool-item-desc">自重を等分布荷重へ入れて再計算。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+<a href="/articles/steel-weight-calculation-basics" className="tool-item article-tool-item">
+  <CardDiagram variant="article" diagramKey="steel-weight-calculation-basics" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">鋼材重量計算のやり方</span>
+    <span className="tool-item-desc">kg/m と総重量の出し方から確認。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+<h2><span aria-hidden="true">❓</span><span>FAQ</span></h2>
+
+<h3><span aria-hidden="true">💬</span><span>Q1. kg/m を kN/m に直すには？</span></h3>
+<p>A. kg/m に重力加速度を掛け、1000 で割って kN/m にします。</p>
+
+<h3><span aria-hidden="true">💬</span><span>Q2. 自重はどの荷重条件に入りますか？</span></h3>
+<p>A. 通常は等分布荷重として外力へ加算します。</p>
+
+<h3><span aria-hidden="true">💬</span><span>Q3. 自重は無視してもよいですか？</span></h3>
+<p>A. 長スパンや重量断面では効きやすいので、初期検討でも入れておく方が安全です。</p>

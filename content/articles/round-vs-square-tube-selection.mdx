@@ -1,0 +1,108 @@
+---
+title: "丸パイプと角パイプの選び方: 強度・加工・取り合いの比較"
+description: "丸パイプと角パイプを、曲げ、ねじれ、加工性、接合性、見た目の観点で比較し、どちらを選ぶべきかを実務向けに整理します。"
+publishedAt: "2026-03-07"
+updatedAt: "2026-03-07"
+category: "梁・断面"
+tags:
+  - "丸パイプ"
+  - "角パイプ"
+  - "断面比較"
+toolRefs:
+  - "section-properties"
+diagramKey: "round-vs-square-tube-selection"
+heroDiagram: true
+faq:
+  - q: "曲げには丸と角のどちらが有利ですか？"
+    a: "曲げ方向が決まっているなら角パイプが扱いやすいことが多く、ねじれや全方向性では丸パイプが有利な場面があります。"
+  - q: "接合しやすいのはどちらですか？"
+    a: "平面で当てやすい角パイプの方が、ブラケットやベース接合は整理しやすいです。"
+  - q: "見た目で決めてもよいですか？"
+    a: "意匠も大事ですが、加工性、排水、ねじれ、接合性まで見て決めた方が後戻りを防げます。"
+sources:
+  - title: "日本建築学会 鋼構造設計規準（AIJ）"
+    url: "https://www.aij.or.jp/paper/detail.html?productId=623"
+    site: "日本建築学会"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: 学協会。断面性能と使用性の整理に使用。"
+  - title: "Engineering ToolBox: Beam Deflection and Stress Formula"
+    url: "https://www.engineeringtoolbox.com/beam-stress-deflection-d_1312.html"
+    site: "Engineering ToolBox"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: 工学技術資料。曲げ比較の基礎整理に使用。"
+  - title: "MISUMI 技術情報"
+    url: "https://jp.misumi-ec.com/tech-info/basic_tech/basic_mech-engineering/mechanics-materials"
+    site: "MISUMI"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: メーカー技術資料。断面比較時の実務観点整理に使用。"
+---
+
+<h2><span aria-hidden="true">💡</span><span>この記事でわかること</span></h2>
+<ul>
+  <li>丸パイプと角パイプの得意な場面</li>
+  <li>強度だけでなく接合や加工でどう違うか</li>
+  <li>断面比較で何を優先すると判断しやすいか</li>
+</ul>
+
+<h2><span aria-hidden="true">✅</span><span>結論</span></h2>
+<ul>
+  <li>曲げ方向が決まっていて接合しやすさを重視するなら、角パイプが扱いやすいです。</li>
+  <li>ねじれや全方向の見え方を重視するなら、丸パイプが有利な場面があります。</li>
+  <li>重量比較だけでなく、加工性、排水、取付面、意匠まで含めて決めるのが実務的です。</li>
+</ul>
+
+この比較は、断面性能の整理に [AIJ 鋼構造設計規準](https://www.aij.or.jp/paper/detail.html?productId=623) と [Engineering ToolBox](https://www.engineeringtoolbox.com/beam-stress-deflection-d_1312.html)、実務上の取り合いと材料力学の整理に [MISUMI 技術情報](https://jp.misumi-ec.com/tech-info/basic_tech/basic_mech-engineering/mechanics-materials) を前提にしています。
+
+<h2><span aria-hidden="true">📊</span><span>比較表</span></h2>
+
+| 項目 | 丸パイプ | 角パイプ |
+|---|---|---|
+| 曲げ方向が決まる用途 | 比較しにくい | 扱いやすい |
+| ねじれ | 有利な場面が多い | 条件次第 |
+| 接合しやすさ | 曲面処理が必要 | 平面接合しやすい |
+| 見た目 | 柔らかい | シャープ |
+| 排水や溜まり | 条件次第 | 納まりで差が出る |
+
+<h2><span aria-hidden="true">🧮</span><span>計算例</span></h2>
+
+<p>配管架台でブラケットを多数溶接するなら、まず角パイプを優先候補にします。手すり支柱のように全方向の見え方と曲げ方向が散る用途なら、丸パイプの方が自然な場合があります。判断は「強度」だけでなく、「接合」と「納まり」を同じ比重で見るのが実務向きです。</p>
+
+<h2><span aria-hidden="true">🔗</span><span>次に確認するページ</span></h2>
+
+<a href="/tools/section-properties" className="tool-item article-tool-item">
+  <CardDiagram variant="tool" diagramKey="section-properties" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">断面性能計算</span>
+    <span className="tool-item-desc">丸と角の I・Z・重量を並べて比較。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+<a href="/articles/square-tube-strength-basics" className="tool-item article-tool-item">
+  <CardDiagram variant="article" diagramKey="square-tube-strength-basics" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">角パイプの強度計算で最初に見ること</span>
+    <span className="tool-item-desc">角パイプ側から見た一次判断の流れ。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+<a href="/articles/h-beam-vs-channel-selection" className="tool-item article-tool-item">
+  <CardDiagram variant="article" diagramKey="h-beam-vs-channel-selection" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">H形鋼とチャンネルの選び方</span>
+    <span className="tool-item-desc">断面比較の考え方自体を広げたいときに。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+<h2><span aria-hidden="true">❓</span><span>FAQ</span></h2>
+
+<h3><span aria-hidden="true">💬</span><span>Q1. 曲げには丸と角のどちらが有利ですか？</span></h3>
+<p>A. 曲げ方向が決まっているなら角パイプが扱いやすいことが多く、ねじれや全方向性では丸パイプが有利な場面があります。</p>
+
+<h3><span aria-hidden="true">💬</span><span>Q2. 接合しやすいのはどちらですか？</span></h3>
+<p>A. 平面で当てやすい角パイプの方が、ブラケットやベース接合は整理しやすいです。</p>
+
+<h3><span aria-hidden="true">💬</span><span>Q3. 見た目で決めてもよいですか？</span></h3>
+<p>A. 意匠も大事ですが、加工性、排水、ねじれ、接合性まで見て決めた方が後戻りを防げます。</p>

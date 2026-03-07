@@ -1,0 +1,107 @@
+---
+title: "集中荷重と等分布荷重の違い: どの式を使うか迷ったときの整理"
+description: "集中荷重と等分布荷重の違いを、反力、曲げモーメント、たわみの式がどう変わるかの観点で整理します。"
+publishedAt: "2026-03-07"
+updatedAt: "2026-03-07"
+category: "梁・断面"
+tags:
+  - "集中荷重"
+  - "等分布荷重"
+  - "梁計算"
+toolRefs:
+  - "beam"
+diagramKey: "point-vs-uniform-load"
+heroDiagram: true
+faq:
+  - q: "荷重が中央に一点なら集中荷重ですか？"
+    a: "はい。点で載るなら集中荷重として扱うのが基本です。"
+  - q: "複数点荷重は等分布荷重で代用できますか？"
+    a: "概算では使うこともありますが、反力や最大モーメント位置が変わるので注意が必要です。"
+  - q: "自重と一点荷重が同時にあるときは？"
+    a: "等分布荷重と集中荷重を別々に計算し、重ね合わせで考えます。"
+sources:
+  - title: "Engineering ToolBox: Beam Deflection and Stress Formula"
+    url: "https://www.engineeringtoolbox.com/beam-stress-deflection-d_1312.html"
+    site: "Engineering ToolBox"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: 工学技術資料。荷重条件ごとの梁式確認に使用。"
+  - title: "日本建築学会 鋼構造設計規準（AIJ）"
+    url: "https://www.aij.or.jp/paper/detail.html?productId=623"
+    site: "日本建築学会"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: 学協会。設計時の荷重整理に使用。"
+  - title: "MISUMI 技術情報"
+    url: "https://jp.misumi-ec.com/tech-info/basic_tech/basic_mech-engineering/mechanics-materials"
+    site: "MISUMI"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: メーカー技術資料。材料力学の実務整理に使用。"
+---
+
+<h2><span aria-hidden="true">💡</span><span>この記事でわかること</span></h2>
+<ul>
+  <li>集中荷重と等分布荷重の違い</li>
+  <li>式がどこで変わるか</li>
+  <li>迷ったときに何を先に固定するか</li>
+</ul>
+
+<h2><span aria-hidden="true">✅</span><span>結論</span></h2>
+<ul>
+  <li>一点で載るなら集中荷重、長さ方向に連続して載るなら等分布荷重です。</li>
+  <li>荷重条件が変わると、反力、最大モーメント、たわみ式も変わります。</li>
+  <li>迷ったときは「荷重がどこに、どの長さで載るか」を図で先に固定してください。</li>
+</ul>
+
+この整理は [Engineering ToolBox](https://www.engineeringtoolbox.com/beam-stress-deflection-d_1312.html) の式整理と、[AIJ 鋼構造設計規準](https://www.aij.or.jp/paper/detail.html?productId=623)、[MISUMI 技術情報](https://jp.misumi-ec.com/tech-info/basic_tech/basic_mech-engineering/mechanics-materials) の設計整理を前提にしています。
+
+<h2><span aria-hidden="true">📊</span><span>比較表</span></h2>
+
+| 項目 | 集中荷重 | 等分布荷重 |
+|---|---|---|
+| 荷重の載り方 | 点で載る | 長さ方向に広がる |
+| 単位 | kN | kN/m |
+| 反力 | 載る位置で変わる | 合力と対称性で決まる |
+| 最大モーメント | 荷重点や中央 | 中央付近に出やすい |
+
+<h2><span aria-hidden="true">🧮</span><span>計算例</span></h2>
+
+<p>例えば、機器 4 kN が梁中央に1点で載るなら集中荷重です。一方、床荷重 2.0 kN/m² を梁の負担幅 1.2 m で受けるなら、<code>2.0 × 1.2 = 2.4 kN/m</code> の等分布荷重として入れます。式の選び方は、荷重の載り方をこの段階で整理できるかで決まります。</p>
+
+<h2><span aria-hidden="true">🔗</span><span>次に確認するページ</span></h2>
+
+<a href="/tools/beams/simple-supported" className="tool-item article-tool-item">
+  <CardDiagram variant="tool" diagramKey="simple-supported" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">単純梁（単純支持）計算</span>
+    <span className="tool-item-desc">荷重条件を切り替えて数値差を確認。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+<a href="/articles/uniform-load-basics" className="tool-item article-tool-item">
+  <CardDiagram variant="article" diagramKey="uniform-load-basics" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">等分布荷重とは</span>
+    <span className="tool-item-desc">kN/m をどう作るかから確認。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+<a href="/articles/simple-beam-reaction-basics" className="tool-item article-tool-item">
+  <CardDiagram variant="article" diagramKey="simple-beam-reaction-basics" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">単純梁の計算の流れ</span>
+    <span className="tool-item-desc">支持条件と反力まで含めて整理したいときに。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+<h2><span aria-hidden="true">❓</span><span>FAQ</span></h2>
+
+<h3><span aria-hidden="true">💬</span><span>Q1. 荷重が中央に一点なら集中荷重ですか？</span></h3>
+<p>A. はい。点で載るなら集中荷重として扱うのが基本です。</p>
+
+<h3><span aria-hidden="true">💬</span><span>Q2. 複数点荷重は等分布荷重で代用できますか？</span></h3>
+<p>A. 概算では使うこともありますが、反力や最大モーメント位置が変わるので注意が必要です。</p>
+
+<h3><span aria-hidden="true">💬</span><span>Q3. 自重と一点荷重が同時にあるときは？</span></h3>
+<p>A. 等分布荷重と集中荷重を別々に計算し、重ね合わせで考えます。</p>

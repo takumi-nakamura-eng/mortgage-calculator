@@ -1,22 +1,38 @@
 import type { CSSProperties, ComponentType } from 'react';
 import { AllowableStressBasicsSvg } from './articles/allowable-stress-basics';
+import { AllowableShearStressBasicsSvg } from './articles/allowable-shear-stress-basics';
+import { AnchorBoltSelectionBasicsSvg } from './articles/anchor-bolt-selection-basics';
+import { AnchorEdgeDistanceBasicsSvg } from './articles/anchor-edge-distance-basics';
 import { BeamDeflectionFormulaSvg } from './articles/beam-deflection-formula';
+import { BeamSelfWeightCalculationSvg } from './articles/beam-self-weight-calculation';
+import { BoltShearStrengthBasicsSvg } from './articles/bolt-shear-strength-basics';
+import { BoltTensileStrengthBasicsSvg } from './articles/bolt-tensile-strength-basics';
 import { BoltStrengthClassSelectionSvg } from './articles/bolt-strength-class-selection';
 import { BoltStrengthClassSvg } from './articles/bolt-strength-class';
+import { CChannelVsLightGaugeSelectionSvg } from './articles/c-channel-vs-light-gauge-selection';
 import { CantileverBeamBasicsSvg } from './articles/cantilever-beam-basics';
+import { ChemicalVsMechanicalAnchorSvg } from './articles/chemical-vs-mechanical-anchor';
 import { CoarseThreadSvg } from './articles/coarse-thread';
 import { DeflectionLimitLOverNSvg } from './articles/deflection-limit-l-over-n';
 import { GripLengthBasicsSvg } from './articles/grip-length-basics';
+import { HBeamSizeReadingSvg } from './articles/h-beam-size-reading';
 import { HBeamVsChannelSelectionSvg } from './articles/h-beam-vs-channel-selection';
 import { MomentOfInertiaBasicsSvg } from './articles/moment-of-inertia-basics';
+import { NVsKgfBasicsSvg } from './articles/n-vs-kgf-basics';
 import { NutBasicsSvg } from './articles/nut-basics';
+import { PointVsUniformLoadSvg } from './articles/point-vs-uniform-load';
+import { RoundVsSquareTubeSelectionSvg } from './articles/round-vs-square-tube-selection';
 import { SectionModulusBasicsSvg } from './articles/section-modulus-basics';
 import { SimpleBeamReactionBasicsSvg } from './articles/simple-beam-reaction-basics';
+import { SquareTubeStrengthBasicsSvg } from './articles/square-tube-strength-basics';
 import { SteelMaterialPropertiesSvg } from './articles/steel-material-properties';
+import { SteelWeightCalculationBasicsSvg } from './articles/steel-weight-calculation-basics';
 import { TemplateDiagramSvg } from './articles/template-diagram';
 import { ThreeThreadsSvg } from './articles/three-threads';
 import { TubeSectionWeightComparisonSvg } from './articles/tube-section-weight-comparison';
+import { UniformLoadBasicsSvg } from './articles/uniform-load-basics';
 import { WasherRoleSvg } from './articles/washer-role';
+import { YoungsModulusBasicsSvg } from './articles/youngs-modulus-basics';
 import { AnchorSvg } from './tools/anchor';
 import { SimpleSupportedSvg } from './tools/simple-supported';
 import { BoltLengthSvg, type BoltLengthSvgProps } from './tools/bolt-length';
@@ -166,23 +182,39 @@ const TOOL_DIAGRAMS: Record<string, DiagramComponent> = {
 
 const ARTICLE_DIAGRAMS: Record<string, DiagramComponent> = {
   'allowable-stress-basics': AllowableStressBasicsSvg,
+  'allowable-shear-stress-basics': AllowableShearStressBasicsSvg,
+  'anchor-bolt-selection-basics': AnchorBoltSelectionBasicsSvg,
+  'anchor-edge-distance-basics': AnchorEdgeDistanceBasicsSvg,
   'beam-deflection-formula': BeamDeflectionFormulaSvg,
+  'beam-self-weight-calculation': BeamSelfWeightCalculationSvg,
+  'bolt-shear-strength-basics': BoltShearStrengthBasicsSvg,
+  'bolt-tensile-strength-basics': BoltTensileStrengthBasicsSvg,
   'bolt-strength-class-selection': BoltStrengthClassSelectionSvg,
   'bolt-strength-class': BoltStrengthClassSvg,
+  'c-channel-vs-light-gauge-selection': CChannelVsLightGaugeSelectionSvg,
   'cantilever-beam-basics': CantileverBeamBasicsSvg,
+  'chemical-vs-mechanical-anchor': ChemicalVsMechanicalAnchorSvg,
   'coarse-thread': CoarseThreadSvg,
   'deflection-limit-l-over-n': DeflectionLimitLOverNSvg,
   'grip-length-basics': GripLengthBasicsSvg,
+  'h-beam-size-reading': HBeamSizeReadingSvg,
   'h-beam-vs-channel-selection': HBeamVsChannelSelectionSvg,
   'moment-of-inertia-basics': MomentOfInertiaBasicsSvg,
+  'n-vs-kgf-basics': NVsKgfBasicsSvg,
   'nut-basics': NutBasicsSvg,
+  'point-vs-uniform-load': PointVsUniformLoadSvg,
+  'round-vs-square-tube-selection': RoundVsSquareTubeSelectionSvg,
   'section-modulus-basics': SectionModulusBasicsSvg,
   'simple-beam-reaction-basics': SimpleBeamReactionBasicsSvg,
+  'square-tube-strength-basics': SquareTubeStrengthBasicsSvg,
   'steel-material-properties': SteelMaterialPropertiesSvg,
+  'steel-weight-calculation-basics': SteelWeightCalculationBasicsSvg,
   'template-diagram': TemplateDiagramSvg,
   'three-threads': ThreeThreadsSvg,
   'tube-section-weight-comparison': TubeSectionWeightComparisonSvg,
+  'uniform-load-basics': UniformLoadBasicsSvg,
   'washer-role': WasherRoleSvg,
+  'youngs-modulus-basics': YoungsModulusBasicsSvg,
 };
 
 function resolveToolFallbackDiagram(diagramKey: string): DiagramComponent {

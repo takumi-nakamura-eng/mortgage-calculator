@@ -1,0 +1,107 @@
+---
+title: "C形鋼と軽量形鋼の選び方: 下地・架台で何が違うか"
+description: "C形鋼と軽量形鋼を、断面性能、取り合い、下地用途、設備架台の観点で比較し、どちらを選ぶかを実務向けに整理します。"
+publishedAt: "2026-03-07"
+updatedAt: "2026-03-07"
+category: "梁・断面"
+tags:
+  - "C形鋼"
+  - "軽量形鋼"
+  - "下地"
+toolRefs:
+  - "section-properties"
+diagramKey: "c-channel-vs-light-gauge-selection"
+heroDiagram: true
+faq:
+  - q: "C形鋼と軽量形鋼は同じですか？"
+    a: "形は近くても、用途、板厚帯、設計の前提が異なることが多いです。"
+  - q: "架台にはどちらが向きますか？"
+    a: "荷重が大きい架台では C形鋼側から入り、軽い下地なら軽量形鋼も有力です。"
+  - q: "下地用途で一番見るべきことは？"
+    a: "強度だけでなく、ビス止め、納まり、取付ピッチまで含めて見ることです。"
+sources:
+  - title: "JIS G 3192 熱間圧延形鋼の形状・寸法・質量"
+    url: "https://kikakurui.com/g3/G3192-2014-01.html"
+    site: "規格一覧"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: 公的。溝形鋼の寸法整理に使用。"
+  - title: "日本建築学会 鋼構造設計規準（AIJ）"
+    url: "https://www.aij.or.jp/paper/detail.html?productId=623"
+    site: "日本建築学会"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: 学協会。断面性能の設計整理に使用。"
+  - title: "MISUMI 技術情報"
+    url: "https://jp.misumi-ec.com/tech-info/basic_tech/basic_mech-engineering/mechanics-materials"
+    site: "MISUMI"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: メーカー技術資料。断面比較時の実務観点整理に使用。"
+---
+
+<h2><span aria-hidden="true">💡</span><span>この記事でわかること</span></h2>
+<ul>
+  <li>C形鋼と軽量形鋼の違い</li>
+  <li>下地用途と架台用途で何が変わるか</li>
+  <li>断面性能だけで決めないための見方</li>
+</ul>
+
+<h2><span aria-hidden="true">✅</span><span>結論</span></h2>
+<ul>
+  <li>荷重が大きい架台では、まず C形鋼から比較した方が整理しやすいです。</li>
+  <li>軽い下地や取り合い優先なら、軽量形鋼が有利な場面があります。</li>
+  <li>断面性能だけでなく、板厚、接合方法、施工のしやすさも同時に見てください。</li>
+</ul>
+
+この整理は [JIS G 3192](https://kikakurui.com/g3/G3192-2014-01.html) の形鋼寸法、[AIJ 鋼構造設計規準](https://www.aij.or.jp/paper/detail.html?productId=623) の設計整理、[MISUMI 技術情報](https://jp.misumi-ec.com/tech-info/basic_tech/basic_mech-engineering/mechanics-materials) の実務観点を前提にしています。
+
+<h2><span aria-hidden="true">📊</span><span>比較表</span></h2>
+
+| 項目 | C形鋼 | 軽量形鋼 |
+|---|---|---|
+| 主な用途 | 架台、補強、一般部材 | 下地、軽量支持 |
+| 板厚 | 比較的厚い | 比較的薄い |
+| 断面性能 | 高め | 小さめ |
+| 施工性 | 重量あり | 扱いやすい |
+
+<h2><span aria-hidden="true">🧮</span><span>計算例</span></h2>
+
+<p>小規模な天井下地や間仕切り下地なら、まず軽量形鋼を優先候補にします。一方で、機器架台や外装下地のように局部荷重や取付け金物が増えるなら、C形鋼の方が扱いやすいことが多いです。最初に見るべき差は「強度」より「用途の重さ」と「接合余裕」です。</p>
+
+<h2><span aria-hidden="true">🔗</span><span>次に確認するページ</span></h2>
+
+<a href="/tools/section-properties" className="tool-item article-tool-item">
+  <CardDiagram variant="tool" diagramKey="section-properties" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">断面性能計算</span>
+    <span className="tool-item-desc">チャンネル寸法の断面性能を比較。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+<a href="/articles/h-beam-vs-channel-selection" className="tool-item article-tool-item">
+  <CardDiagram variant="article" diagramKey="h-beam-vs-channel-selection" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">H形鋼とチャンネルの選び方</span>
+    <span className="tool-item-desc">形鋼比較の考え方を広げたいときに。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+<a href="/articles/h-beam-size-reading" className="tool-item article-tool-item">
+  <CardDiagram variant="article" diagramKey="h-beam-size-reading" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">H形鋼サイズの見方</span>
+    <span className="tool-item-desc">形鋼寸法の読み方自体を確認したいときに。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+<h2><span aria-hidden="true">❓</span><span>FAQ</span></h2>
+
+<h3><span aria-hidden="true">💬</span><span>Q1. C形鋼と軽量形鋼は同じですか？</span></h3>
+<p>A. 形は近くても、用途、板厚帯、設計の前提が異なることが多いです。</p>
+
+<h3><span aria-hidden="true">💬</span><span>Q2. 架台にはどちらが向きますか？</span></h3>
+<p>A. 荷重が大きい架台では C形鋼側から入り、軽い下地なら軽量形鋼も有力です。</p>
+
+<h3><span aria-hidden="true">💬</span><span>Q3. 下地用途で一番見るべきことは？</span></h3>
+<p>A. 強度だけでなく、ビス止め、納まり、取付ピッチまで含めて見ることです。</p>

@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import BoltLengthCalculator from './BoltLengthCalculator';
 import Breadcrumbs from '@/app/components/Breadcrumbs';
 import RelatedArticles from '@/app/components/RelatedArticles';
+import ToolHero from '@/app/components/ToolHero';
 import AdSlot from '@/app/components/ads/AdSlot';
 import { getAllArticles } from '@/lib/content/articles';
 import { getToolById } from '@/lib/data/tools';
@@ -11,7 +12,7 @@ import { buildMetadata } from '@/lib/seo';
 export const metadata: Metadata = buildMetadata({
   title: 'ボルト長さ計算',
   description:
-    'ボルト呼び径・ナット・座金の組み合わせから必要なボルト長さ（先端3山確保）と推奨購入長さを計算します。M6〜M24対応。',
+    'ナット・座金の組み合わせから、必要なボルト長さと推奨購入長さを計算できるツールです。M6〜M24に対応し、締結条件の一次確認や寸法確認、PDF出力に使えます。',
   path: '/tools/bolt-length',
 });
 
@@ -31,7 +32,7 @@ export default async function BoltLengthPage() {
     operatingSystem: 'Web',
     applicationCategory: 'EngineeringApplication',
     description:
-      'ナット・座金の組み合わせから先端3山確保に必要なボルト長さと推奨購入長さを計算します。',
+      'ナット・座金の組み合わせから、必要なボルト長さと推奨購入長さを計算できる無料ツール。M6〜M24に対応し、一次確認や寸法確認に使えます。',
     offers: {
       '@type': 'Offer',
       price: '0',
@@ -82,11 +83,17 @@ export default async function BoltLengthPage() {
         ]}
       />
 
-      <h1 className="page-title">ボルト長さ計算</h1>
-      <p className="page-description">
-        ナット・座金の組み合わせから、先端3山確保に必要なボルト長さと推奨購入長さを計算します（M6〜M24）。
-      </p>
-      <p className="tool-flow">入力条件 → 計算結果 → 途中式・PDF出力 の順で確認できます。概略図で各寸法位置も確認できます。</p>
+      <ToolHero
+        title="ボルト長さ計算"
+        description="ナット・座金の組み合わせから、必要なボルト長さと推奨購入長さを計算できるツールです。M6〜M24に対応し、締結条件の一次確認や寸法確認、PDF出力に使えます。"
+        labels={[
+          { label: '対応範囲', value: 'M6〜M24' },
+          { label: '用途', value: '一次確認' },
+          { label: '種別', value: '締結 / ボルト / 長さ算定' },
+        ]}
+        diagramKey="bolt-length"
+        note="入力条件 → 計算結果 → 途中式・PDF出力の順で確認できます。"
+      />
       <BoltLengthCalculator />
       <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', marginTop: '2rem', lineHeight: 1.7 }}>
         ※ 本ツールの結果は参考値です。最終確認は規格・メーカー・専門家にお問い合わせください。

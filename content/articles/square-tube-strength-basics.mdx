@@ -1,0 +1,118 @@
+---
+title: "角パイプの強度計算で最初に見ること: たわみと断面性能の基礎"
+description: "角パイプの強度計算を始めるときに、支持条件、I、Z、許容たわみをどの順で見ると判断しやすいかを整理します。"
+publishedAt: "2026-03-07"
+updatedAt: "2026-03-07"
+category: "梁・断面"
+tags:
+  - "角パイプ"
+  - "角形鋼管"
+  - "強度計算"
+  - "たわみ"
+toolRefs:
+  - "section-properties"
+  - "beam"
+diagramKey: "square-tube-strength-basics"
+heroDiagram: true
+faq:
+  - q: "角パイプはまず I と Z のどちらを見ますか？"
+    a: "使用性が先に問題になりやすいので、一次判断では I を先に見て、その後 Z を重ねると整理しやすいです。"
+  - q: "肉厚を増やせばすぐ解決しますか？"
+    a: "有利にはなりますが、せい寸法の変更の方が効く場面も多いので、断面全体で見てください。"
+  - q: "丸パイプより角パイプが有利ですか？"
+    a: "曲げ方向が決まっていて接合しやすさを重視するなら角パイプが扱いやすい場面が多いです。"
+sources:
+  - title: "日本建築学会 鋼構造設計規準（AIJ）"
+    url: "https://www.aij.or.jp/paper/detail.html?productId=623"
+    site: "日本建築学会"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: 学協会。鋼部材の一次設計整理に使用。"
+  - title: "Engineering ToolBox: Beam Deflection and Stress Formula"
+    url: "https://www.engineeringtoolbox.com/beam-stress-deflection-d_1312.html"
+    site: "Engineering ToolBox"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: 工学技術資料。梁たわみと曲げ応力の基本式確認に使用。"
+  - title: "MISUMI 技術情報"
+    url: "https://jp.misumi-ec.com/tech-info/basic_tech/basic_mech-engineering/mechanics-materials"
+    site: "MISUMI"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: メーカー技術資料。断面性能と材料力学の実務整理に使用。"
+---
+
+<h2><span aria-hidden="true">💡</span><span>この記事でわかること</span></h2>
+<ul>
+  <li>角パイプ強度計算で最初に見る順番</li>
+  <li>I、Z、許容たわみの役割分担</li>
+  <li>寸法変更の効き方をどう見るか</li>
+</ul>
+
+<h2><span aria-hidden="true">✅</span><span>結論</span></h2>
+<ul>
+  <li>角パイプは、まず支持条件を固定し、I でたわみ、Z で強度を見ると整理しやすいです。</li>
+  <li>同じ肉厚変更でも、せい方向を大きくした方が効く場面は多いです。</li>
+  <li>一次判断では、断面性能だけでなく接合のしやすさも同時に見てください。</li>
+</ul>
+
+この考え方は [AIJ 鋼構造設計規準](https://www.aij.or.jp/paper/detail.html?productId=623) の一次設計整理、[Engineering ToolBox](https://www.engineeringtoolbox.com/beam-stress-deflection-d_1312.html) の梁式、[MISUMI 技術情報](https://jp.misumi-ec.com/tech-info/basic_tech/basic_mech-engineering/mechanics-materials) の材料力学整理を前提にしています。
+
+<h2><span aria-hidden="true">🧭</span><span>一次判断の流れ</span></h2>
+<div className="article-step-list">
+  <p>1. 単純梁か片持ち梁かを固定する</p>
+  <p>2. 許容たわみを置いて I を確認する</p>
+  <p>3. 曲げモーメントから Z を確認する</p>
+  <p>4. 寸法変更はせい方向と肉厚を比較する</p>
+  <p>5. 接合部と取り合いまで見て候補を絞る</p>
+</div>
+
+<h2><span aria-hidden="true">📊</span><span>比較表</span></h2>
+
+| 最初に見る項目 | 何が分かるか | 実務上の意味 |
+|---|---|---|
+| I | たわみやすさ | 見た目や使用感の当たり付け |
+| Z | 曲げ強度 | 断面が持つかの一次判定 |
+| 重量 | 自重と搬入性 | 長尺材や架台で効く |
+| 外形寸法 | 取り合い | 接合、見付、納まり確認 |
+
+<h2><span aria-hidden="true">🧮</span><span>計算例</span></h2>
+
+<p>例えば、3 m スパンの角パイプ架台に等分布荷重が入る場合は、まず許容たわみを L/300 で仮置きし、必要な I を逆算します。その後、候補断面の Z が許容応力側も満たすかを確認します。角パイプの強度計算は、I と Z を分けて見るのが最短です。</p>
+
+<h2><span aria-hidden="true">🔗</span><span>次に確認するページ</span></h2>
+
+<a href="/tools/section-properties" className="tool-item article-tool-item">
+  <CardDiagram variant="tool" diagramKey="section-properties" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">断面性能計算</span>
+    <span className="tool-item-desc">角パイプ寸法から I・Z・重量を確認。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+<a href="/articles/moment-of-inertia-basics" className="tool-item article-tool-item">
+  <CardDiagram variant="article" diagramKey="moment-of-inertia-basics" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">断面二次モーメントIの使い方</span>
+    <span className="tool-item-desc">たわみ側を先に見る理由を整理。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+<a href="/articles/round-vs-square-tube-selection" className="tool-item article-tool-item">
+  <CardDiagram variant="article" diagramKey="round-vs-square-tube-selection" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">丸パイプと角パイプの選び方</span>
+    <span className="tool-item-desc">断面形状で迷うときの比較記事。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+<h2><span aria-hidden="true">❓</span><span>FAQ</span></h2>
+
+<h3><span aria-hidden="true">💬</span><span>Q1. 角パイプはまず I と Z のどちらを見ますか？</span></h3>
+<p>A. 使用性が先に問題になりやすいので、一次判断では I を先に見て、その後 Z を重ねると整理しやすいです。</p>
+
+<h3><span aria-hidden="true">💬</span><span>Q2. 肉厚を増やせばすぐ解決しますか？</span></h3>
+<p>A. 有利にはなりますが、せい寸法の変更の方が効く場面も多いので、断面全体で見てください。</p>
+
+<h3><span aria-hidden="true">💬</span><span>Q3. 丸パイプより角パイプが有利ですか？</span></h3>
+<p>A. 曲げ方向が決まっていて接合しやすさを重視するなら角パイプが扱いやすい場面が多いです。</p>

@@ -1,0 +1,114 @@
+---
+title: "アンカーボルトの縁端距離とピッチの考え方"
+description: "アンカーボルト配置で迷いやすい縁端距離とピッチを、コンクリート端部、施工余裕、あと施工アンカーの観点から一次判断向けに整理します。"
+publishedAt: "2026-03-07"
+updatedAt: "2026-03-07"
+category: "ねじ・締結"
+tags:
+  - "アンカーボルト"
+  - "縁端距離"
+  - "ピッチ"
+  - "あと施工アンカー"
+toolRefs:
+  - "anchor"
+diagramKey: "anchor-edge-distance-basics"
+heroDiagram: true
+faq:
+  - q: "縁端距離は小さいほど何がまずいですか？"
+    a: "コンクリートのコーン破壊や端部欠けのリスクが上がり、アンカー耐力を十分に使えなくなります。"
+  - q: "ピッチを詰めれば本数でカバーできますか？"
+    a: "アンカー同士の影響が重なりやすくなるため、単純に本数を増やせば解決するとは限りません。"
+  - q: "一次判断では何を優先しますか？"
+    a: "必要耐力より先に、配置図上で縁端距離と工具作業スペースが成立するかを見るのが実務的です。"
+sources:
+  - title: "Hilti HUS3-A ねじ固定式アンカー"
+    url: "https://www.hilti.co.jp/c/CLS_FASTENER_7135/CLS_MECHANICAL_ANCHORS_7135/r6253"
+    site: "Hilti"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: メーカー技術資料。最小縁端距離・ピッチの扱い確認に使用。"
+  - title: "Hilti HUS4-C ねじ固定式アンカー"
+    url: "https://www.hilti.co.jp/c/CLS_FASTENER_7135/CLS_MECHANICAL_ANCHORS_7135/r12910873"
+    site: "Hilti"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: メーカー技術資料。配置条件と施工性確認に使用。"
+  - title: "Hilti 耐震設計ガイドライン"
+    url: "https://www.hilti.co.jp/content/hilti/A1/JP/ja/business/design-center/anchor-systems/design-guidelines/seismic-design.html"
+    site: "Hilti"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: メーカー技術資料。母材端部条件の考え方確認に使用。"
+---
+
+<h2><span aria-hidden="true">💡</span><span>この記事でわかること</span></h2>
+<ul>
+  <li>縁端距離とピッチが何に効くか</li>
+  <li>配置が危ないパターンをどう避けるか</li>
+  <li>一次判断で最初に何を見ればよいか</li>
+</ul>
+
+<h2><span aria-hidden="true">✅</span><span>結論</span></h2>
+<ul>
+  <li>縁端距離とピッチは、アンカー耐力より先に配置成立性を見るための条件です。</li>
+  <li>端部が近い、またはピッチが詰まりすぎると、アンカー本数を増やしても素直に有利になりません。</li>
+  <li>一次判断では、必要耐力の前に「端から十分離れているか」「工具が入るか」を確認してください。</li>
+</ul>
+
+この整理は、縁端距離とピッチ条件を製品ごとに示す [HUS3-A](https://www.hilti.co.jp/c/CLS_FASTENER_7135/CLS_MECHANICAL_ANCHORS_7135/r6253)、[HUS4-C](https://www.hilti.co.jp/c/CLS_FASTENER_7135/CLS_MECHANICAL_ANCHORS_7135/r12910873)、および端部条件の考え方を補助する [耐震設計ガイドライン](https://www.hilti.co.jp/content/hilti/A1/JP/ja/business/design-center/anchor-systems/design-guidelines/seismic-design.html) を前提にしています。
+
+<h2><span aria-hidden="true">📊</span><span>比較表</span></h2>
+
+| 配置条件 | 起きやすい問題 | 一次判断 |
+|---|---|---|
+| 縁端距離が小さい | 端部欠け、コーン破壊 | 径や本数より先に配置を見直す |
+| ピッチが小さい | アンカー相互干渉 | 本数追加だけで解決しない |
+| 工具スペース不足 | 施工不良、締付不足 | 実施工寸法を優先確認 |
+| 母材厚み不足 | 埋込み長さが取れない | 工法変更も視野に入れる |
+
+<h2><span aria-hidden="true">🧭</span><span>一次判断の流れ</span></h2>
+<div className="article-step-list">
+  <p>1. アンカー芯からコンクリート端までの距離を確認する</p>
+  <p>2. アンカー芯同士のピッチを確認する</p>
+  <p>3. 座金径と工具外形を重ねて施工スペースを見る</p>
+  <p>4. 埋込み長さが母材厚みに収まるか確認する</p>
+  <p>5. 条件が厳しいときは工法や本数を再検討する</p>
+</div>
+
+<h2><span aria-hidden="true">🧮</span><span>計算例</span></h2>
+
+<p>例えば、端から 60 mm の位置に M12 アンカーを 2 本並べたい場合、母材厚さと製品資料の最小縁端距離を先に確認します。必要距離を満たさないなら、径を落とす、アンカー種別を変える、ベースプレート寸法を見直す順で検討するのが実務的です。</p>
+
+<h2><span aria-hidden="true">⚠️</span><span>よくある見落とし</span></h2>
+
+- ピッチだけ見て、縁端距離を見ていない
+- 設計図上は入るが、施工工具が入らない
+- 埋込み長さを増やして、母材厚み不足を見落とす
+
+<h2><span aria-hidden="true">🔗</span><span>次に確認するページ</span></h2>
+
+<a href="/articles/anchor-bolt-selection-basics" className="tool-item article-tool-item">
+  <CardDiagram variant="article" diagramKey="anchor-bolt-selection-basics" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">アンカーボルトの選び方</span>
+    <span className="tool-item-desc">配置のあとに径・本数・埋込みをどう決めるかを整理。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+<a href="/articles/chemical-vs-mechanical-anchor" className="tool-item article-tool-item">
+  <CardDiagram variant="article" diagramKey="chemical-vs-mechanical-anchor" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">ケミカルアンカーと金属アンカーの違い</span>
+    <span className="tool-item-desc">配置制約が厳しいときの工法比較に。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+<h2><span aria-hidden="true">❓</span><span>FAQ</span></h2>
+
+<h3><span aria-hidden="true">💬</span><span>Q1. 縁端距離は小さいほど何がまずいですか？</span></h3>
+<p>A. コンクリートのコーン破壊や端部欠けのリスクが上がり、アンカー耐力を十分に使えなくなります。</p>
+
+<h3><span aria-hidden="true">💬</span><span>Q2. ピッチを詰めれば本数でカバーできますか？</span></h3>
+<p>A. アンカー同士の影響が重なりやすくなるため、単純に本数を増やせば解決するとは限りません。</p>
+
+<h3><span aria-hidden="true">💬</span><span>Q3. 一次判断では何を優先しますか？</span></h3>
+<p>A. 必要耐力より先に、配置図上で縁端距離と工具作業スペースが成立するかを見るのが実務的です。</p>

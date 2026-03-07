@@ -1,0 +1,106 @@
+---
+title: "ヤング率とは: たわみ計算で何に効くかを実務向けに整理"
+description: "ヤング率 E がたわみ計算にどう効くか、鋼・ステンレス・アルミで何が変わるかを、断面二次モーメントとの関係から整理します。"
+publishedAt: "2026-03-07"
+updatedAt: "2026-03-07"
+category: "梁・断面"
+tags:
+  - "ヤング率"
+  - "たわみ"
+  - "E"
+toolRefs:
+  - "beam"
+diagramKey: "youngs-modulus-basics"
+heroDiagram: true
+faq:
+  - q: "ヤング率が大きいと何が変わりますか？"
+    a: "同じ荷重・同じ断面なら、ヤング率が大きいほどたわみにくくなります。"
+  - q: "鋼種が違っても E はほぼ同じですか？"
+    a: "炭素鋼と低合金鋼は近いですが、ステンレスやアルミは差が大きくなります。"
+  - q: "強度とは別ですか？"
+    a: "別です。E は剛性、降伏点や許容応力は強度側の値です。"
+sources:
+  - title: "JIS G 3101 一般構造用圧延鋼材"
+    url: "https://kikakurui.com/g3/G3101-2020-01.html"
+    site: "規格一覧"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: 公的。鋼材の基準確認に使用。"
+  - title: "日本建築学会 鋼構造設計規準（AIJ）"
+    url: "https://www.aij.or.jp/paper/detail.html?productId=623"
+    site: "日本建築学会"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: 学協会。E と使用性評価の整理に使用。"
+  - title: "MISUMI 技術情報"
+    url: "https://jp.misumi-ec.com/tech-info/basic_tech/basic_mech-engineering/mechanics-materials"
+    site: "MISUMI"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: メーカー技術資料。材料力学基礎の実務整理に使用。"
+---
+
+<h2><span aria-hidden="true">💡</span><span>この記事でわかること</span></h2>
+<ul>
+  <li>ヤング率 E の意味</li>
+  <li>たわみ計算でどこに効くか</li>
+  <li>強度との違い</li>
+</ul>
+
+<h2><span aria-hidden="true">✅</span><span>結論</span></h2>
+<ul>
+  <li>ヤング率 E は、材料の「たわみにくさ」を表す剛性側の値です。</li>
+  <li>たわみ計算では <code>E × I</code> の形で効き、同じ I なら E が大きいほどたわみにくくなります。</li>
+  <li>強度の判定値ではないので、降伏点や許容応力とは分けて考えてください。</li>
+</ul>
+
+この整理は [AIJ 鋼構造設計規準](https://www.aij.or.jp/paper/detail.html?productId=623) の使用性整理、[MISUMI 技術情報](https://jp.misumi-ec.com/tech-info/basic_tech/basic_mech-engineering/mechanics-materials) の材料力学解説、[JIS G 3101](https://kikakurui.com/g3/G3101-2020-01.html) の鋼材基準を前提にしています。
+
+<h2><span aria-hidden="true">📊</span><span>比較表</span></h2>
+
+| 値 | 何に使うか | 代表例 |
+|---|---|---|
+| E | たわみ、剛性 | 鋼 205 GPa 前後 |
+| 降伏点 | 強度 | SS400 で 245 MPa など |
+| 許容応力 | 設計判定 | 荷重条件や規準で変わる |
+
+<h2><span aria-hidden="true">🧮</span><span>計算例</span></h2>
+
+<p>同じ荷重、同じスパン、同じ断面でも、E が小さい材料ほどたわみは大きくなります。鋼材の梁で計算した結果を、そのままアルミ材や樹脂材へ流用できないのはこのためです。実務では、たわみが気になる時点で最初に E の入力値を疑うと整理しやすくなります。</p>
+
+<h2><span aria-hidden="true">🔗</span><span>次に確認するページ</span></h2>
+
+<a href="/articles/steel-material-properties" className="tool-item article-tool-item">
+  <CardDiagram variant="article" diagramKey="steel-material-properties" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">鋼材の機械的性質まとめ</span>
+    <span className="tool-item-desc">E、降伏点、許容応力をまとめて確認。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+<a href="/articles/moment-of-inertia-basics" className="tool-item article-tool-item">
+  <CardDiagram variant="article" diagramKey="moment-of-inertia-basics" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">断面二次モーメントIの使い方</span>
+    <span className="tool-item-desc">E とセットで見る I の役割整理。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+<a href="/articles/deflection-limit-l-over-n" className="tool-item article-tool-item">
+  <CardDiagram variant="article" diagramKey="deflection-limit-l-over-n" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">許容たわみ L/200・L/300・L/400 の選び方</span>
+    <span className="tool-item-desc">E と I の確認先となる許容側の基準整理。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+<h2><span aria-hidden="true">❓</span><span>FAQ</span></h2>
+
+<h3><span aria-hidden="true">💬</span><span>Q1. ヤング率が大きいと何が変わりますか？</span></h3>
+<p>A. 同じ荷重・同じ断面なら、ヤング率が大きいほどたわみにくくなります。</p>
+
+<h3><span aria-hidden="true">💬</span><span>Q2. 鋼種が違っても E はほぼ同じですか？</span></h3>
+<p>A. 炭素鋼と低合金鋼は近いですが、ステンレスやアルミは差が大きくなります。</p>
+
+<h3><span aria-hidden="true">💬</span><span>Q3. 強度とは別ですか？</span></h3>
+<p>A. 別です。E は剛性、降伏点や許容応力は強度側の値です。</p>

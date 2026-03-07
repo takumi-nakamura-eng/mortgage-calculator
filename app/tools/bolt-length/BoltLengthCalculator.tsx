@@ -6,7 +6,6 @@ import { printEngReport } from '@/lib/printReport';
 import { trackToolCalculate } from '@/lib/analytics/events';
 import { calcBoltLength } from '@/lib/bolts/length';
 import { BOLT_CALC_SPECS, type Diameter } from '@/lib/bolts/specs';
-import BoltLengthDimensionDiagram from './BoltLengthDimensionDiagram';
 
 function parseIntegerInRange(
   value: string,
@@ -120,10 +119,6 @@ export default function BoltLengthCalculator() {
 
   return (
     <>
-      <div className="beam-diagram-wrapper">
-        <BoltLengthDimensionDiagram />
-      </div>
-
       <form className="loan-form" onSubmit={handleSubmit} noValidate>
         <div className="form-group">
           <label htmlFor="diam">呼び径</label>

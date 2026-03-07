@@ -1,0 +1,123 @@
+---
+title: "ボルトせん断強度の考え方: 何kNまで持つかの一次判断"
+description: "ボルトせん断強度を考えるときに、強度区分、呼び径、せん断面数、荷重条件をどう見ればよいかを一次判断向けに整理します。"
+publishedAt: "2026-03-07"
+updatedAt: "2026-03-07"
+category: "ねじ・締結"
+tags:
+  - "ボルト"
+  - "せん断強度"
+  - "強度区分"
+toolRefs:
+  - "bolt-strength"
+diagramKey: "bolt-shear-strength-basics"
+heroDiagram: true
+faq:
+  - q: "ボルト径を上げるとせん断強度はどのくらい増えますか？"
+    a: "有効断面積に応じて増えます。強度区分が同じなら、径の影響が大きいです。"
+  - q: "せん断面が2面なら単純に2倍ですか？"
+    a: "一次判断では2面せん断として見ますが、実際は接合形状や偏心も確認が必要です。"
+  - q: "引張とせん断が同時にあるときは？"
+    a: "単独せん断だけでなく相互作用を見た方が安全です。"
+sources:
+  - title: "JIS B 1051 炭素鋼及び合金鋼製締結用部品の機械的性質"
+    url: "https://kikakurui.com/b1/B1051-2014-01.html"
+    site: "規格一覧"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: 公的。強度区分と機械的性質の確認に使用。"
+  - title: "JIS B 1083 ねじの締付け通則"
+    url: "https://kikakurui.com/b1/B1083-2008-01.html"
+    site: "規格一覧"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: 公的。締結体の設計上の考え方整理に使用。"
+  - title: "MISUMI 技術情報"
+    url: "https://jp.misumi-ec.com/tech-info/categories/technical_data/td01/c1678.html"
+    site: "MISUMI"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: メーカー技術資料。ボルト選定の実務整理に使用。"
+---
+
+<h2><span aria-hidden="true">💡</span><span>この記事でわかること</span></h2>
+<ul>
+  <li>ボルトせん断強度を何で決めるか</li>
+  <li>径、強度区分、せん断面数の見方</li>
+  <li>一次判断で何kNまで持つかの見積もり方</li>
+</ul>
+
+<h2><span aria-hidden="true">✅</span><span>結論</span></h2>
+<ul>
+  <li>せん断強度は、強度区分より先に「有効断面積」と「せん断面数」が大きく効きます。</li>
+  <li>同じ径なら強度区分を上げる、同じ区分なら径を上げる、2面せん断なら余力が増える、と整理すると判断しやすいです。</li>
+  <li>引張とせん断が同時にかかる接合では、せん断単独で終えず相互作用を確認してください。</li>
+</ul>
+
+この整理は [JIS B 1051](https://kikakurui.com/b1/B1051-2014-01.html) の強度区分、[JIS B 1083](https://kikakurui.com/b1/B1083-2008-01.html) の締結体整理、[MISUMI 技術情報](https://jp.misumi-ec.com/tech-info/categories/technical_data/td01/c1678.html) の実務選定観点を前提にしています。
+
+<h2><span aria-hidden="true">📊</span><span>比較表</span></h2>
+
+| 見る項目 | 何が変わるか | 一次判断 |
+|---|---|---|
+| 呼び径 | 有効断面積 | 径アップは効果が大きい |
+| 強度区分 | 材料強度 | 4.8 → 8.8 → 10.9 の順で有利 |
+| せん断面数 | 抵抗面数 | 2面せん断は有利 |
+| 荷重状態 | 相互作用 | 引張併用なら別確認が必要 |
+
+<h2><span aria-hidden="true">🧮</span><span>計算例</span></h2>
+
+<a href="/tools/bolt-strength" className="tool-item article-tool-item">
+  <CardDiagram variant="tool" diagramKey="bolt-strength" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">ボルト引張・せん断耐力計算</span>
+    <span className="tool-item-desc">径と強度区分の差を数値で比較。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+例:
+
+- M12
+- 強度区分 8.8
+- 単せん断
+
+このときは、同条件で M10 より M12 の方が有効断面積分だけ有利です。  
+一次判断では「径を上げるか」「区分を上げるか」の順に比較すると整理しやすくなります。
+
+<h2><span aria-hidden="true">🔗</span><span>次に確認するページ</span></h2>
+
+<a href="/tools/bolt-strength" className="tool-item article-tool-item">
+  <CardDiagram variant="tool" diagramKey="bolt-strength" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">ボルト引張・せん断耐力計算</span>
+    <span className="tool-item-desc">せん断面数を含めた比較をその場で確認。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+<a href="/articles/bolt-strength-class-selection" className="tool-item article-tool-item">
+  <CardDiagram variant="article" diagramKey="bolt-strength-class-selection" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">ボルト強度区分の選び方</span>
+    <span className="tool-item-desc">4.6、8.8、10.9 をどう使い分けるかを整理。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+<a href="/articles/allowable-shear-stress-basics" className="tool-item article-tool-item">
+  <CardDiagram variant="article" diagramKey="allowable-shear-stress-basics" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">許容せん断応力の考え方</span>
+    <span className="tool-item-desc">部材側のせん断判定も合わせて確認。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+<h2><span aria-hidden="true">❓</span><span>FAQ</span></h2>
+
+<h3><span aria-hidden="true">💬</span><span>Q1. ボルト径を上げるとせん断強度はどのくらい増えますか？</span></h3>
+<p>A. 有効断面積に応じて増えます。強度区分が同じなら、径の影響が大きいです。</p>
+
+<h3><span aria-hidden="true">💬</span><span>Q2. せん断面が2面なら単純に2倍ですか？</span></h3>
+<p>A. 一次判断では2面せん断として見ますが、実際は接合形状や偏心も確認が必要です。</p>
+
+<h3><span aria-hidden="true">💬</span><span>Q3. 引張とせん断が同時にあるときは？</span></h3>
+<p>A. 単独せん断だけでなく相互作用を見た方が安全です。</p>

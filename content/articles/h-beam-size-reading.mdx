@@ -1,0 +1,107 @@
+---
+title: "H形鋼サイズの見方: H-200×100×5.5×8 は何を意味するか"
+description: "H形鋼のサイズ表記を読むときに、せい、幅、ウェブ厚、フランジ厚をどう見分けるかを、重量と断面性能のつながりまで整理します。"
+publishedAt: "2026-03-07"
+updatedAt: "2026-03-07"
+category: "梁・断面"
+tags:
+  - "H形鋼"
+  - "サイズ"
+  - "断面性能"
+toolRefs:
+  - "section-properties"
+diagramKey: "h-beam-size-reading"
+heroDiagram: true
+faq:
+  - q: "H-200×100×5.5×8 の 4つの数字は何ですか？"
+    a: "順に、せい H、フランジ幅 B、ウェブ厚 tw、フランジ厚 tf を表すのが一般的です。"
+  - q: "サイズが大きいほど必ず強いですか？"
+    a: "一般には有利ですが、重量、弱軸、接合条件まで含めて判断する必要があります。"
+  - q: "同じH-200でも断面性能が違うことはありますか？"
+    a: "あります。幅や板厚が違えば I、Z、重量は変わります。"
+sources:
+  - title: "JIS G 3192 熱間圧延形鋼の形状・寸法・質量"
+    url: "https://kikakurui.com/g3/G3192-2014-01.html"
+    site: "規格一覧"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: 公的。H形鋼の寸法記号と質量確認に使用。"
+  - title: "日本建築学会 鋼構造設計規準（AIJ）"
+    url: "https://www.aij.or.jp/paper/detail.html?productId=623"
+    site: "日本建築学会"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: 学協会。断面性能の見方と設計整理に使用。"
+  - title: "MISUMI 技術情報"
+    url: "https://jp.misumi-ec.com/tech-info/basic_tech/basic_mech-engineering/mechanics-materials"
+    site: "MISUMI"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: メーカー技術資料。断面性能と材料力学の実務整理に使用。"
+---
+
+<h2><span aria-hidden="true">💡</span><span>この記事でわかること</span></h2>
+<ul>
+  <li>H形鋼サイズ表記の 4 つの数字の意味</li>
+  <li>寸法と重量・断面性能のつながり</li>
+  <li>最初にどの寸法へ注目すべきか</li>
+</ul>
+
+<h2><span aria-hidden="true">✅</span><span>結論</span></h2>
+<ul>
+  <li>H-200×100×5.5×8 は、せい 200、幅 100、ウェブ厚 5.5、フランジ厚 8 を読むのが基本です。</li>
+  <li>せいが大きいほど強軸の I と Z は伸びやすく、板厚が増えると重量も増えます。</li>
+  <li>サイズを読むだけで終わらず、重量と断面性能まで一緒に確認すると判断が早くなります。</li>
+</ul>
+
+この読み方は [JIS G 3192](https://kikakurui.com/g3/G3192-2014-01.html) の寸法整理を基準にし、断面性能の意味付けは [AIJ 鋼構造設計規準](https://www.aij.or.jp/paper/detail.html?productId=623) と [MISUMI 技術情報](https://jp.misumi-ec.com/tech-info/basic_tech/basic_mech-engineering/mechanics-materials) を前提にしています。
+
+<h2><span aria-hidden="true">📊</span><span>比較表</span></h2>
+
+| 記号 | 意味 | 主に効くもの |
+|---|---|---|
+| H | せい | 強軸の I と Z |
+| B | フランジ幅 | 弱軸側と取り合い |
+| tw | ウェブ厚 | せん断、重量 |
+| tf | フランジ厚 | 曲げ耐力、重量 |
+
+<h2><span aria-hidden="true">🧭</span><span>一次判断の流れ</span></h2>
+<div className="article-step-list">
+  <p>1. まず H と B を見て断面の大きさ感をつかむ</p>
+  <p>2. tw と tf を見て重量感と板厚を確認する</p>
+  <p>3. 強軸側か弱軸側かを意識して I と Z を見る</p>
+  <p>4. 同サイズ帯の近い断面を比較する</p>
+  <p>5. 最終的に重量と入手性も合わせて決める</p>
+</div>
+
+<h2><span aria-hidden="true">🧮</span><span>計算例</span></h2>
+
+<p><code>H-200×100×5.5×8</code> を読むと、呼び高さ 200 mm、幅 100 mm、ウェブ厚 5.5 mm、フランジ厚 8 mm の H 形鋼です。実務では、この寸法記号を見たら次に重量と断面性能を確認し、必要な I と Z を満たすかを断面性能計算で確認します。</p>
+
+<h2><span aria-hidden="true">🔗</span><span>次に確認するページ</span></h2>
+
+<a href="/tools/section-properties" className="tool-item article-tool-item">
+  <CardDiagram variant="tool" diagramKey="section-properties" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">断面性能計算</span>
+    <span className="tool-item-desc">寸法から I・Z・重量をその場で確認。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+<a href="/articles/h-beam-vs-channel-selection" className="tool-item article-tool-item">
+  <CardDiagram variant="article" diagramKey="h-beam-vs-channel-selection" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">H形鋼とチャンネルの選び方</span>
+    <span className="tool-item-desc">形状の違いまで含めた比較記事。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+<h2><span aria-hidden="true">❓</span><span>FAQ</span></h2>
+
+<h3><span aria-hidden="true">💬</span><span>Q1. H-200×100×5.5×8 の 4つの数字は何ですか？</span></h3>
+<p>A. 順に、せい H、フランジ幅 B、ウェブ厚 tw、フランジ厚 tf を表すのが一般的です。</p>
+
+<h3><span aria-hidden="true">💬</span><span>Q2. サイズが大きいほど必ず強いですか？</span></h3>
+<p>A. 一般には有利ですが、重量、弱軸、接合条件まで含めて判断する必要があります。</p>
+
+<h3><span aria-hidden="true">💬</span><span>Q3. 同じH-200でも断面性能が違うことはありますか？</span></h3>
+<p>A. あります。幅や板厚が違えば I、Z、重量は変わります。</p>

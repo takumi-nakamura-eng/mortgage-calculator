@@ -1,0 +1,134 @@
+---
+title: "鋼材重量計算のやり方: kg/m・1本重量・総重量の出し方"
+description: "鋼材重量を計算するときに、kg/m、1本重量、総重量をどう出すかを、断面積・密度・長さの関係から実務向けに整理します。"
+publishedAt: "2026-03-07"
+updatedAt: "2026-03-07"
+category: "材料・重量"
+tags:
+  - "鋼材重量"
+  - "kg/m"
+  - "自重"
+  - "材料拾い"
+toolRefs:
+  - "steel-weight"
+diagramKey: "steel-weight-calculation-basics"
+heroDiagram: true
+faq:
+  - q: "kg/m はどうやって出しますか？"
+    a: "断面積に密度を掛け、1m 当たりへ直した値です。鋼材なら密度 7.85×10^-6 kg/mm³ を使う整理が一般的です。"
+  - q: "1本重量と総重量は何が違いますか？"
+    a: "1本重量は単材1本分、総重量は本数を掛けた積み上げ結果です。見積もりでは両方必要です。"
+  - q: "自重計算にもそのまま使えますか？"
+    a: "はい。梁計算へ入れるときは、重量をさらに N/m や kN/m に換算します。"
+sources:
+  - title: "JIS G 3192 熱間圧延形鋼の形状・寸法・質量"
+    url: "https://kikakurui.com/g3/G3192-2014-01.html"
+    site: "規格一覧"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: 公的。形鋼の質量表確認に使用。"
+  - title: "JIS G 3101 一般構造用圧延鋼材"
+    url: "https://kikakurui.com/g3/G3101-2020-01.html"
+    site: "規格一覧"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: 公的。一般構造用鋼材の材料基準確認に使用。"
+  - title: "Engineering ToolBox: Metal Alloys - Densities"
+    url: "https://www.engineeringtoolbox.com/metal-alloys-densities-d_50.html"
+    site: "Engineering ToolBox"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: 工学技術資料。鋼材密度の整理確認に使用。"
+---
+
+<h2><span aria-hidden="true">💡</span><span>この記事でわかること</span></h2>
+<ul>
+  <li>kg/m、1本重量、総重量の関係</li>
+  <li>断面積と密度から重量を出す基本式</li>
+  <li>材料拾いと自重計算で何が違うか</li>
+</ul>
+
+<h2><span aria-hidden="true">✅</span><span>結論</span></h2>
+<ul>
+  <li>鋼材重量は <code>断面積 × 長さ × 密度</code> で計算できます。</li>
+  <li><code>kg/m</code> を先に出しておくと、1本重量も総重量も展開しやすいです。</li>
+  <li>梁の自重へ入れるときは、重量をさらに <code>N/m</code> または <code>kN/m</code> に換算してください。</li>
+</ul>
+
+この整理は、形鋼の質量表を持つ [JIS G 3192](https://kikakurui.com/g3/G3192-2014-01.html)、鋼材基準の [JIS G 3101](https://kikakurui.com/g3/G3101-2020-01.html)、密度確認用の [Engineering ToolBox](https://www.engineeringtoolbox.com/metal-alloys-densities-d_50.html) を前提にしています。
+
+<h2><span aria-hidden="true">📊</span><span>比較表</span></h2>
+
+| 欲しい値 | 使う式 | 主な用途 |
+|---|---|---|
+| kg/m | 断面積 × 1m × 密度 | 材料比較、自重の入口 |
+| 1本重量 | kg/m × 部材長さ | 購買、本数管理 |
+| 総重量 | 1本重量 × 本数 | 見積もり、搬入計画 |
+| 線荷重 | kg/m × 9.8 / 1000 | 梁自重を kN/m に直す |
+
+<h2><span aria-hidden="true">🧮</span><span>計算例</span></h2>
+
+<a href="/tools/steel-weight" className="tool-item article-tool-item">
+  <CardDiagram variant="tool" diagramKey="steel-weight" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">鋼材重量計算</span>
+    <span className="tool-item-desc">kg/m、1本重量、総重量をその場で確認。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+条件:
+
+- 断面積 `A = 2,000 mm²`
+- 長さ `L = 3,000 mm`
+- 密度 `ρ = 7.85 × 10^-6 kg/mm³`
+- 本数 `n = 8`
+
+計算:
+
+- `kg/m = 2,000 × 1,000 × 7.85 × 10^-6 = 15.7 kg/m`
+- 1本重量 `= 15.7 × 3.0 = 47.1 kg`
+- 総重量 `= 47.1 × 8 = 376.8 kg`
+
+<h2><span aria-hidden="true">⚠️</span><span>よくある見落とし</span></h2>
+
+- 断面積の単位を mm² から cm² へ直さず混ぜる
+- kg/m と 1本重量を取り違える
+- 梁自重に入れるとき、kg/m のままで式に入れる
+
+<h2><span aria-hidden="true">🔗</span><span>次に確認するページ</span></h2>
+
+<a href="/tools/steel-weight" className="tool-item article-tool-item">
+  <CardDiagram variant="tool" diagramKey="steel-weight" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">鋼材重量計算</span>
+    <span className="tool-item-desc">形状別の重量をそのまま明細化。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+<a href="/articles/beam-self-weight-calculation" className="tool-item article-tool-item">
+  <CardDiagram variant="article" diagramKey="beam-self-weight-calculation" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">梁の自重計算のやり方</span>
+    <span className="tool-item-desc">kg/m を kN/m に変換して梁計算へ入れる整理。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+<a href="/articles/steel-material-properties" className="tool-item article-tool-item">
+  <CardDiagram variant="article" diagramKey="steel-material-properties" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">鋼材の機械的性質まとめ</span>
+    <span className="tool-item-desc">重量と合わせて見たい材料入力値の基礎。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+<h2><span aria-hidden="true">❓</span><span>FAQ</span></h2>
+
+<h3><span aria-hidden="true">💬</span><span>Q1. kg/m はどうやって出しますか？</span></h3>
+<p>A. 断面積に密度を掛け、1m 当たりへ直した値です。鋼材なら密度 7.85×10^-6 kg/mm³ を使う整理が一般的です。</p>
+
+<h3><span aria-hidden="true">💬</span><span>Q2. 1本重量と総重量は何が違いますか？</span></h3>
+<p>A. 1本重量は単材1本分、総重量は本数を掛けた積み上げ結果です。見積もりでは両方必要です。</p>
+
+<h3><span aria-hidden="true">💬</span><span>Q3. 自重計算にもそのまま使えますか？</span></h3>
+<p>A. はい。梁計算へ入れるときは、重量をさらに N/m や kN/m に換算します。</p>

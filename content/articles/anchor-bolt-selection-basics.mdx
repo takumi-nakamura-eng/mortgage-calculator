@@ -1,0 +1,124 @@
+---
+title: "アンカーボルトの選び方: 径・本数・埋込み長さの一次判断"
+description: "アンカーボルトを選ぶときに、径・本数・埋込み長さを何から決めるかを、荷重条件・母材・施工条件の順で実務向けに整理します。"
+publishedAt: "2026-03-07"
+updatedAt: "2026-03-07"
+category: "ねじ・締結"
+tags:
+  - "アンカーボルト"
+  - "あと施工アンカー"
+  - "埋込み長さ"
+  - "コンクリート"
+toolRefs:
+  - "anchor"
+  - "bolt-strength"
+diagramKey: "anchor-bolt-selection-basics"
+heroDiagram: true
+faq:
+  - q: "アンカーボルトはまず径と本数のどちらを決めますか？"
+    a: "一次判断では必要荷重と配置可能スペースを先に見て、本数の当たりを付けてから径を絞る方が整理しやすいです。"
+  - q: "埋込み長さは深いほど安全ですか？"
+    a: "一般には有利ですが、縁端距離や母材厚み、施工性が支配するので、深ければよいとは限りません。"
+  - q: "金属アンカーとケミカルアンカーはどちらを基準に考えますか？"
+    a: "施工速度や撤去性を優先するなら金属系、ひび割れコンクリートや高荷重を意識するなら接着系を候補にすると整理しやすいです。"
+sources:
+  - title: "Hilti 金属系アンカー FAQ"
+    url: "https://www.hilti.co.jp/content/hilti/A1/JP/ja/support/info-center/faq/eng_faq_landing/eng-FAQ-mechanicalanchor.html"
+    site: "Hilti"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: メーカー技術資料。金属系アンカーの選定観点整理に使用。"
+  - title: "Hilti 接着系アンカー HIT-RE 500 V3"
+    url: "https://www.hilti.co.jp/c/CLS_FASTENER_7135/CLS_CHEMICAL_ANCHORS_7135/r4929903"
+    site: "Hilti"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: メーカー技術資料。接着系アンカーの埋込みと用途確認に使用。"
+  - title: "Hilti 耐震設計ガイドライン"
+    url: "https://www.hilti.co.jp/content/hilti/A1/JP/ja/business/design-center/anchor-systems/design-guidelines/seismic-design.html"
+    site: "Hilti"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: メーカー技術資料。ひび割れ母材と設計条件の見方確認に使用。"
+---
+
+<h2><span aria-hidden="true">💡</span><span>この記事でわかること</span></h2>
+<ul>
+  <li>アンカーボルトの径・本数・埋込み長さを何から決めるか</li>
+  <li>母材条件と施工条件で何が変わるか</li>
+  <li>金属系と接着系のどちらを候補にするか</li>
+</ul>
+
+<h2><span aria-hidden="true">✅</span><span>結論</span></h2>
+<ul>
+  <li>最初に決めるべきなのは「必要荷重」「母材状態」「施工条件」です。</li>
+  <li>配置余裕が小さいときは、径より先に本数とピッチの成立性を見た方が手戻りが減ります。</li>
+  <li>埋込み長さは深いほど有利ですが、縁端距離・母材厚み・施工可能深さの制約を同時に確認してください。</li>
+</ul>
+
+この整理は、金属系アンカーの基本観点をまとめた [Hilti 金属系アンカー FAQ](https://www.hilti.co.jp/content/hilti/A1/JP/ja/support/info-center/faq/eng_faq_landing/eng-FAQ-mechanicalanchor.html) と、接着系アンカーの代表例である [HIT-RE 500 V3](https://www.hilti.co.jp/c/CLS_FASTENER_7135/CLS_CHEMICAL_ANCHORS_7135/r4929903)、ひび割れ母材や耐震条件の整理に使える [耐震設計ガイドライン](https://www.hilti.co.jp/content/hilti/A1/JP/ja/business/design-center/anchor-systems/design-guidelines/seismic-design.html) を前提にしています。
+
+<h2><span aria-hidden="true">🧭</span><span>一次判断の流れ</span></h2>
+<div className="article-step-list">
+  <p>1. 引張・せん断のどちらが支配するか整理する</p>
+  <p>2. 母材が無筋か、ひび割れか、既設コンクリートかを確認する</p>
+  <p>3. 設置スペースから本数と縁端距離の成立性を見る</p>
+  <p>4. 金属系か接着系かの候補を決める</p>
+  <p>5. 径と埋込み長さを当たり付ける</p>
+</div>
+
+<h2><span aria-hidden="true">📊</span><span>比較表</span></h2>
+
+| 見る項目 | 先に確認すること | 一次判断の置き方 |
+|---|---|---|
+| 荷重条件 | 引張主体か、せん断主体か | 支配荷重に合わせて本数と径を仮置き |
+| 母材 | ひび割れ有無、厚み、端部条件 | 条件が厳しいほど接着系を候補にしやすい |
+| 施工 | 穿孔深さ、清掃、施工姿勢 | 施工条件が厳しいと接着系の管理負荷が増える |
+| 維持管理 | 撤去、交換、即時載荷 | 撤去や即時載荷を優先するなら金属系が有利 |
+
+<h2><span aria-hidden="true">🧮</span><span>計算例</span></h2>
+
+<p>例えば、架台脚1本に引張 12 kN、せん断 6 kN が入る条件なら、まず 2 本配置で 1 本当たり引張 6 kN、せん断 3 kN に割り付けます。そのうえで、母材が普通コンクリートで縁端距離に余裕があるか、埋込み長さを取れるかを確認します。Hilti のアンカー資料でも、径だけでなく埋込みと配置条件を併せて評価する前提です。</p>
+
+<h2><span aria-hidden="true">⚠️</span><span>よくある見落とし</span></h2>
+
+- 径だけで決めて、本数や配置が成立しない
+- 埋込み長さだけ深くして、縁端距離不足を解消したつもりになる
+- 母材のひび割れ条件を確認せずにアンカー種を決める
+
+<h2><span aria-hidden="true">🔗</span><span>次に確認するページ</span></h2>
+
+<a href="/articles/chemical-vs-mechanical-anchor" className="tool-item article-tool-item">
+  <CardDiagram variant="article" diagramKey="chemical-vs-mechanical-anchor" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">ケミカルアンカーと金属アンカーの違い</span>
+    <span className="tool-item-desc">工法選定を先に分けたいときの比較記事。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+<a href="/articles/anchor-edge-distance-basics" className="tool-item article-tool-item">
+  <CardDiagram variant="article" diagramKey="anchor-edge-distance-basics" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">アンカーボルトの縁端距離とピッチ</span>
+    <span className="tool-item-desc">配置が成立するかを先に確認したいときの整理。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+<a href="/articles/bolt-strength-class-selection" className="tool-item article-tool-item">
+  <CardDiagram variant="article" diagramKey="bolt-strength-class-selection" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">ボルト強度区分の選び方</span>
+    <span className="tool-item-desc">アンカー頭部の締結側で迷うときの基礎整理。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+<h2><span aria-hidden="true">❓</span><span>FAQ</span></h2>
+
+<h3><span aria-hidden="true">💬</span><span>Q1. アンカーボルトはまず径と本数のどちらを決めますか？</span></h3>
+<p>A. 一次判断では必要荷重と配置可能スペースを先に見て、本数の当たりを付けてから径を絞る方が整理しやすいです。</p>
+
+<h3><span aria-hidden="true">💬</span><span>Q2. 埋込み長さは深いほど安全ですか？</span></h3>
+<p>A. 一般には有利ですが、縁端距離や母材厚み、施工性が支配するので、深ければよいとは限りません。</p>
+
+<h3><span aria-hidden="true">💬</span><span>Q3. 金属アンカーとケミカルアンカーはどちらを基準に考えますか？</span></h3>
+<p>A. 施工速度や撤去性を優先するなら金属系、ひび割れコンクリートや高荷重を意識するなら接着系を候補にすると整理しやすいです。</p>

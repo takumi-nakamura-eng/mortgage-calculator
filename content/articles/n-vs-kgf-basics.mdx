@@ -1,0 +1,116 @@
+---
+title: "Nとkgfの違い: 荷重計算で混同しやすい単位を整理"
+description: "N と kgf の違い、換算の考え方、荷重計算やボルト・梁計算で混同しやすいポイントを整理します。"
+publishedAt: "2026-03-07"
+updatedAt: "2026-03-07"
+category: "基礎計算"
+tags:
+  - "N"
+  - "kgf"
+  - "単位換算"
+  - "荷重"
+toolRefs:
+  - "unit"
+  - "beam"
+diagramKey: "n-vs-kgf-basics"
+heroDiagram: true
+faq:
+  - q: "1 kgf は何 N ですか？"
+    a: "標準重力加速度を使うと 1 kgf = 9.80665 N です。"
+  - q: "kg と kgf は同じですか？"
+    a: "同じではありません。kg は質量、kgf は力です。"
+  - q: "実務ではどちらを使うべきですか？"
+    a: "設計計算は N 系へ統一する方が安全です。図面や現場慣習に kgf が残る場合は明示的に換算します。"
+sources:
+  - title: "NIST Guide for the Use of the International System of Units (SI)"
+    url: "https://www.nist.gov/publications/guide-use-international-system-units-si"
+    site: "NIST"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: 公的技術資料。SI単位系の基準整理に使用。"
+  - title: "NIST SP 811 Section 5"
+    url: "https://www.nist.gov/pml/pubs/sp811/sec05.cfm"
+    site: "NIST"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: 公的技術資料。SIと非SI単位の扱い確認に使用。"
+  - title: "NIST What is Force?"
+    url: "https://www.nist.gov/pml/quantum-measurement/mass-and-force/proving-ring/what-force"
+    site: "NIST"
+    accessedAt: "2026-03-07"
+    note: "カテゴリ: 公的技術資料。力の定義とニュートンの説明に使用。"
+---
+
+<h2><span aria-hidden="true">💡</span><span>この記事でわかること</span></h2>
+<ul>
+  <li>N と kgf の違い</li>
+  <li>換算の基本式</li>
+  <li>荷重計算でどこを間違えやすいか</li>
+</ul>
+
+<h2><span aria-hidden="true">✅</span><span>結論</span></h2>
+<ul>
+  <li>N は力、kgf も力ですが、kg は質量です。この 3 つを混ぜないことが最優先です。</li>
+  <li>1 kgf = 9.80665 N として換算します。</li>
+  <li>設計計算は N 系へ統一し、kgf は入力時に換算してから使う方が安全です。</li>
+</ul>
+
+この整理は [NIST Guide for the Use of the International System of Units (SI)](https://www.nist.gov/publications/guide-use-international-system-units-si)、[NIST SP 811 Section 5](https://www.nist.gov/pml/pubs/sp811/sec05.cfm)、[NIST What is Force?](https://www.nist.gov/pml/quantum-measurement/mass-and-force/proving-ring/what-force) を前提にしています。
+
+<h2><span aria-hidden="true">📊</span><span>比較表</span></h2>
+
+| 単位 | 何を表すか | 注意点 |
+|---|---|---|
+| kg | 質量 | 力ではない |
+| N | 力 | SI の標準 |
+| kgf | 力 | 現場慣習で残ることがある |
+
+<h2><span aria-hidden="true">🧮</span><span>計算例</span></h2>
+
+- `100 kgf = 980.665 N`
+- `1.5 kN = 1500 N`
+- `1500 N ≒ 153 kgf`
+
+<h2><span aria-hidden="true">⚠️</span><span>よくある見落とし</span></h2>
+
+- 100 kg を 100 kgf と同じ感覚で使う
+- kN と N を混ぜる
+- kgf のまま梁計算やボルト計算へ入れる
+
+<h2><span aria-hidden="true">🔗</span><span>次に確認するページ</span></h2>
+
+<a href="/tools/beams/simple-supported" className="tool-item article-tool-item">
+  <CardDiagram variant="tool" diagramKey="simple-supported" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">単純梁（単純支持）計算</span>
+    <span className="tool-item-desc">荷重単位を N 系へ揃えて梁計算へ入れる。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+<a href="/tools/bolt-strength" className="tool-item article-tool-item">
+  <CardDiagram variant="tool" diagramKey="bolt-strength" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">ボルト引張・せん断耐力計算</span>
+    <span className="tool-item-desc">軸力や外力の単位を誤らずに入力したいときに。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+<a href="/articles/uniform-load-basics" className="tool-item article-tool-item">
+  <CardDiagram variant="article" diagramKey="uniform-load-basics" className="tool-item-diagram" />
+  <span className="tool-item-body">
+    <span className="tool-item-title">等分布荷重とは</span>
+    <span className="tool-item-desc">単位換算の先で kN/m をどう使うかを整理。</span>
+  </span>
+  <span className="tool-item-arrow">›</span>
+</a>
+
+<h2><span aria-hidden="true">❓</span><span>FAQ</span></h2>
+
+<h3><span aria-hidden="true">💬</span><span>Q1. 1 kgf は何 N ですか？</span></h3>
+<p>A. 標準重力加速度を使うと 1 kgf = 9.80665 N です。</p>
+
+<h3><span aria-hidden="true">💬</span><span>Q2. kg と kgf は同じですか？</span></h3>
+<p>A. 同じではありません。kg は質量、kgf は力です。</p>
+
+<h3><span aria-hidden="true">💬</span><span>Q3. 実務ではどちらを使うべきですか？</span></h3>
+<p>A. 設計計算は N 系へ統一する方が安全です。図面や現場慣習に kgf が残る場合は明示的に換算します。</p>

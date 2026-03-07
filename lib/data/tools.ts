@@ -39,6 +39,9 @@ export const TOOLS: ToolItem[] = [
     keywords: ['単純梁', 'たわみ', '曲げ応力', '断面係数', '断面二次モーメント'],
     relatedArticleSlugs: [
       'simple-beam-reaction-basics',
+      'uniform-load-basics',
+      'point-vs-uniform-load',
+      'beam-self-weight-calculation',
       'section-modulus-basics',
       'allowable-stress-basics',
       'deflection-limit-l-over-n',
@@ -57,6 +60,10 @@ export const TOOLS: ToolItem[] = [
     relatedArticleSlugs: [
       'section-modulus-basics',
       'moment-of-inertia-basics',
+      'h-beam-size-reading',
+      'square-tube-strength-basics',
+      'round-vs-square-tube-selection',
+      'c-channel-vs-light-gauge-selection',
       'h-beam-vs-channel-selection',
       'steel-material-properties',
     ],
@@ -73,6 +80,7 @@ export const TOOLS: ToolItem[] = [
     relatedArticleSlugs: [
       'cantilever-beam-basics',
       'moment-of-inertia-basics',
+      'youngs-modulus-basics',
       'allowable-stress-basics',
       'deflection-limit-l-over-n',
     ],
@@ -86,7 +94,12 @@ export const TOOLS: ToolItem[] = [
     available: true,
     category: '材料・重量',
     keywords: ['鋼材', '重量', '自重', '密度', '材料拾い', 'kg'],
-    relatedArticleSlugs: ['steel-material-properties', 'allowable-stress-basics'],
+    relatedArticleSlugs: [
+      'steel-weight-calculation-basics',
+      'beam-self-weight-calculation',
+      'steel-material-properties',
+      'allowable-stress-basics',
+    ],
     diagramKey: 'steel-weight',
   },
   {
@@ -99,6 +112,9 @@ export const TOOLS: ToolItem[] = [
     keywords: ['ボルト', '引張耐力', 'せん断耐力', '強度区分', '相互作用'],
     relatedArticleSlugs: [
       'bolt-strength-class-selection',
+      'bolt-shear-strength-basics',
+      'bolt-tensile-strength-basics',
+      'allowable-shear-stress-basics',
       'allowable-stress-basics',
       'nut-basics',
     ],
@@ -112,7 +128,11 @@ export const TOOLS: ToolItem[] = [
     available: false,
     category: 'ねじ・締結',
     keywords: ['アンカーボルト', '引張強度', 'せん断強度'],
-    relatedArticleSlugs: [],
+    relatedArticleSlugs: [
+      'anchor-bolt-selection-basics',
+      'chemical-vs-mechanical-anchor',
+      'anchor-edge-distance-basics',
+    ],
     diagramKey: 'anchor',
   },
   {
@@ -123,7 +143,7 @@ export const TOOLS: ToolItem[] = [
     available: false,
     category: '基礎計算',
     keywords: ['単位換算', 'mm', 'inch', 'N', 'kgf'],
-    relatedArticleSlugs: [],
+    relatedArticleSlugs: ['n-vs-kgf-basics'],
     diagramKey: 'unit',
   },
 ];
