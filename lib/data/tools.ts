@@ -15,7 +15,7 @@ export const TOOLS: ToolItem[] = [
     id: 'bolt-length',
     title: 'ボルト長さ計算',
     desc: 'ナット・座金の組み合わせから必要なボルト長さと推奨購入長さを計算します。',
-    href: '/tools/bolt',
+    href: '/tools/bolt-length',
     available: true,
     category: 'ねじ・締結',
     keywords: ['ボルト', 'ナット', '座金', 'ピッチ', '3山'],

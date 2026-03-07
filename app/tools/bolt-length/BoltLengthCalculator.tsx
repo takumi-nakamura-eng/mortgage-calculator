@@ -5,7 +5,7 @@ import { addEngHistoryEntry, type EngHistoryEntry, type FormulaStep } from '@/li
 import { printEngReport } from '@/lib/printReport';
 import { trackToolCalculate } from '@/lib/analytics/events';
 import { BOLT_CALC_SPECS, type Diameter } from '@/lib/bolts/specs';
-import BoltDimensionDiagram from './BoltDimensionDiagram';
+import BoltLengthDimensionDiagram from './BoltLengthDimensionDiagram';
 
 function parseIntegerInRange(
   value: string,
@@ -40,7 +40,7 @@ interface Result {
   steps: FormulaStep[];
 }
 
-export default function BoltCalculator() {
+export default function BoltLengthCalculator() {
   const [diam, setDiam] = useState<Diameter>('M12');
   const [n, setN] = useState('1');
   const [pw, setPw] = useState('1');
@@ -159,7 +159,7 @@ export default function BoltCalculator() {
   return (
     <>
       <div className="beam-diagram-wrapper">
-        <BoltDimensionDiagram />
+        <BoltLengthDimensionDiagram />
       </div>
 
       <form className="loan-form" onSubmit={handleSubmit} noValidate>
@@ -318,25 +318,14 @@ export default function BoltCalculator() {
           <div className="formula-steps-section" style={{ marginTop: '1.5rem' }}>
             <h3 className="formula-steps-title">計算式・途中経過</h3>
             {result.steps.map((step) => (
-              <div key={step.label} className="formula-step-item">
-                <span className="formula-step-label">{step.label}</span>
+              <div key={step.label} className="formula-step">
+                <div className="formula-step-label">{step.label}</div>
                 <pre className="formula-step-expr">{step.expr}</pre>
               </div>
             ))}
           </div>
         </div>
       )}
-
-      <div style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '1.5rem', marginTop: '2rem', marginBottom: '1.5rem' }}>
-        <h3 style={{ fontSize: '0.875rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.75rem' }}>計算式</h3>
-        <code style={{ display: 'block', fontFamily: 'monospace', fontSize: '0.875rem', background: 'var(--bg)', padding: '0.625rem 0.875rem', borderRadius: '0.5rem', marginBottom: '0.75rem', color: 'var(--text)' }}>
-          L_required = t + N×Hnut + PW×Hpw + SW×Hsw + 3p
-        </code>
-        <ul style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', paddingLeft: '1.25rem', lineHeight: 1.7 }}>
-          <li>3p = ピッチ p × 3（先端3山分）</li>
-          <li>推奨購入長さ: 100mm以下は5mm刻み、200mm以下は10mm刻み、200mm超は25mm刻み</li>
-        </ul>
-      </div>
     </>
   );
 }

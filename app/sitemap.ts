@@ -7,7 +7,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const fixedPaths = [
     '/',
     '/tools',
-    '/tools/bolt',
+    '/tools/bolt-length',
     '/tools/beams',
     '/tools/beams/simple-supported',
     '/tools/section-properties',

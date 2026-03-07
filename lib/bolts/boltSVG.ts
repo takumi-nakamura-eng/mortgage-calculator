@@ -1,3 +1,10 @@
+interface BoltSvgMarkupOptions {
+  width?: number | string;
+  height?: number | string;
+  maxWidth?: number;
+  includeXmlns?: boolean;
+}
+
 function hdim(x1: number, x2: number, y: number, label: string): string {
   const cx = (x1 + x2) / 2;
   return `<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="#334155" stroke-width="1"/>
@@ -6,7 +13,13 @@ function hdim(x1: number, x2: number, y: number, label: string): string {
   <text x="${cx}" y="${y + 13}" text-anchor="middle" font-size="11" fill="#1f2937" font-weight="700">${label}</text>`;
 }
 
-export function getBoltSVGString(): string {
+export function getBoltSvgMarkup(options: BoltSvgMarkupOptions = {}): string {
+  const {
+    width = 420,
+    height = 176,
+    maxWidth,
+    includeXmlns = true,
+  } = options;
   const shankX1 = 248;
   const plateX1 = 248;
   const plateX2 = 318;
@@ -22,8 +35,10 @@ export function getBoltSVGString(): string {
 
   const tipX1 = 394;
   const tipX2 = 414;
+  const maxWidthStyle = maxWidth !== undefined ? `;max-width:${maxWidth}px` : '';
+  const xmlns = includeXmlns ? ' xmlns="http://www.w3.org/2000/svg"' : '';
 
-  return `<svg viewBox="0 0 620 260" xmlns="http://www.w3.org/2000/svg" width="420" height="176" style="display:block;max-width:100%;background:#f8fafc;border:1px solid #cbd5e1;border-radius:6px;">
+  return `<svg viewBox="0 0 620 260"${xmlns} width="${width}" height="${height}" aria-label="ボルト締結の概略図" style="display:block;max-width:100%${maxWidthStyle};background:#f8fafc;border:1px solid #cbd5e1;border-radius:6px;">
   <line x1="90" y1="132" x2="530" y2="132" stroke="#94a3b8" stroke-dasharray="4 3" stroke-width="1"/>
 
   <polygon points="214,98 248,98 259,112 259,152 248,166 214,166 203,152 203,112" fill="#94a3b8" stroke="#334155" stroke-width="1.4"/>
@@ -71,4 +86,8 @@ export function getBoltSVGString(): string {
   <text x="354" y="198" text-anchor="middle" font-size="12" fill="#1f2937" font-weight="700">Hsw</text>
   <line x1="350" y1="201" x2="336" y2="209" stroke="#334155" stroke-width="1"/>
   </svg>`;
+}
+
+export function getBoltSVGString(): string {
+  return getBoltSvgMarkup();
 }
