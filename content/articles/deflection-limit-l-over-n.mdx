@@ -14,6 +14,7 @@ toolRefs:
   - "beam"
   - "cantilever"
 diagramKey: "deflection-limit-l-over-n"
+heroDiagram: true
 faq:
   - q: "仕様がないなら L/300 で固定してよいですか？"
     a: "初期検討の起点としては有効ですが、外観・据付精度・勾配・芯ずれの要求があれば L/400 側へ見直します。"
@@ -44,29 +45,30 @@ sources:
     note: "カテゴリ: メーカー技術資料。材料力学、縦弾性係数、断面二次モーメント、曲げ剛性 E×I の基礎整理の確認に使用。"
 ---
 
-## この記事でわかること
-
-- L/200・L/300・L/400 をどんな場面で使い分けるか
-- スパンから許容たわみを mm に直して確認する方法
-- 判定前に見落としやすいポイント
-
-## 結論
-
-- まず契約図書・発注仕様・社内標準の指定値を優先します。
-- 指定がない初期検討なら、起点は **L/300** が最も扱いやすいです。
-- 外観、据付精度、勾配、芯ずれに効く部材は **L/400** 側で見ます。
-- たわみが機能にほぼ影響しない支持材なら **L/200** も候補になります。
-- ただし、`L/n` は許容値の置き方であり、計算式そのものではありません。支持条件と荷重条件を先に固定してください。
-
-この「まず指定値を優先する」という前提は、法令適合を前提に個別条件を整合させる考え方として [建築基準法施行令](https://elaws.e-gov.go.jp/document?lawid=325CO0000000338) と [日本建築学会 鋼構造設計規準（AIJ）](https://www.aij.or.jp/paper/detail.html?productId=623) を参照しています。
-
-## 図解
-
-<div className="diagram-card diagram-card--compact">
-  <Diagram diagramKey="deflection-limit-l-over-n" width="100%" maxWidth={560} />
+<div className="article-callout article-callout--tip">
+  <h2><span aria-hidden="true">💡</span><span>この記事でわかること</span></h2>
+  <ul>
+    <li>L/200・L/300・L/400 をどんな場面で使い分けるか</li>
+    <li>スパンから許容たわみを mm に直して確認する方法</li>
+    <li>判定前に見落としやすいポイント</li>
+  </ul>
 </div>
 
-## 一次判断の流れ
+<div className="article-callout article-callout--success">
+  <h2><span aria-hidden="true">✅</span><span>結論</span></h2>
+  <ul>
+    <li>まず契約図書・発注仕様・社内標準の指定値を優先します。</li>
+    <li>指定がない初期検討なら、起点は <strong>L/300</strong> が最も扱いやすいです。</li>
+    <li>外観、据付精度、勾配、芯ずれに効く部材は <strong>L/400</strong> 側で見ます。</li>
+    <li>たわみが機能にほぼ影響しない支持材なら <strong>L/200</strong> も候補になります。</li>
+    <li>ただし、<code>L/n</code> は許容値の置き方であり、計算式そのものではありません。支持条件と荷重条件を先に固定してください。</li>
+  </ul>
+</div>
+
+この「まず指定値を優先する」という前提は、法令適合を前提に個別条件を整合させる考え方として [建築基準法施行令](https://elaws.e-gov.go.jp/document?lawid=325CO0000000338) と [日本建築学会 鋼構造設計規準（AIJ）](https://www.aij.or.jp/paper/detail.html?productId=623) を参照しています。
+以下では、初期検討で迷いやすい置き方を順に整理します。
+
+<h2><span aria-hidden="true">🧭</span><span>一次判断の流れ</span></h2>
 
 <div className="article-step-list">
   <p>1. 仕様に許容たわみの指定があるか確認する</p>
@@ -78,7 +80,7 @@ sources:
 
 迷いやすいのは 2 です。たわみが問題になるのは、強度不足より先に「見た目が悪い」「機器レベルがずれる」「勾配が崩れる」「歩行感が悪い」といった使用性の場面です。
 
-## 比較表
+<h2><span aria-hidden="true">📊</span><span>比較表</span></h2>
 
 | 用途の目安 | 初期候補 | この値を置きやすい場面 | 緩めない方がよい場面 |
 |---|---|---|---|
@@ -91,7 +93,7 @@ sources:
 迷ったときは「たわみで誰が困るか」を先に考えると整理しやすくなります。  
 見た目や据付に効くなら厳しめ、機能に効かなければ標準か緩め、という順です。
 
-## スパンを mm に直して見る
+<h2><span aria-hidden="true">📏</span><span>スパンを mm に直して見る</span></h2>
 
 許容たわみは `δ_allow = L / n` です。  
 同じスパンなら、L/400 は L/200 の半分しかたわみを許しません。ここで使っている `L/n` の見方自体は、使用性の許容値を置いてからたわみ計算と照合するという [日本建築学会 鋼構造設計規準（AIJ）](https://www.aij.or.jp/paper/detail.html?productId=623) の整理に沿ったものです。
@@ -106,7 +108,7 @@ sources:
 この早見だけでも、L/300 と L/400 の差が意外に大きいことがわかります。  
 「4 m スパンなら 3.3 mm の差しかない」と見るか、「要求が厳しい用途ではその 3.3 mm が効く」と見るかが判断の分かれ目です。
 
-## 計算例
+<h2><span aria-hidden="true">🧮</span><span>計算例</span></h2>
 
 この条件は [単純梁（単純支持）計算](/tools/beams/simple-supported) でそのまま再現できます。単純梁の中央集中荷重に対して `δ_calc = P L³ / (48 E I)` を使う式は [Engineering ToolBox: Beam Deflection and Stress Formula](https://www.engineeringtoolbox.com/beam-stress-deflection-d_1312.html) と照合しています。
 
@@ -134,14 +136,14 @@ sources:
 
 片持ち梁なら式が変わるため、同じ `L/n` を置いても結果は別になります。この支持条件の違いも [Engineering ToolBox: Beam Deflection and Stress Formula](https://www.engineeringtoolbox.com/beam-stress-deflection-d_1312.html) で分けて整理されているので、片持ち条件は [片持ち梁の基本とたわみ公式・計算の流れ](/articles/cantilever-beam-basics) か、下の片持ち梁ツールで確認してください。
 
-## よくある見落とし
+<h2><span aria-hidden="true">⚠️</span><span>よくある見落とし</span></h2>
 
 - `n` が大きいほど緩いと勘違いする
 - `L/n` を計算式だと思い、支持条件に合ったたわみ式を使わない
 - 単純梁と片持ち梁で同じ式を使ってしまう
 - たわみだけ見て、勾配・据付精度・見た目・振動の要求を未確認のまま終える
 
-## 次に確認するページ
+<h2><span aria-hidden="true">🔗</span><span>次に確認するページ</span></h2>
 
 <a href="/tools/beams/simple-supported" className="tool-item article-tool-item">
   <CardDiagram variant="tool" diagramKey="simple-supported" className="tool-item-diagram" />
@@ -179,13 +181,13 @@ sources:
   <span className="tool-item-arrow">›</span>
 </a>
 
-## FAQ
+<h2><span aria-hidden="true">❓</span><span>FAQ</span></h2>
 
-### Q1. 仕様がないなら L/300 で固定してよいですか？
+<h3><span aria-hidden="true">💬</span><span>Q1. 仕様がないなら L/300 で固定してよいですか？</span></h3>
 A. 初期検討の起点としては有効です。ただし、外観・据付精度・勾配・芯ずれの要求が見えてきたら L/400 側へ見直してください。最終判断は仕様優先です。
 
-### Q2. n が大きいほど安全側ですか？
+<h3><span aria-hidden="true">💬</span><span>Q2. n が大きいほど安全側ですか？</span></h3>
 A. はい。`δ_allow = L / n` なので、n が大きいほど許容たわみは小さくなります。L/400 は L/200 より厳しい条件です。
 
-### Q3. 片持ち梁でも同じ L/200・L/300・L/400 を使えますか？
+<h3><span aria-hidden="true">💬</span><span>Q3. 片持ち梁でも同じ L/200・L/300・L/400 を使えますか？</span></h3>
 A. 許容値の考え方は同じですが、片持ち梁は変形が目立ちやすく、たわみ式も別です。単純梁の結果を流用せず、片持ち条件で再計算してください。
