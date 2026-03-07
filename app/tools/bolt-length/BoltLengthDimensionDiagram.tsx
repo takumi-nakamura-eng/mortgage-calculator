@@ -1,17 +1,7 @@
-import { getBoltLengthSvgMarkup } from '@/lib/bolts/boltLengthSvg';
+import { BoltLengthSvg } from '@/lib/bolts/boltLengthSvg';
 
 export default function BoltLengthDimensionDiagram() {
   return (
-    <div
-      aria-label="ボルト締結の概略図"
-      role="img"
-      dangerouslySetInnerHTML={{
-        __html: getBoltLengthSvgMarkup({
-          width: '100%',
-          maxWidth: 680,
-          includeXmlns: false,
-        }),
-      }}
-    />
+    <BoltLengthSvg width="100%" maxWidth={680} />
   );
 }

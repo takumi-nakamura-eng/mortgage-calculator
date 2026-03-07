@@ -1,16 +1,8 @@
-import { getBoltLengthSvgMarkup } from '@/lib/bolts/boltLengthSvg';
+import { BoltLengthSvg } from '@/lib/bolts/boltLengthSvg';
 
 function BoltLengthCardDiagram() {
   return (
-    <div
-      aria-hidden="true"
-      dangerouslySetInnerHTML={{
-        __html: getBoltLengthSvgMarkup({
-          width: '100%',
-          includeXmlns: false,
-        }),
-      }}
-    />
+    <BoltLengthSvg width="100%" height="100%" framed={false} ariaHidden role="presentation" />
   );
 }
 
