@@ -10,7 +10,6 @@ export interface BoltLengthSvgProps {
   ariaHidden?: boolean;
   framed?: boolean;
   className?: string;
-  renderContext?: 'default' | 'hero' | 'card';
 }
 
 const BOLT_LENGTH_COLORS = {
