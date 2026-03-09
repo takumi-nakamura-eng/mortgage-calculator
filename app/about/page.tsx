@@ -16,6 +16,15 @@ export default function AboutPage() {
         <h2>運営者プロフィール</h2>
         <ul>
           <li>
+            <strong>運営者名</strong>：E. Pascal
+          </li>
+          <li>
+            <strong>屋号</strong>：Work Shift Studio
+          </li>
+          <li>
+            <strong>所在地</strong>：東京都
+          </li>
+          <li>
             <strong>専門領域</strong>：機械設計（鉄骨部材・設備架台・配管サポートなどの構造設計）
           </li>
           <li>
@@ -25,6 +34,11 @@ export default function AboutPage() {
             <strong>技術領域</strong>：ボルト締結設計、梁・断面の強度計算、JIS規格に基づく部材選定
           </li>
         </ul>
+        <p>
+          E. Pascal は、設計・計算・実務に役立つ工学知を整理して届けることを意識したペンネームです。
+          Work Shift Studio として、機械設計・施工実務に役立つ計算ツールと技術解説の提供を通じて、
+          実務で使いやすく、根拠を確認しやすい情報発信を目指しています。
+        </p>
 
         <h2>サイト開設の目的</h2>
         <p>
