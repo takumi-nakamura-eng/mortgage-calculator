@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo, useEffect, useCallback } from 'react';
+import { addEngHistoryEntry, type EngHistoryEntry } from '@/lib/engHistory';
 import {
   SHAPE_DEFS,
   validateDims,
@@ -13,7 +14,9 @@ import {
   type SteelWeightItem,
 } from '@/lib/steelWeight';
 import { trackToolCalculate } from '@/lib/analytics/events';
+import { printEngReport } from '@/lib/printReport';
 import { DENSITY_PRESETS, resolveDensity } from '@/lib/materialPresets';
+import ToolWorkbenchHeader from '@/app/components/ToolWorkbenchHeader';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -45,6 +48,7 @@ export default function SteelWeightCalculator() {
   const [densityIdx, setDensityIdx] = useState(0);
   const [customDensity, setCustomDensity] = useState<string>('7850');
   const [note, setNote] = useState<string>('');
+  const [lastEntry, setLastEntry] = useState<EngHistoryEntry | null>(null);
 
   // ── Edit state ──
   const [editId, setEditId] = useState<string | null>(null);
@@ -132,6 +136,40 @@ export default function SteelWeightCalculator() {
   const totalW = useMemo(() => items.reduce((s, i) => s + i.W_kg, 0), [items]);
   const totalCount = items.length;
 
+  function buildSnapshotData(snapshotItems: SteelWeightItem[]): Omit<EngHistoryEntry, 'id' | 'timestamp'> | null {
+    if (snapshotItems.length === 0) return null;
+    const dims: Record<string, string> = {};
+    snapshotItems.forEach((item, index) => {
+      dims[`${index + 1}. ${shapeLabel(item.shape)}`] =
+        `${dimSummary(item.shape, item.dims)} / L=${item.Lm} m / n=${item.n} / 単位重量=${fmtNum(item.w_kgm, 3)} kg/m / 重量=${fmtNum(item.W_kg, 2)} kg${item.note ? ` / ${item.note}` : ''}`;
+    });
+    return {
+      toolId: 'steel-weight',
+      toolName: '鋼材重量計算',
+      inputs: {
+        material: '行ごとに密度保持',
+        shapeKey: 'steel-weight',
+        shapeName: '鋼材明細',
+        dims,
+        rawDims: {},
+        itemRows: Object.values(dims),
+      },
+      results: {
+        totalWeight_kg: snapshotItems.reduce((sum, item) => sum + item.W_kg, 0),
+        itemCount: snapshotItems.length,
+      },
+      formulaSteps: [],
+    };
+  }
+
+  function persistSnapshot(snapshotItems: SteelWeightItem[]): EngHistoryEntry | null {
+    const snapshot = buildSnapshotData(snapshotItems);
+    if (!snapshot) return null;
+    const entry = addEngHistoryEntry(snapshot);
+    setLastEntry(entry);
+    return entry;
+  }
+
   // ── Handlers ──
   function handleShapeChange(shape: SteelShape) {
     setSelectedShape(shape);
@@ -149,12 +187,14 @@ export default function SteelWeightCalculator() {
       note.trim(),
     );
     if (!item) return;
-    setItems((prev) => [...prev, item]);
+    const nextItems = [...items, item];
+    setItems(nextItems);
     // Reset length/count/note but keep shape & density
     setShapeDims({});
     setLm('1');
     setN('1');
     setNote('');
+    persistSnapshot(nextItems);
     trackToolCalculate({ toolId: 'steel-weight', category: '材料・重量' });
   }
 
@@ -187,8 +227,7 @@ export default function SteelWeightCalculator() {
 
   function handleSaveEdit() {
     if (!canSaveEdit || editId === null || editDensity === null) return;
-    setItems((prev) =>
-      prev.map((item) => {
+    const nextItems = items.map((item) => {
         if (item.id !== editId) return item;
         return recalcItem({
           ...item,
@@ -199,8 +238,9 @@ export default function SteelWeightCalculator() {
           rho: editDensity,
           note: editNote.trim(),
         });
-      }),
-    );
+      });
+    setItems(nextItems);
+    persistSnapshot(nextItems);
     setEditId(null);
   }
 
@@ -213,7 +253,13 @@ export default function SteelWeightCalculator() {
     if (!window.confirm('すべての行を削除しますか？')) return;
     setItems([]);
     setEditId(null);
+    setLastEntry(null);
   }, [items.length]);
+
+  function handleSaveSnapshot() {
+    const entry = persistSnapshot(items);
+    if (!entry) return;
+  }
 
   function handleCopyTSV() {
     const header = ['No', '形状', '寸法', 'L [m]', 'n', '単位重量 [kg/m]', '重量 [kg]', '備考'].join('\t');
@@ -238,149 +284,155 @@ export default function SteelWeightCalculator() {
 
   return (
     <div className="section-prop-wrap">
-      {/* ── Add Form ── */}
-      <div className="beam-section">
-        <h2 className="beam-section-title">鋼材を追加</h2>
+      <section className="tool-workbench" aria-label="鋼材重量計算の入力条件">
+        <div className="tool-workbench__section">
+          <ToolWorkbenchHeader title="入力条件" />
+          <div className="beam-section">
+            <h2 className="beam-section-title">鋼材を追加</h2>
 
-        {/* Shape selector */}
-        <div className="form-group" style={{ marginBottom: '0.75rem' }}>
-          <label htmlFor="sw-shape">形状</label>
-          <select
-            id="sw-shape"
-            value={selectedShape}
-            onChange={(e) => handleShapeChange(e.target.value as SteelShape)}
-          >
-            {SHAPE_DEFS.map((d) => (
-              <option key={d.shape} value={d.shape}>{d.label}</option>
-            ))}
-          </select>
-        </div>
-
-        {/* Dimension inputs */}
-        <div className="beam-row" style={{ marginBottom: '0.75rem' }}>
-          {currentDef.params.map((p) => (
-            <div key={p.key} className="form-group" style={{ flex: '1 1 120px' }}>
-              <label htmlFor={`sw-${p.key}`}>
-                {p.label} <span className="unit-label">[{p.unit}]</span>
-              </label>
-              <input
-                id={`sw-${p.key}`}
-                type="number"
-                min="0.001"
-                step="any"
-                placeholder={p.placeholder}
-                value={shapeDims[p.key] ?? ''}
-                onChange={(e) => setShapeDims((prev) => ({ ...prev, [p.key]: e.target.value }))}
-              />
+            <div className="form-group" style={{ marginBottom: '0.75rem' }}>
+              <label htmlFor="sw-shape">形状</label>
+              <select
+                id="sw-shape"
+                value={selectedShape}
+                onChange={(e) => handleShapeChange(e.target.value as SteelShape)}
+              >
+                {SHAPE_DEFS.map((d) => (
+                  <option key={d.shape} value={d.shape}>{d.label}</option>
+                ))}
+              </select>
             </div>
-          ))}
-          <div className="form-group" style={{ flex: '1 1 100px' }}>
-            <label htmlFor="sw-L">長さ L <span className="unit-label">[m]</span></label>
-            <input
-              id="sw-L"
-              type="number"
-              min="0.001"
-              step="any"
-              placeholder="1"
-              value={Lm}
-              onChange={(e) => setLm(e.target.value)}
-            />
-          </div>
-          <div className="form-group" style={{ flex: '0 0 80px' }}>
-            <label htmlFor="sw-n">本数</label>
-            <input
-              id="sw-n"
-              type="number"
-              min="1"
-              step="1"
-              placeholder="1"
-              value={n}
-              onChange={(e) => setN(e.target.value)}
-            />
-          </div>
-        </div>
 
-        {/* Density + Note */}
-        <div className="beam-row" style={{ marginBottom: '0.75rem' }}>
-          <div className="form-group" style={{ flex: '1 1 200px' }}>
-            <label htmlFor="sw-density-preset">密度プリセット</label>
-            <select
-              id="sw-density-preset"
-              value={densityIdx}
-              onChange={(e) => setDensityIdx(Number(e.target.value))}
-            >
-              {DENSITY_PRESETS.map((d, i) => (
-                <option key={i} value={i}>
-                  {d.label}{d.density !== null ? ` (${d.density} kg/m³)` : ''}
-                </option>
+            <div className="beam-row" style={{ marginBottom: '0.75rem' }}>
+              {currentDef.params.map((p) => (
+                <div key={p.key} className="form-group" style={{ flex: '1 1 120px' }}>
+                  <label htmlFor={`sw-${p.key}`}>
+                    {p.label} <span className="unit-label">[{p.unit}]</span>
+                  </label>
+                  <input
+                    id={`sw-${p.key}`}
+                    type="number"
+                    min="0.001"
+                    step="any"
+                    placeholder={p.placeholder}
+                    value={shapeDims[p.key] ?? ''}
+                    onChange={(e) => setShapeDims((prev) => ({ ...prev, [p.key]: e.target.value }))}
+                  />
+                </div>
               ))}
-            </select>
-          </div>
-          {DENSITY_PRESETS[densityIdx].density === null && (
-            <div className="form-group" style={{ flex: '0 0 140px' }}>
-              <label htmlFor="sw-custom-density">密度 <span className="unit-label">[kg/m³]</span></label>
-              <input
-                id="sw-custom-density"
-                type="number"
-                min="0.001"
-                step="any"
-                placeholder="7850"
-                value={customDensity}
-                onChange={(e) => setCustomDensity(e.target.value)}
-              />
+              <div className="form-group" style={{ flex: '1 1 100px' }}>
+                <label htmlFor="sw-L">長さ L <span className="unit-label">[m]</span></label>
+                <input
+                  id="sw-L"
+                  type="number"
+                  min="0.001"
+                  step="any"
+                  placeholder="1"
+                  value={Lm}
+                  onChange={(e) => setLm(e.target.value)}
+                />
+              </div>
+              <div className="form-group" style={{ flex: '0 0 80px' }}>
+                <label htmlFor="sw-n">本数</label>
+                <input
+                  id="sw-n"
+                  type="number"
+                  min="1"
+                  step="1"
+                  placeholder="1"
+                  value={n}
+                  onChange={(e) => setN(e.target.value)}
+                />
+              </div>
             </div>
-          )}
-          <div className="form-group" style={{ flex: '1 1 180px' }}>
-            <label htmlFor="sw-note">備考（任意）</label>
-            <input
-              id="sw-note"
-              type="text"
-              placeholder="例: ベースプレート"
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
-              maxLength={60}
-            />
+
+            <div className="beam-row" style={{ marginBottom: '0.75rem' }}>
+              <div className="form-group" style={{ flex: '1 1 200px' }}>
+                <label htmlFor="sw-density-preset">密度プリセット</label>
+                <select
+                  id="sw-density-preset"
+                  value={densityIdx}
+                  onChange={(e) => setDensityIdx(Number(e.target.value))}
+                >
+                  {DENSITY_PRESETS.map((d, i) => (
+                    <option key={i} value={i}>
+                      {d.label}{d.density !== null ? ` (${d.density} kg/m³)` : ''}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              {DENSITY_PRESETS[densityIdx].density === null && (
+                <div className="form-group" style={{ flex: '0 0 140px' }}>
+                  <label htmlFor="sw-custom-density">密度 <span className="unit-label">[kg/m³]</span></label>
+                  <input
+                    id="sw-custom-density"
+                    type="number"
+                    min="0.001"
+                    step="any"
+                    placeholder="7850"
+                    value={customDensity}
+                    onChange={(e) => setCustomDensity(e.target.value)}
+                  />
+                </div>
+              )}
+              <div className="form-group" style={{ flex: '1 1 180px' }}>
+                <label htmlFor="sw-note">備考（任意）</label>
+                <input
+                  id="sw-note"
+                  type="text"
+                  placeholder="例: ベースプレート"
+                  value={note}
+                  onChange={(e) => setNote(e.target.value)}
+                  maxLength={60}
+                />
+              </div>
+            </div>
+
+            {addErrors.map((err, i) => (
+              <p key={i} className="error-message">{err}</p>
+            ))}
+
+            <div className="form-submit-row">
+              <button
+                type="button"
+                className="calc-btn"
+                disabled={!canAdd}
+                onClick={handleAdd}
+              >
+                追加
+              </button>
+              {canAdd && density !== null && (
+                <span className="beam-note">
+                  単位重量 {fmtNum((density * (buildItem(selectedShape, parsedDims, 1, 1, density, '')?.w_kgm ?? 0) / density), 3)} kg/m
+                </span>
+              )}
+            </div>
           </div>
         </div>
 
-        {addErrors.map((err, i) => (
-          <p key={i} className="error-message">{err}</p>
-        ))}
-
-        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-          <button
-            type="button"
-            className="calc-btn"
-            disabled={!canAdd}
-            onClick={handleAdd}
-          >
-            追加
-          </button>
-          {canAdd && density !== null && (
-            <span className="beam-note">
-              単位重量 {fmtNum((density * (buildItem(selectedShape, parsedDims, 1, 1, density, '')?.w_kgm ?? 0) / density), 3)} kg/m
-            </span>
-          )}
-        </div>
-      </div>
-
-      {/* ── Table ── */}
-      <div className="beam-section" style={{ padding: '1rem 0.75rem' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', padding: '0 0.5rem' }}>
-          <h2 className="beam-section-title" style={{ margin: 0 }}>明細テーブル</h2>
-          <div style={{ display: 'flex', gap: '0.5rem' }}>
-            {items.length > 0 && (
-              <>
-                <button type="button" className="sw-small-btn" onClick={handleCopyTSV} title="TSVコピー">
-                  コピー
-                </button>
-                <button type="button" className="sw-small-btn sw-small-btn--danger" onClick={handleClearAll}>
-                  全削除
-                </button>
-              </>
-            )}
-          </div>
-        </div>
+        <div className="tool-workbench__section tool-workbench__section--results">
+          <div className="beam-section" style={{ padding: '1rem 0.75rem', marginBottom: 0 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', padding: '0 0.5rem' }}>
+              <h2 className="beam-section-title" style={{ margin: 0 }}>明細テーブル</h2>
+              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                {items.length > 0 && (
+                  <>
+                    <button type="button" className="sw-small-btn sw-small-btn--primary" onClick={handleSaveSnapshot}>
+                      履歴に保存
+                    </button>
+                    <button type="button" className="pdf-btn pdf-btn--sm" onClick={() => lastEntry && printEngReport(lastEntry)} disabled={!lastEntry}>
+                      PDF出力
+                    </button>
+                    <button type="button" className="sw-small-btn" onClick={handleCopyTSV} title="TSVコピー">
+                      コピー
+                    </button>
+                    <button type="button" className="sw-small-btn sw-small-btn--danger" onClick={handleClearAll}>
+                      全削除
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
 
         {items.length === 0 ? (
           <p className="beam-note" style={{ textAlign: 'center', padding: '2rem 0' }}>
@@ -482,6 +534,8 @@ export default function SteelWeightCalculator() {
           <span className="sw-total-value">{fmtNum(totalW, 2)} <span className="sw-total-unit">kg</span></span>
         </div>
       )}
+        </div>
+      </section>
     </div>
   );
 }

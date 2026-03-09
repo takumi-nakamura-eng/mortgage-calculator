@@ -3,6 +3,8 @@ import BoltStrengthCalculator from './BoltStrengthCalculator';
 import AdSlot from '@/app/components/ads/AdSlot';
 import Breadcrumbs from '@/app/components/Breadcrumbs';
 import RelatedArticles from '@/app/components/RelatedArticles';
+import ToolDisclaimer from '@/app/components/ToolDisclaimer';
+import ToolHero from '@/app/components/ToolHero';
 import { getAllArticles } from '@/lib/content/articles';
 import { getToolById } from '@/lib/data/tools';
 import { SITE_NAME, SITE_URL } from '@/lib/site';
@@ -57,12 +59,20 @@ export default async function BoltStrengthPage() {
         ]}
       />
 
-      <h1 className="page-title">ボルト引張・せん断耐力計算ツール</h1>
-      <p className="page-description">
-        締結用ボルトの許容引張耐力・許容せん断耐力を即時計算します。引張＋せん断の相互作用チェックにも対応。
-      </p>
+      <ToolHero
+        title="ボルト引張・せん断耐力計算"
+        description="締結用ボルトの許容引張耐力・許容せん断耐力を計算できるツールです。強度区分4.8〜10.9、M6〜M24に対応し、相互作用チェックや一次確認に使えます。"
+        labels={[
+          { label: '対応範囲', value: 'M6〜M24' },
+          { label: '用途', value: '一次確認' },
+          { label: '種別', value: '締結 / ボルト / 耐力' },
+        ]}
+        diagramKey="bolt-strength"
+        diagramMaxWidth={190}
+      />
 
       <BoltStrengthCalculator />
+      <ToolDisclaimer />
 
       <AdSlot
         slot={process.env.NEXT_PUBLIC_ADSENSE_SLOT_TOOL}

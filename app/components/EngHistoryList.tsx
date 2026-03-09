@@ -99,6 +99,18 @@ function EngHistoryCard({
         {r.lBuy_mm !== undefined && (
           <span>推奨購入長さ = {fmt(r.lBuy_mm, 0)} mm</span>
         )}
+        {r.Ra_t_total_kN !== undefined && (
+          <span>引張耐力 = {fmt(r.Ra_t_total_kN, 2)} kN</span>
+        )}
+        {r.Ra_v_total_kN !== undefined && (
+          <span>せん断耐力 = {fmt(r.Ra_v_total_kN, 2)} kN</span>
+        )}
+        {r.boltInteractionRatio !== undefined && (
+          <span>相互作用 = {fmt(r.boltInteractionRatio, 3)}</span>
+        )}
+        {r.totalWeight_kg !== undefined && (
+          <span>総重量 = {fmt(r.totalWeight_kg, 2)} kg</span>
+        )}
       </div>
 
       {/* Expanded detail */}
@@ -187,6 +199,51 @@ function EngHistoryCard({
                 <div className="eng-hist-result-row">
                   <span className="eng-hist-result-label">推奨購入長さ</span>
                   <span className="eng-hist-result-value"><strong>{fmt(r.lBuy_mm, 0)}</strong> mm</span>
+                </div>
+              )}
+              {r.Ra_t_kN !== undefined && (
+                <div className="eng-hist-result-row">
+                  <span className="eng-hist-result-label">許容引張耐力</span>
+                  <span className="eng-hist-result-value"><strong>{fmt(r.Ra_t_kN, 2)}</strong> kN/本</span>
+                </div>
+              )}
+              {r.Ra_v_kN !== undefined && (
+                <div className="eng-hist-result-row">
+                  <span className="eng-hist-result-label">許容せん断耐力</span>
+                  <span className="eng-hist-result-value"><strong>{fmt(r.Ra_v_kN, 2)}</strong> kN/本</span>
+                </div>
+              )}
+              {r.Ra_t_total_kN !== undefined && (
+                <div className="eng-hist-result-row">
+                  <span className="eng-hist-result-label">引張耐力合計</span>
+                  <span className="eng-hist-result-value"><strong>{fmt(r.Ra_t_total_kN, 2)}</strong> kN</span>
+                </div>
+              )}
+              {r.Ra_v_total_kN !== undefined && (
+                <div className="eng-hist-result-row">
+                  <span className="eng-hist-result-label">せん断耐力合計</span>
+                  <span className="eng-hist-result-value"><strong>{fmt(r.Ra_v_total_kN, 2)}</strong> kN</span>
+                </div>
+              )}
+              {r.boltInteractionRatio !== undefined && (
+                <div className="eng-hist-result-row">
+                  <span className="eng-hist-result-label">相互作用比</span>
+                  <span className="eng-hist-result-value">
+                    <strong>{fmt(r.boltInteractionRatio, 3)}</strong>
+                    <span className="eng-hist-result-sub"> ({r.boltInteractionOK ? 'OK' : 'NG'})</span>
+                  </span>
+                </div>
+              )}
+              {r.totalWeight_kg !== undefined && (
+                <div className="eng-hist-result-row">
+                  <span className="eng-hist-result-label">総重量</span>
+                  <span className="eng-hist-result-value"><strong>{fmt(r.totalWeight_kg, 2)}</strong> kg</span>
+                </div>
+              )}
+              {r.itemCount !== undefined && (
+                <div className="eng-hist-result-row">
+                  <span className="eng-hist-result-label">明細行数</span>
+                  <span className="eng-hist-result-value"><strong>{r.itemCount}</strong> 行</span>
                 </div>
               )}
             </div>

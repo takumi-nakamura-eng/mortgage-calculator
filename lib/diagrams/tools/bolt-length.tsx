@@ -4,6 +4,7 @@ export interface BoltLengthSvgProps {
   width?: number | string;
   height?: number | string;
   maxWidth?: number;
+  renderContext?: 'default' | 'hero' | 'card';
   ariaLabel?: string;
   role?: 'img' | 'presentation';
   ariaHidden?: boolean;

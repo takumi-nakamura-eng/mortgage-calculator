@@ -7,6 +7,7 @@ import { fmt } from '@/lib/beams/units';
 import { SECTION_DEFS, type SectionShape } from '@/lib/beams/sections';
 import type { BeamResult } from '@/lib/beams/simpleBeam';
 import type { EngHistoryEntry, FormulaStep } from '@/lib/engHistory';
+import ToolWorkbenchHeader from '@/app/components/ToolWorkbenchHeader';
 import type { BeamFormActions, BeamFormState, IUnit, LoadUnit, SectionMode, ZUnit } from './useBeamForm';
 
 interface BeamCalculatorText {
@@ -28,7 +29,6 @@ interface BeamCalculatorText {
 }
 
 interface BeamCalculatorLayoutProps {
-  diagram: ReactNode;
   form: BeamFormState;
   actions: BeamFormActions;
   formErrors: Record<string, string>;
@@ -479,7 +479,7 @@ function ResultSection({
   text: BeamCalculatorText;
 }) {
   return (
-    <div className="results" style={{ marginTop: '2rem' }}>
+    <div className="results">
       <div className="section-results-header">
         <h2>計算結果</h2>
         {lastEntry && (
@@ -563,7 +563,7 @@ function ResultSection({
       )}
 
       {formulaSteps.length > 0 && (
-        <div className="formula-steps-section" style={{ marginTop: '1.5rem' }}>
+        <div className="formula-steps-section" style={{ marginTop: '1rem' }}>
           <h3 className="formula-steps-title">計算式・途中経過</h3>
           {formulaSteps.map((step, index) => (
             <div key={index} className="formula-step-item">
@@ -578,7 +578,6 @@ function ResultSection({
 }
 
 export default function BeamCalculatorLayout({
-  diagram,
   form,
   actions,
   formErrors,
@@ -595,92 +594,96 @@ export default function BeamCalculatorLayout({
 }: BeamCalculatorLayoutProps) {
   return (
     <div>
-      <div className="beam-diagram-wrapper">{diagram}</div>
+      <section className="tool-workbench" aria-label="梁計算の入力条件">
+        <div className="tool-workbench__section">
+          <ToolWorkbenchHeader title="入力条件" />
+          <form className="beam-form" onSubmit={onSubmit} noValidate>
+            <MaterialSection form={form} actions={actions} formErrors={formErrors} />
+            <SpanSection
+              form={form}
+              actions={actions}
+              formErrors={formErrors}
+              title={text.spanSectionTitle}
+              placeholder={text.spanPlaceholder}
+            />
+            <LoadSection
+              form={form}
+              actions={actions}
+              formErrors={formErrors}
+              text={text}
+              onLoadCaseChange={onLoadCaseChange}
+            />
 
-      <form className="beam-form" onSubmit={onSubmit} noValidate>
-        <MaterialSection form={form} actions={actions} formErrors={formErrors} />
-        <SpanSection
-          form={form}
-          actions={actions}
-          formErrors={formErrors}
-          title={text.spanSectionTitle}
-          placeholder={text.spanPlaceholder}
-        />
-        <LoadSection
-          form={form}
-          actions={actions}
-          formErrors={formErrors}
-          text={text}
-          onLoadCaseChange={onLoadCaseChange}
-        />
+            <section className="beam-section">
+              <h2 className="beam-section-title">④ 断面性能</h2>
+              <div className="beam-toggle-group" style={{ marginBottom: '1rem', alignSelf: 'flex-start' }}>
+                <button
+                  type="button"
+                  className={`beam-toggle-btn${form.sectionMode === 'shape' ? ' beam-toggle-btn--active' : ''}`}
+                  onClick={() => onSectionModeChange('shape')}
+                >
+                  形状から計算
+                </button>
+                <button
+                  type="button"
+                  className={`beam-toggle-btn${form.sectionMode === 'direct' ? ' beam-toggle-btn--active' : ''}`}
+                  onClick={() => onSectionModeChange('direct')}
+                >
+                  直接入力
+                </button>
+              </div>
 
-        <section className="beam-section">
-          <h2 className="beam-section-title">④ 断面性能</h2>
-          <div className="beam-toggle-group" style={{ marginBottom: '1.25rem', alignSelf: 'flex-start' }}>
-            <button
-              type="button"
-              className={`beam-toggle-btn${form.sectionMode === 'shape' ? ' beam-toggle-btn--active' : ''}`}
-              onClick={() => onSectionModeChange('shape')}
-            >
-              形状から計算
-            </button>
-            <button
-              type="button"
-              className={`beam-toggle-btn${form.sectionMode === 'direct' ? ' beam-toggle-btn--active' : ''}`}
-              onClick={() => onSectionModeChange('direct')}
-            >
-              直接入力
-            </button>
-          </div>
+              {form.sectionMode === 'shape' ? (
+                <ShapeSection form={form} actions={actions} formErrors={formErrors} onShapeChange={onShapeChange} />
+              ) : (
+                <DirectSection form={form} actions={actions} formErrors={formErrors} />
+              )}
+            </section>
 
-          {form.sectionMode === 'shape' ? (
-            <ShapeSection form={form} actions={actions} formErrors={formErrors} onShapeChange={onShapeChange} />
-          ) : (
-            <DirectSection form={form} actions={actions} formErrors={formErrors} />
-          )}
-        </section>
+            <DeflectionSection form={form} actions={actions} formErrors={formErrors} text={text} />
 
-        <DeflectionSection form={form} actions={actions} formErrors={formErrors} text={text} />
+            <section className="beam-section">
+              <h2 className="beam-section-title">⑥ 用途メモ（任意）</h2>
+              <div className="form-group" style={{ maxWidth: 480 }}>
+                <label htmlFor="purpose">用途メモ</label>
+                <input
+                  id="purpose"
+                  type="text"
+                  placeholder={text.purposePlaceholder}
+                  value={form.purpose}
+                  onChange={(event) => actions.setPurpose(event.target.value)}
+                  maxLength={120}
+                />
+              </div>
+            </section>
 
-        <section className="beam-section">
-          <h2 className="beam-section-title">⑥ 計算用途（任意）</h2>
-          <div className="form-group" style={{ maxWidth: 480 }}>
-            <label htmlFor="purpose">計算用途・メモ</label>
-            <input
-              id="purpose"
-              type="text"
-              placeholder={text.purposePlaceholder}
-              value={form.purpose}
-              onChange={(event) => actions.setPurpose(event.target.value)}
-              maxLength={120}
+            {formWarnings.length > 0 && (
+              <div className="beam-warnings">
+                {formWarnings.map((warning, index) => (
+                  <p key={index} className="beam-warning-item">⚠ {warning}</p>
+                ))}
+              </div>
+            )}
+
+            <div className="form-submit-row">
+              <button type="submit" className="calc-btn">計算する</button>
+            </div>
+          </form>
+        </div>
+
+        {result && (
+          <div className="tool-workbench__section tool-workbench__section--results">
+            <ResultSection
+              form={form}
+              result={result}
+              loadKNNormalized={loadKNNormalized}
+              lastEntry={lastEntry}
+              formulaSteps={formulaSteps}
+              text={text}
             />
           </div>
-        </section>
-
-        {formWarnings.length > 0 && (
-          <div className="beam-warnings">
-            {formWarnings.map((warning, index) => (
-              <p key={index} className="beam-warning-item">⚠ {warning}</p>
-            ))}
-          </div>
         )}
-
-        <div className="form-submit-row">
-          <button type="submit" className="calc-btn">計算する</button>
-        </div>
-      </form>
-
-      {result && (
-        <ResultSection
-          form={form}
-          result={result}
-          loadKNNormalized={loadKNNormalized}
-          lastEntry={lastEntry}
-          formulaSteps={formulaSteps}
-          text={text}
-        />
-      )}
-
+      </section>
       <div className="beam-notes-section">
         <h3>注記</h3>
         <ul>

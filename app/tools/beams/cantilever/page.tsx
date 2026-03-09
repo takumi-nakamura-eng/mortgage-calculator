@@ -3,6 +3,8 @@ import CantileverCalculator from './CantileverCalculator';
 import AdSlot from '@/app/components/ads/AdSlot';
 import Breadcrumbs from '@/app/components/Breadcrumbs';
 import RelatedArticles from '@/app/components/RelatedArticles';
+import ToolDisclaimer from '@/app/components/ToolDisclaimer';
+import ToolHero from '@/app/components/ToolHero';
 import { getAllArticles } from '@/lib/content/articles';
 import { getToolById } from '@/lib/data/tools';
 import { SITE_NAME, SITE_URL } from '@/lib/site';
@@ -54,13 +56,19 @@ export default async function CantileverPage() {
         ]}
       />
 
-      <h1 className="page-title">片持ち梁（カンチレバー）計算</h1>
-      <p className="page-description">
-        固定端・自由端の片持ち梁に対して、曲げ応力・最大たわみを計算し OK/NG 判定を行います。
-        先端集中荷重・等分布荷重（総荷重入力）に対応。
-      </p>
-      <p className="tool-flow">入力条件 → 計算結果（OK/NG） → 途中式・履歴・PDF の順に確認できます。</p>
+      <ToolHero
+        title="片持ち梁（カンチレバー）計算"
+        description="固定端・自由端の片持ち梁について、先端集中荷重・等分布荷重の曲げ応力と最大たわみを計算できるツールです。OK/NGの一次確認と寸法検討に使えます。"
+        labels={[
+          { label: '荷重条件', value: '集中 / 等分布' },
+          { label: '用途', value: '一次確認' },
+          { label: '種別', value: '梁 / 片持ち / たわみ' },
+        ]}
+        diagramKey="cantilever"
+        diagramMaxWidth={220}
+      />
       <CantileverCalculator />
+      <ToolDisclaimer />
       <AdSlot slot={process.env.NEXT_PUBLIC_ADSENSE_SLOT_TOOL} className="tool-ad" pageType="tool" />
       <RelatedArticles
         source="tool:cantilever"

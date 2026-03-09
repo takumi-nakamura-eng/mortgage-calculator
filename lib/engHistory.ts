@@ -33,6 +33,7 @@ export interface EngInputSnapshot {
 
   boltPreset?: string;
   diameter?: string;
+  itemRows?: string[];
 }
 
 export interface EngResultSnapshot {
@@ -53,6 +54,18 @@ export interface EngResultSnapshot {
   lRequired_mm?: number;
   lBuy_mm?: number;
   tipAllowance_mm?: number;
+
+  Ra_t_kN?: number;
+  Ra_v_kN?: number;
+  Ra_t_total_kN?: number;
+  Ra_v_total_kN?: number;
+  boltInteractionRatio?: number;
+  boltInteractionOK?: boolean;
+  Aeff_mm2?: number;
+  S_Nmm2?: number;
+
+  totalWeight_kg?: number;
+  itemCount?: number;
 }
 
 export interface EngHistoryEntry {

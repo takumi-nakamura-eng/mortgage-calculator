@@ -9,7 +9,6 @@ import { cm3ToMm3, cm4ToMm4, fmt, GPaToMPa, kgToKN } from '@/lib/beams/units';
 import { BEAM_MATERIAL_PRESETS } from '@/lib/materialPresets';
 import BeamCalculatorLayout from '../BeamCalculatorLayout';
 import { useBeamForm } from '../useBeamForm';
-import BeamDiagram from './BeamDiagram';
 
 export default function SimpleSupportedCalculator() {
   const { state: form, actions } = useBeamForm(300);
@@ -165,13 +164,6 @@ export default function SimpleSupportedCalculator() {
 
   return (
     <BeamCalculatorLayout
-      diagram={(
-        <BeamDiagram
-          loadCase={form.loadCase}
-          spanLabel={form.spanLabel}
-          loadLabel={form.loadLabelForDiagram}
-        />
-      )}
       form={form}
       actions={actions}
       formErrors={formErrors}

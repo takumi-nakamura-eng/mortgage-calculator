@@ -10,7 +10,6 @@ import { cm3ToMm3, cm4ToMm4, fmt, GPaToMPa, kgToKN } from '@/lib/beams/units';
 import { BEAM_MATERIAL_PRESETS } from '@/lib/materialPresets';
 import BeamCalculatorLayout from '../BeamCalculatorLayout';
 import { useBeamForm } from '../useBeamForm';
-import CantileverDiagram from './CantileverDiagram';
 
 export default function CantileverCalculator() {
   const { state: form, actions } = useBeamForm(200);
@@ -166,13 +165,6 @@ export default function CantileverCalculator() {
 
   return (
     <BeamCalculatorLayout
-      diagram={(
-        <CantileverDiagram
-          loadCase={form.loadCase}
-          spanLabel={form.spanLabel}
-          loadLabel={form.loadLabelForDiagram}
-        />
-      )}
       form={form}
       actions={actions}
       formErrors={formErrors}

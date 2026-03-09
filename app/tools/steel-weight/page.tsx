@@ -3,6 +3,8 @@ import SteelWeightCalculator from './SteelWeightCalculator';
 import AdSlot from '@/app/components/ads/AdSlot';
 import Breadcrumbs from '@/app/components/Breadcrumbs';
 import RelatedArticles from '@/app/components/RelatedArticles';
+import ToolDisclaimer from '@/app/components/ToolDisclaimer';
+import ToolHero from '@/app/components/ToolHero';
 import { getAllArticles } from '@/lib/content/articles';
 import { getToolById } from '@/lib/data/tools';
 import { SITE_NAME, SITE_URL } from '@/lib/site';
@@ -57,12 +59,20 @@ export default async function SteelWeightPage() {
         ]}
       />
 
-      <h1 className="page-title">鋼材重量計算ツール</h1>
-      <p className="page-description">
-        鋼材の形状・寸法・長さを入力して重量を計算し、明細テーブルに積み上げます。材料拾い・重量見積もりにご活用ください。
-      </p>
+      <ToolHero
+        title="鋼材重量計算"
+        description="平板・丸棒・角棒・丸パイプ・角パイプの寸法と長さから重量を計算し、明細表で合計重量を集計できるツールです。材料拾い、重量見積もり、一次確認に使えます。"
+        labels={[
+          { label: '対応形状', value: '5形状' },
+          { label: '用途', value: '拾い出し' },
+          { label: '種別', value: '鋼材 / 重量 / 集計' },
+        ]}
+        diagramKey="steel-weight"
+        diagramMaxWidth={190}
+      />
 
       <SteelWeightCalculator />
+      <ToolDisclaimer />
 
       <AdSlot
         slot={process.env.NEXT_PUBLIC_ADSENSE_SLOT_TOOL}

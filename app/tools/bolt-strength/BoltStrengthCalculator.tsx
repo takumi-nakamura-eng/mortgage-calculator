@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
+import { addEngHistoryEntry, type EngHistoryEntry, type FormulaStep } from '@/lib/engHistory';
 import {
   BOLT_SIZES,
   BOLT_GRADES,
@@ -15,6 +16,8 @@ import {
   type StrengthBasis,
 } from '@/lib/bolts/strength';
 import { trackToolCalculate } from '@/lib/analytics/events';
+import { printEngReport } from '@/lib/printReport';
+import ToolWorkbenchHeader from '@/app/components/ToolWorkbenchHeader';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -36,6 +39,7 @@ export default function BoltStrengthCalculator() {
   const [nStr, setNStr] = useState('1');
   const [tensionInput, setTensionInput] = useState('');
   const [shearInput, setShearInput] = useState('');
+  const [purpose, setPurpose] = useState('');
 
   // Advanced settings (collapsible)
   const [showSettings, setShowSettings] = useState(false);
@@ -45,9 +49,7 @@ export default function BoltStrengthCalculator() {
 
   // Reference section
   const [showRef, setShowRef] = useState(false);
-
-  // Track first calculation
-  const [tracked, setTracked] = useState(false);
+  const [lastEntry, setLastEntry] = useState<EngHistoryEntry | null>(null);
 
   // Compute
   const result = useMemo(() => {
@@ -81,14 +83,6 @@ export default function BoltStrengthCalculator() {
     });
   }, [size, grade, areaMode, strengthBasis, nStr, tensionInput, shearInput, gammaT, gammaV, kvStr]);
 
-  // Track once per session
-  useEffect(() => {
-    if (!result || tracked) return;
-    trackToolCalculate({ toolId: 'bolt-strength', category: 'ねじ・締結' });
-    const timer = window.setTimeout(() => setTracked(true), 0);
-    return () => window.clearTimeout(timer);
-  }, [result, tracked]);
-
   // Copy handler
   function handleCopy() {
     if (!result) return;
@@ -108,13 +102,77 @@ export default function BoltStrengthCalculator() {
   }
 
   const n = parseInt(nStr, 10);
+  const formulaSteps = useMemo<FormulaStep[]>(() => {
+    if (!result) return [];
+    const basisLabel = strengthBasis === 'Rm_min' ? 'Rm_min' : grade === '4.8' ? 'ReL_min' : 'Rp0.2_min';
+    const steps: FormulaStep[] = [
+      { label: '採用断面積 Aeff', expr: `Aeff = ${fmt(result.Aeff_mm2, 1)} mm² (${areaMode === 'As' ? 'ねじ有効断面積 As' : '軸断面積 A'})` },
+      { label: '採用強度 S', expr: `S = ${fmt(result.S_Nmm2, 0)} N/mm² (${basisLabel})` },
+      { label: '許容引張耐力', expr: `Ra_t = (Aeff × S) / γt / 1000 = (${fmt(result.Aeff_mm2, 1)} × ${fmt(result.S_Nmm2, 0)}) / ${gammaT} / 1000 = ${fmt(result.Ra_t_kN, 2)} kN/本\nRa_t_total = ${fmt(result.Ra_t_kN, 2)} × ${n} = ${fmt(result.Ra_t_total_kN, 2)} kN` },
+      { label: '許容せん断耐力', expr: `Ra_v = (Aeff × S × kv) / γv / 1000 = (${fmt(result.Aeff_mm2, 1)} × ${fmt(result.S_Nmm2, 0)} × ${fmt(parseFloat(kvStr), 5)}) / ${gammaV} / 1000 = ${fmt(result.Ra_v_kN, 2)} kN/本\nRa_v_total = ${fmt(result.Ra_v_kN, 2)} × ${n} = ${fmt(result.Ra_v_total_kN, 2)} kN` },
+    ];
+    if (result.interaction) {
+      steps.push({
+        label: '相互作用チェック',
+        expr: `N/Ra_t + V/Ra_v = ${fmt(result.interaction.N_kN, 2)} / ${fmt(result.Ra_t_total_kN, 2)} + ${fmt(result.interaction.V_kN, 2)} / ${fmt(result.Ra_v_total_kN, 2)} = ${fmt(result.interaction.ratio, 3)} → ${result.interaction.ok ? 'OK' : 'NG'}`,
+      });
+    }
+    return steps;
+  }, [result, areaMode, strengthBasis, grade, gammaT, gammaV, kvStr, n]);
+
+  function handleSave() {
+    if (!result) return;
+    const entry = addEngHistoryEntry({
+      toolId: 'bolt-strength',
+      toolName: 'ボルト引張・せん断耐力計算',
+      inputs: {
+        material: 'JIS / ISO 規格値',
+        purpose: purpose.trim() || undefined,
+        shapeKey: 'bolt-strength',
+        shapeName: '締結用ボルト',
+        dims: {
+          '呼び径': size,
+          '強度区分': grade,
+          '断面の扱い': areaMode === 'As' ? 'As（ねじ有効断面積）' : 'A（軸断面積）',
+          '強度基準': strengthBasis === 'Rm_min' ? 'Rm_min（最小引張強さ）' : '耐力最小値',
+          '本数 n': `${n} 本`,
+          '引張力 N': tensionInput.trim() ? `${tensionInput} kN` : '未入力',
+          'せん断力 V': shearInput.trim() ? `${shearInput} kN` : '未入力',
+          '安全率・係数': `γt=${gammaT}, γv=${gammaV}, kv=${fmt(parseFloat(kvStr), 5)}`,
+        },
+        rawDims: {
+          n,
+          gammaT: parseFloat(gammaT),
+          gammaV: parseFloat(gammaV),
+          kv: parseFloat(kvStr),
+          N_kN: tensionInput.trim() ? parseFloat(tensionInput) : 0,
+          V_kN: shearInput.trim() ? parseFloat(shearInput) : 0,
+        },
+        diameter: size,
+      },
+      results: {
+        Ra_t_kN: result.Ra_t_kN,
+        Ra_v_kN: result.Ra_v_kN,
+        Ra_t_total_kN: result.Ra_t_total_kN,
+        Ra_v_total_kN: result.Ra_v_total_kN,
+        boltInteractionRatio: result.interaction?.ratio,
+        boltInteractionOK: result.interaction?.ok,
+        Aeff_mm2: result.Aeff_mm2,
+        S_Nmm2: result.S_Nmm2,
+      },
+      formulaSteps,
+    });
+    setLastEntry(entry);
+    trackToolCalculate({ toolId: 'bolt-strength', category: 'ねじ・締結' });
+  }
 
   return (
     <div className="section-prop-wrap">
-      {/* ── Inputs ── */}
-      <div className="beam-section">
-        <h2 className="beam-section-title">入力</h2>
+      <section className="tool-workbench" aria-label="ボルト耐力計算の入力条件">
+        <div className="tool-workbench__section">
+          <ToolWorkbenchHeader title="入力条件" />
 
+        <div className="beam-section">
         <div className="beam-row" style={{ marginBottom: '0.75rem' }}>
           <div className="form-group" style={{ flex: '1 1 120px' }}>
             <label htmlFor="bs-size">ボルト呼び径</label>
@@ -215,11 +273,36 @@ export default function BoltStrengthCalculator() {
             </div>
           </div>
         )}
+        </div>
+
+        <div className="beam-section">
+          <h2 className="beam-section-title">用途メモ（任意）</h2>
+          <div className="form-group" style={{ maxWidth: 480 }}>
+            <label htmlFor="bs-purpose">用途メモ</label>
+            <input
+              id="bs-purpose"
+              type="text"
+              placeholder="例: ベースプレート締結の一次確認"
+              value={purpose}
+              onChange={(e) => setPurpose(e.target.value)}
+              maxLength={120}
+            />
+          </div>
+        </div>
+
+        <div className="form-submit-row">
+          <button type="button" className="calc-btn" disabled={!result} onClick={handleSave}>計算する</button>
+          {lastEntry && (
+            <button type="button" className="pdf-btn" onClick={() => printEngReport(lastEntry)}>
+              PDF出力
+            </button>
+          )}
+        </div>
       </div>
 
       {/* ── Results ── */}
       {result ? (
-        <div className="beam-section">
+        <div className="tool-workbench__section tool-workbench__section--results">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
             <h2 className="beam-section-title" style={{ margin: 0 }}>計算結果</h2>
             <button type="button" className="sw-small-btn" onClick={handleCopy}>結果コピー</button>
@@ -270,14 +353,25 @@ export default function BoltStrengthCalculator() {
               <span>γt = {gammaT}　γv = {gammaV}　kv = {fmt(parseFloat(kvStr), 5)}</span>
             </div>
           </div>
+
+          <div className="formula-steps-section" style={{ marginTop: '1rem' }}>
+            <h3 className="formula-steps-title">計算式・途中経過</h3>
+            {formulaSteps.map((step) => (
+              <div key={step.label} className="formula-step-item">
+                <span className="formula-step-label">{step.label}</span>
+                <pre className="formula-step-expr">{step.expr}</pre>
+              </div>
+            ))}
+          </div>
         </div>
       ) : (
-        <div className="beam-section">
+        <div className="tool-workbench__section tool-workbench__section--results">
           <p className="beam-note" style={{ textAlign: 'center', padding: '1rem 0' }}>
             入力値を確認してください（本数は1以上の整数、安全率・kvは正の値）
           </p>
         </div>
       )}
+      </section>
 
       {/* ── Reference ── */}
       <button
