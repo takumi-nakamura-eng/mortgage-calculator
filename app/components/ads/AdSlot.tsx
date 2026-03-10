@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import Script from 'next/script';
 import { trackAdClick, trackAdImpression } from '@/lib/analytics/events';
 
 declare global {
@@ -63,13 +62,6 @@ export default function AdSlot({
       className={`ad-slot ${className ?? ''}`.trim()}
       onClickCapture={() => trackAdClick({ slot, pageType })}
     >
-      <Script
-        id="adsense-script"
-        strategy="afterInteractive"
-        async
-        src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${client}`}
-        crossOrigin="anonymous"
-      />
       <ins
         className="adsbygoogle"
         style={{ display: 'block', minHeight: 280 }}
