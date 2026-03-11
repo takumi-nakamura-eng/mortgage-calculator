@@ -10,8 +10,10 @@
 
 export type SectionShape =
   | 'H'
+  | 't-bar'
   | 'rect-tube'
   | 'circ-tube'
+  | 'round-bar'
   | 'flat'
   | 'angle'
   | 'channel';
@@ -32,19 +34,15 @@ export interface SectionDef {
 }
 
 export interface SectionResult {
-  /** Strong axis (X-X) second moment of area [mm⁴] */
   I_mm4: number;
-  /** Strong axis section modulus [mm³] */
   Z_mm3: number;
-  /** Weak axis (Y-Y) second moment of area [mm⁴] – undefined if not calculable */
   Iy_mm4?: number;
-  /** Weak axis section modulus [mm³] – undefined if not calculable */
   Zy_mm3?: number;
-  /** Cross-sectional area [mm²] */
   area_mm2: number;
+  rx_mm: number;
+  ry_mm?: number;
+  weight_kg_per_m: number;
 }
-
-// ─── Section definitions ──────────────────────────────────────────────────────
 
 export const SECTION_DEFS: SectionDef[] = [
   {
@@ -52,10 +50,21 @@ export const SECTION_DEFS: SectionDef[] = [
     label: 'H形鋼',
     desc: 'H ビーム。強軸（フランジ面内）曲げ。',
     params: [
-      { key: 'H',  label: '断面高さ H', unit: 'mm', placeholder: '200', hint: '外形全高' },
-      { key: 'B',  label: 'フランジ幅 B', unit: 'mm', placeholder: '100' },
-      { key: 'tw', label: 'ウェブ厚 tw',  unit: 'mm', placeholder: '5.5' },
+      { key: 'H', label: '断面高さ H', unit: 'mm', placeholder: '200', hint: '外形全高' },
+      { key: 'B', label: 'フランジ幅 B', unit: 'mm', placeholder: '100' },
+      { key: 'tw', label: 'ウェブ厚 tw', unit: 'mm', placeholder: '5.5' },
       { key: 'tf', label: 'フランジ厚 tf', unit: 'mm', placeholder: '8' },
+    ],
+  },
+  {
+    shape: 't-bar',
+    label: 'T形鋼（Tバー）',
+    desc: 'T形断面。フランジ上・ウェブ下の一般的なTバーを想定。',
+    params: [
+      { key: 'H', label: '断面高さ H', unit: 'mm', placeholder: '150' },
+      { key: 'B', label: 'フランジ幅 B', unit: 'mm', placeholder: '100' },
+      { key: 'tw', label: 'ウェブ厚 tw', unit: 'mm', placeholder: '8' },
+      { key: 'tf', label: 'フランジ厚 tf', unit: 'mm', placeholder: '12' },
     ],
   },
   {
@@ -64,7 +73,7 @@ export const SECTION_DEFS: SectionDef[] = [
     desc: '正方形または長方形の中空断面。強軸曲げ。',
     params: [
       { key: 'H', label: '高さ H', unit: 'mm', placeholder: '150', hint: '曲げ方向の外寸' },
-      { key: 'B', label: '幅 B',   unit: 'mm', placeholder: '100' },
+      { key: 'B', label: '幅 B', unit: 'mm', placeholder: '100' },
       { key: 't', label: '板厚 t', unit: 'mm', placeholder: '6' },
     ],
   },
@@ -78,12 +87,20 @@ export const SECTION_DEFS: SectionDef[] = [
     ],
   },
   {
+    shape: 'round-bar',
+    label: '丸棒（丸鋼）',
+    desc: '無垢の円形断面。',
+    params: [
+      { key: 'D', label: '直径 D', unit: 'mm', placeholder: '32' },
+    ],
+  },
+  {
     shape: 'flat',
     label: 'フラットバー（平鋼）',
     desc: '矩形断面（無垢）。強軸（高さ方向）曲げ。',
     params: [
       { key: 'H', label: '高さ H', unit: 'mm', placeholder: '100', hint: '曲げ方向の寸法' },
-      { key: 'B', label: '幅 B',   unit: 'mm', placeholder: '50' },
+      { key: 'B', label: '幅 B', unit: 'mm', placeholder: '50' },
     ],
   },
   {
@@ -100,166 +117,146 @@ export const SECTION_DEFS: SectionDef[] = [
     label: '溝形鋼（チャンネル）',
     desc: 'C 形断面。強軸（フランジ面内）曲げ。',
     params: [
-      { key: 'H',  label: '断面高さ H',  unit: 'mm', placeholder: '150' },
-      { key: 'B',  label: 'フランジ幅 B', unit: 'mm', placeholder: '65' },
-      { key: 'tw', label: 'ウェブ厚 tw',  unit: 'mm', placeholder: '6.5' },
+      { key: 'H', label: '断面高さ H', unit: 'mm', placeholder: '150' },
+      { key: 'B', label: 'フランジ幅 B', unit: 'mm', placeholder: '65' },
+      { key: 'tw', label: 'ウェブ厚 tw', unit: 'mm', placeholder: '6.5' },
       { key: 'tf', label: 'フランジ厚 tf', unit: 'mm', placeholder: '10' },
     ],
   },
 ];
 
-// ─── Individual calculators ───────────────────────────────────────────────────
-
-/**
- * H-beam (I-section)
- * Strong axis:  Ix = (B·H³ − (B−tw)·hw³) / 12
- * Weak axis:    Iy = (2·tf·B³ + hw·tw³) / 12
- */
 function calcH(H: number, B: number, tw: number, tf: number): SectionResult {
   const hw = H - 2 * tf;
-  const I_mm4  = (B * H ** 3 - (B - tw) * hw ** 3) / 12;
-  const Z_mm3  = (2 * I_mm4) / H;
+  const I_mm4 = (B * H ** 3 - (B - tw) * hw ** 3) / 12;
+  const Z_mm3 = (2 * I_mm4) / H;
   const Iy_mm4 = (2 * tf * B ** 3 + hw * tw ** 3) / 12;
   const Zy_mm3 = (2 * Iy_mm4) / B;
   const area_mm2 = 2 * B * tf + tw * hw;
-  return { I_mm4, Z_mm3, Iy_mm4, Zy_mm3, area_mm2 };
+  return finalizeSection({ I_mm4, Z_mm3, Iy_mm4, Zy_mm3, area_mm2 });
 }
 
-/**
- * Rectangular hollow section
- * Strong axis:  Ix = (B·H³ − bi·hi³) / 12
- * Weak axis:    Iy = (H·B³ − hi·bi³) / 12
- */
+function calcTBar(H: number, B: number, tw: number, tf: number): SectionResult {
+  const hw = H - tf;
+  const areaFlange = B * tf;
+  const areaWeb = tw * hw;
+  const area_mm2 = areaFlange + areaWeb;
+  const yFlange = tf / 2;
+  const yWeb = tf + hw / 2;
+  const yBar = (areaFlange * yFlange + areaWeb * yWeb) / area_mm2;
+  const IFlange = (B * tf ** 3) / 12 + areaFlange * (yBar - yFlange) ** 2;
+  const IWeb = (tw * hw ** 3) / 12 + areaWeb * (yWeb - yBar) ** 2;
+  const I_mm4 = IFlange + IWeb;
+  const Z_mm3 = I_mm4 / Math.max(yBar, H - yBar);
+  const Iy_mm4 = (tf * B ** 3) / 12 + (hw * tw ** 3) / 12;
+  const Zy_mm3 = (2 * Iy_mm4) / B;
+  return finalizeSection({ I_mm4, Z_mm3, Iy_mm4, Zy_mm3, area_mm2 });
+}
+
 function calcRectTube(H: number, B: number, t: number): SectionResult {
   const hi = H - 2 * t;
   const bi = B - 2 * t;
-  const I_mm4  = (B * H ** 3 - bi * hi ** 3) / 12;
-  const Z_mm3  = (2 * I_mm4) / H;
+  const I_mm4 = (B * H ** 3 - bi * hi ** 3) / 12;
+  const Z_mm3 = (2 * I_mm4) / H;
   const Iy_mm4 = (H * B ** 3 - hi * bi ** 3) / 12;
   const Zy_mm3 = (2 * Iy_mm4) / B;
   const area_mm2 = B * H - bi * hi;
-  return { I_mm4, Z_mm3, Iy_mm4, Zy_mm3, area_mm2 };
+  return finalizeSection({ I_mm4, Z_mm3, Iy_mm4, Zy_mm3, area_mm2 });
 }
 
-/**
- * Circular hollow section
- * Ix = Iy = π(D⁴−d⁴)/64  (symmetric)
- */
 function calcCircTube(D: number, t: number): SectionResult {
   const d = D - 2 * t;
-  const I_mm4  = (Math.PI * (D ** 4 - d ** 4)) / 64;
-  const Z_mm3  = (Math.PI * (D ** 4 - d ** 4)) / (32 * D);
+  const I_mm4 = (Math.PI * (D ** 4 - d ** 4)) / 64;
+  const Z_mm3 = (Math.PI * (D ** 4 - d ** 4)) / (32 * D);
   const area_mm2 = (Math.PI * (D ** 2 - d ** 2)) / 4;
-  return { I_mm4, Z_mm3, Iy_mm4: I_mm4, Zy_mm3: Z_mm3, area_mm2 };
+  return finalizeSection({ I_mm4, Z_mm3, Iy_mm4: I_mm4, Zy_mm3: Z_mm3, area_mm2 });
 }
 
-/**
- * Solid rectangular section (flat bar)
- * Strong axis: Ix = B·H³/12,  Zx = B·H²/6
- * Weak axis:   Iy = H·B³/12,  Zy = H·B²/6
- */
+function calcRoundBar(D: number): SectionResult {
+  const I_mm4 = (Math.PI * D ** 4) / 64;
+  const Z_mm3 = (Math.PI * D ** 3) / 32;
+  const area_mm2 = (Math.PI * D ** 2) / 4;
+  return finalizeSection({ I_mm4, Z_mm3, Iy_mm4: I_mm4, Zy_mm3: Z_mm3, area_mm2 });
+}
+
 function calcFlat(H: number, B: number): SectionResult {
-  const I_mm4  = (B * H ** 3) / 12;
-  const Z_mm3  = (B * H ** 2) / 6;
+  const I_mm4 = (B * H ** 3) / 12;
+  const Z_mm3 = (B * H ** 2) / 6;
   const Iy_mm4 = (H * B ** 3) / 12;
   const Zy_mm3 = (H * B ** 2) / 6;
   const area_mm2 = B * H;
-  return { I_mm4, Z_mm3, Iy_mm4, Zy_mm3, area_mm2 };
+  return finalizeSection({ I_mm4, Z_mm3, Iy_mm4, Zy_mm3, area_mm2 });
 }
 
-/**
- * Equal-leg angle — centroidal axes parallel to each leg.
- * For equal legs: Ix = Iy (by symmetry of the 45° principal axes).
- *
- * Centroid from base: yc = (b²+bt−t²) / (2(2b−t))
- * Ix = b·t³/12 + b·t·(yc−t/2)² + t·(b−t)³/12 + t·(b−t)·((b+t)/2−yc)²
- * Zx = Ix / max(yc, b−yc)
- *
- * Note: does not account for corner fillet radius.
- */
 function calcAngle(b: number, t: number): SectionResult {
   const area_mm2 = 2 * b * t - t * t;
   const yc = (b * b + b * t - t * t) / (2 * (2 * b - t));
-  const I_h  = (b * t ** 3) / 12 + b * t * (yc - t / 2) ** 2;
-  const I_v  = (t * (b - t) ** 3) / 12 + t * (b - t) * ((b + t) / 2 - yc) ** 2;
+  const I_h = (b * t ** 3) / 12 + b * t * (yc - t / 2) ** 2;
+  const I_v = (t * (b - t) ** 3) / 12 + t * (b - t) * ((b + t) / 2 - yc) ** 2;
   const I_mm4 = I_h + I_v;
   const Z_mm3 = I_mm4 / Math.max(yc, b - yc);
-  // For equal-leg angle: Iy = Ix (centroidal axes parallel to each leg are equal)
-  return { I_mm4, Z_mm3, Iy_mm4: I_mm4, Zy_mm3: Z_mm3, area_mm2 };
+  return finalizeSection({ I_mm4, Z_mm3, Iy_mm4: I_mm4, Zy_mm3: Z_mm3, area_mm2 });
 }
 
-/**
- * Channel (C-section) — symmetric about horizontal (strong) axis.
- *
- * Strong axis X-X:
- *   Ix = (B·H³ − (B−tw)·hw³) / 12
- *   Zx = 2·Ix / H
- *
- * Weak axis Y-Y (centroid from web back):
- *   xc = (B²·tf + hw·tw²/2) / area
- *   Iy = 2·(tf·B³/12 + tf·B·(B/2−xc)²) + hw·tw³/12 + hw·tw·(xc−tw/2)²
- *   Zy = Iy / max(xc, B−xc)
- */
 function calcChannel(H: number, B: number, tw: number, tf: number): SectionResult {
   const hw = H - 2 * tf;
   const area_mm2 = tw * hw + 2 * B * tf;
-
-  // Strong axis
   const I_mm4 = (B * H ** 3 - (B - tw) * hw ** 3) / 12;
   const Z_mm3 = (2 * I_mm4) / H;
-
-  // Weak axis
   const xc = (B ** 2 * tf + hw * tw ** 2 / 2) / area_mm2;
   const Iy_flanges = 2 * ((tf * B ** 3) / 12 + tf * B * (B / 2 - xc) ** 2);
-  const Iy_web     = (hw * tw ** 3) / 12 + hw * tw * (xc - tw / 2) ** 2;
+  const Iy_web = (hw * tw ** 3) / 12 + hw * tw * (xc - tw / 2) ** 2;
   const Iy_mm4 = Iy_flanges + Iy_web;
   const Zy_mm3 = Iy_mm4 / Math.max(xc, B - xc);
-
-  return { I_mm4, Z_mm3, Iy_mm4, Zy_mm3, area_mm2 };
+  return finalizeSection({ I_mm4, Z_mm3, Iy_mm4, Zy_mm3, area_mm2 });
 }
 
-// ─── Public API ───────────────────────────────────────────────────────────────
-
-export function calcSection(
-  shape: SectionShape,
-  dims: Record<string, number>,
-): SectionResult | null {
+export function calcSection(shape: SectionShape, dims: Record<string, number>): SectionResult | null {
   try {
     switch (shape) {
-      case 'H':         return calcH(dims.H, dims.B, dims.tw, dims.tf);
-      case 'rect-tube': return calcRectTube(dims.H, dims.B, dims.t);
-      case 'circ-tube': return calcCircTube(dims.D, dims.t);
-      case 'flat':      return calcFlat(dims.H, dims.B);
-      case 'angle':     return calcAngle(dims.b, dims.t);
-      case 'channel':   return calcChannel(dims.H, dims.B, dims.tw, dims.tf);
+      case 'H':
+        return calcH(dims.H, dims.B, dims.tw, dims.tf);
+      case 't-bar':
+        return calcTBar(dims.H, dims.B, dims.tw, dims.tf);
+      case 'rect-tube':
+        return calcRectTube(dims.H, dims.B, dims.t);
+      case 'circ-tube':
+        return calcCircTube(dims.D, dims.t);
+      case 'round-bar':
+        return calcRoundBar(dims.D);
+      case 'flat':
+        return calcFlat(dims.H, dims.B);
+      case 'angle':
+        return calcAngle(dims.b, dims.t);
+      case 'channel':
+        return calcChannel(dims.H, dims.B, dims.tw, dims.tf);
     }
   } catch {
     return null;
   }
 }
 
-export function validateSectionDims(
-  shape: SectionShape,
-  dims: Record<string, number>,
-): string[] {
+export function validateSectionDims(shape: SectionShape, dims: Record<string, number>): string[] {
   const errors: string[] = [];
-  const def = SECTION_DEFS.find((d) => d.shape === shape);
+  const def = SECTION_DEFS.find((definition) => definition.shape === shape);
   if (!def) return ['不明な断面形状です。'];
 
-  for (const p of def.params) {
-    const v = dims[p.key];
-    if (v === undefined || isNaN(v) || v <= 0) {
-      errors.push(`${p.label} は正の数を入力してください。`);
+  for (const param of def.params) {
+    const value = dims[param.key];
+    if (value === undefined || isNaN(value) || value <= 0) {
+      errors.push(`${param.label} は正の数を入力してください。`);
     }
   }
   if (errors.length > 0) return errors;
 
   switch (shape) {
     case 'H':
-      if (dims.tf * 2 >= dims.H)
+    case 't-bar':
+    case 'channel':
+      if (dims.tf >= dims.H) errors.push('フランジ厚 tf は断面高さ H より小さくしてください。');
+      if (dims.tw >= dims.B) errors.push('ウェブ厚 tw はフランジ幅 B より小さくしてください。');
+      if (shape !== 't-bar' && dims.tf * 2 >= dims.H) {
         errors.push('フランジ厚 tf × 2 が断面高さ H 以上です。');
-      if (dims.tw >= dims.B)
-        errors.push('ウェブ厚 tw がフランジ幅 B 以上です。');
+      }
       break;
     case 'rect-tube':
       if (dims.t * 2 >= dims.H) errors.push('板厚 t × 2 が高さ H 以上です。');
@@ -268,15 +265,29 @@ export function validateSectionDims(
     case 'circ-tube':
       if (dims.t * 2 >= dims.D) errors.push('板厚 t × 2 が外径 D 以上です。');
       break;
+    case 'round-bar':
+      break;
     case 'angle':
       if (dims.t >= dims.b) errors.push('板厚 t が辺長 b 以上です。');
       break;
-    case 'channel':
-      if (dims.tf * 2 >= dims.H)
-        errors.push('フランジ厚 tf × 2 が断面高さ H 以上です。');
-      if (dims.tw >= dims.B)
-        errors.push('ウェブ厚 tw がフランジ幅 B 以上です。');
+    case 'flat':
       break;
   }
+
   return errors;
+}
+
+function finalizeSection(base: {
+  I_mm4: number;
+  Z_mm3: number;
+  Iy_mm4?: number;
+  Zy_mm3?: number;
+  area_mm2: number;
+}): SectionResult {
+  return {
+    ...base,
+    rx_mm: Math.sqrt(base.I_mm4 / base.area_mm2),
+    ry_mm: base.Iy_mm4 !== undefined ? Math.sqrt(base.Iy_mm4 / base.area_mm2) : undefined,
+    weight_kg_per_m: base.area_mm2 * 0.00785,
+  };
 }

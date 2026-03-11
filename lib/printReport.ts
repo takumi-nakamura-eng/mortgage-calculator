@@ -165,6 +165,7 @@ function buildSectionPropertiesReport(entry: EngHistoryEntry): string {
     result.Iy_mm4 !== undefined ? `<tr><th>Iy</th><td class="val">${fmt(result.Iy_mm4, 1)} mm⁴</td></tr>` : '',
     result.Zy_mm3 !== undefined ? `<tr><th>Zy</th><td class="val">${fmt(result.Zy_mm3, 2)} mm³</td></tr>` : '',
     result.area_mm2 !== undefined ? `<tr><th>断面積</th><td class="val">${fmt(result.area_mm2, 2)} mm²</td></tr>` : '',
+    result.weightKgPerM != null ? `<tr><th>単位重量</th><td class="val">${fmt(result.weightKgPerM, 3)} kg/m</td></tr>` : '',
   ].join('');
 
   return buildCommonCompactReport({
@@ -199,6 +200,7 @@ function buildBeamLikeReport(
       : `<tr><th>断面形状</th><td class="val">${entry.inputs.shapeName}</td></tr>`,
   ].join('');
   const resultRows = [
+    ...(result.reactionSummary ?? []).map((value, index) => `<tr><th>反力 ${index + 1}</th><td class="val">${value}</td></tr>`),
     `<tr><th>最大曲げモーメント</th><td class="val">${fmt(result.Mmax_kNm ?? 0, 3)} kN·m</td></tr>`,
     `<tr><th>曲げ応力</th><td class="val">${fmt(result.sigmaMax_MPa ?? 0, 2)} MPa (${result.stressOK ? 'OK' : 'NG'})</td></tr>`,
     `<tr><th>最大たわみ</th><td class="val">${fmt(result.deltaMax_mm ?? 0, 2)} mm</td></tr>`,
@@ -245,6 +247,29 @@ function buildBoltReport(entry: EngHistoryEntry): string {
   });
 }
 
+function buildBoltEffectiveThreadReport(entry: EngHistoryEntry): string {
+  const result = entry.results;
+  const inputRows = Object.entries(entry.inputs.dims)
+    .map(([key, value]) => `<tr><th>${key}</th><td class="val">${value}</td></tr>`)
+    .join('');
+  const resultRows = [
+    `<tr><th>必要ねじ長さ</th><td class="val">${fmt(result.lRequired_mm ?? 0, 2)} mm</td></tr>`,
+    `<tr><th>先端余長</th><td class="val">${fmt(result.tipAllowance_mm ?? 0, 2)} mm</td></tr>`,
+  ].join('');
+
+  return buildCommonCompactReport({
+    title: 'ボルト有効ねじ長さチェックシート',
+    toolUrl: 'https://calcnavi.com/tools/bolt-effective-thread-length',
+    timestamp: entry.timestamp,
+    metaPurpose: entry.inputs.purpose,
+    figureNote: '必要ねじ長さと先端余長の一次確認用シートです。',
+    inputRows,
+    resultRows,
+    steps: buildFormulaSteps(entry),
+    disclaimer: '本計算書は簡易判定です。実部材のねじ仕様、強度区分、メーカー寸法を必ず確認してください。',
+  });
+}
+
 function buildBoltStrengthReport(entry: EngHistoryEntry): string {
   const result = entry.results;
   const inputRows = Object.entries(entry.inputs.dims)
@@ -280,6 +305,7 @@ function buildSteelWeightReport(entry: EngHistoryEntry): string {
   const resultRows = [
     `<tr><th>明細行数</th><td class="val">${entry.results.itemCount ?? 0} 行</td></tr>`,
     `<tr><th>総重量</th><td class="val">${fmt(entry.results.totalWeight_kg ?? 0, 2)} kg</td></tr>`,
+    `<tr><th>総荷重</th><td class="val">${fmt(entry.results.totalLoad_kN ?? 0, 3)} kN</td></tr>`,
   ].join('');
 
   return buildCommonCompactReport({
@@ -300,12 +326,14 @@ export function printEngReport(entry: EngHistoryEntry): void {
 
   if (entry.toolId === 'section-properties') {
     html = buildSectionPropertiesReport(entry);
-  } else if (entry.toolId === 'simple-beam') {
+  } else if (entry.toolId === 'simple-beam' || entry.toolId === 'simple-supported-point-load' || entry.toolId === 'simple-supported-uniform-load') {
     html = buildBeamLikeReport(entry, '単純梁（単純支持）計算書', 'https://calcnavi.com/tools/beams/simple-supported', 'simple');
-  } else if (entry.toolId === 'cantilever') {
+  } else if (entry.toolId === 'cantilever' || entry.toolId === 'cantilever-point-load' || entry.toolId === 'cantilever-uniform-load') {
     html = buildBeamLikeReport(entry, '片持ち梁（カンチレバー）計算書', 'https://calcnavi.com/tools/beams/cantilever', 'cantilever');
   } else if (entry.toolId === 'bolt-length') {
     html = buildBoltReport(entry);
+  } else if (entry.toolId === 'bolt-effective-thread-length') {
+    html = buildBoltEffectiveThreadReport(entry);
   } else if (entry.toolId === 'bolt-strength') {
     html = buildBoltStrengthReport(entry);
   } else if (entry.toolId === 'steel-weight') {

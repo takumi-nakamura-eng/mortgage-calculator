@@ -114,6 +114,7 @@ export default function SectionPropertiesCalculator() {
         Iy_mm4:       result.Iy_mm4,
         Zy_mm3:       result.Zy_mm3,
         area_mm2:     result.area_mm2,
+        weightKgPerM: result.weight_kg_per_m,
       },
       formulaSteps: steps,
     });
@@ -251,11 +252,16 @@ export default function SectionPropertiesCalculator() {
               <div className="section-result-group">
                 <p className="section-result-group-title">断面積</p>
                 <ResultRow label="断面積 A" mm={committedResult.result.area_mm2} unitMm="mm²" toCm={1/100} unitCm="cm²" decimals={2} />
+                <ResultRow label="断面二次半径 rx" mm={committedResult.result.rx_mm} unitMm="mm" toCm={1/10} unitCm="cm" decimals={2} />
+                {committedResult.result.ry_mm !== undefined ? (
+                  <ResultRow label="断面二次半径 ry" mm={committedResult.result.ry_mm} unitMm="mm" toCm={1/10} unitCm="cm" decimals={2} />
+                ) : null}
+                <ResultRow label="単位重量" mm={committedResult.result.weight_kg_per_m} unitMm="kg/m" toCm={1} unitCm="kg/m" decimals={3} />
               </div>
             </div>
 
             <p className="beam-note" style={{ marginTop: '1rem' }}>
-              重量算出が必要な場合は <Link href="/tools/steel-weight">鋼材重量計算ツール</Link> を使ってください。
+              <Link href="/tools/steel-weight">鋼材重量計算ツールへ</Link>
             </p>
 
             <AdSenseBlock

@@ -13,14 +13,14 @@ export const metadata: Metadata = buildMetadata({
 const BEAM_TOOLS = [
   {
     href: '/tools/beams/simple-supported',
-    title: '単純梁（単純支持）',
-    desc: 'ピン・ローラー支持の梁に対して、中央集中荷重または等分布荷重の曲げ応力・最大たわみを計算します。',
+    title: '単純梁',
+    desc: '中央集中荷重と等分布荷重を荷重条件別ツールに分けて選べます。',
     available: true,
   },
   {
     href: '/tools/beams/cantilever',
     title: '片持ち梁（カンチレバー）',
-    desc: '固定端・自由端の片持ち梁に対して、集中荷重・等分布荷重の曲げ応力・たわみを計算します。',
+    desc: '先端集中荷重と等分布荷重を荷重条件別ツールに分けて選べます。',
     available: true,
   },
   {

@@ -4,7 +4,18 @@
  * Max entries: 100
  */
 
-export type EngToolId = 'section-properties' | 'simple-beam' | 'bolt-length' | 'cantilever' | 'steel-weight' | 'bolt-strength';
+export type EngToolId =
+  | 'section-properties'
+  | 'simple-beam'
+  | 'cantilever'
+  | 'simple-supported-point-load'
+  | 'simple-supported-uniform-load'
+  | 'cantilever-point-load'
+  | 'cantilever-uniform-load'
+  | 'bolt-length'
+  | 'bolt-effective-thread-length'
+  | 'steel-weight'
+  | 'bolt-strength';
 
 export interface FormulaStep {
   label: string;
@@ -66,6 +77,8 @@ export interface EngResultSnapshot {
 
   totalWeight_kg?: number;
   itemCount?: number;
+  totalLoad_kN?: number;
+  reactionSummary?: string[];
 }
 
 export interface EngHistoryEntry {

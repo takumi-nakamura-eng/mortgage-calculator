@@ -88,6 +88,28 @@ function hBeamSVG(): string {
 </svg>`;
 }
 
+function tBarSVG(): string {
+  const B = 110, H = 150, tf = 16, tw = 12;
+  const lx = 85, ty = 40;
+  const cx = lx + B / 2;
+  const by = ty + H;
+  const hw = H - tf;
+  const ny = ty + 58;
+
+  return `<svg viewBox="0 0 280 230" xmlns="http://www.w3.org/2000/svg">
+  <rect x="${lx}" y="${ty}" width="${B}" height="${tf}" fill="${FILL}" stroke="${STROKE}" stroke-width="${SW}"/>
+  <rect x="${cx - tw / 2}" y="${ty + tf}" width="${tw}" height="${hw}" fill="${FILL}" stroke="${STROKE}" stroke-width="${SW}"/>
+  ${neutAxis(ny)}
+  ${loadArrow(cx, ty)}
+  ${vdim(lx - 18, ty, by, 'H')}
+  ${hdim(lx, lx + B, ty - 16, 'B')}
+  ${leader(lx + B + 6, ty + tf / 2 + 3, 'tf')}
+  ${leader(cx + tw / 2 + 5, ty + tf + hw / 2, 'tw')}
+  <line x1="${cx + tw / 2}" y1="${ty + tf + hw / 2}" x2="${cx + tw / 2 + 4}" y2="${ty + tf + hw / 2}" stroke="${DIM}" stroke-width="0.7"/>
+  ${ann(212, 'hw = H − tf')}
+</svg>`;
+}
+
 function rectTubeSVG(): string {
   const B = 100, H = 150, t = 13;
   const lx = 90, ty = 40;
@@ -126,6 +148,19 @@ function circTubeSVG(): string {
   <line x1="${cx}" y1="${cy}" x2="${cx + r}" y2="${cy}" stroke="${ANN_C}" stroke-width="0.7" stroke-dasharray="3 2"/>
   <text x="${cx + r + 5}" y="${cy + 4}" font-size="9" fill="${ANN_C}" font-style="italic">di</text>
   ${ann(215, 'di = D \u2212 2t \uff08\u5185\u5f84\uff09')}
+</svg>`;
+}
+
+function roundBarSVG(): string {
+  const R = 64;
+  const cx = 140, cy = 115;
+
+  return `<svg viewBox="0 0 280 230" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="${cx}" cy="${cy}" r="${R}" fill="${FILL}" stroke="${STROKE}" stroke-width="${SW}"/>
+  ${neutAxis(cy)}
+  ${loadArrow(cx, cy - R)}
+  ${hdim(cx - R, cx + R, cy + R + 18, 'D（直径）')}
+  ${ann(214, 'Ix = Iy = πD⁴ / 64')}
 </svg>`;
 }
 
@@ -204,10 +239,13 @@ function channelSVG(): string {
 export function getSectionSVGString(shape: SectionShape): string {
   switch (shape) {
     case 'H':         return hBeamSVG();
+    case 't-bar':     return tBarSVG();
     case 'rect-tube': return rectTubeSVG();
     case 'circ-tube': return circTubeSVG();
+    case 'round-bar': return roundBarSVG();
     case 'flat':      return flatBarSVG();
     case 'angle':     return angleSVG();
     case 'channel':   return channelSVG();
+    default:          return hBeamSVG();
   }
 }

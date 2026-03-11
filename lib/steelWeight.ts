@@ -1,13 +1,14 @@
-/**
- * Steel weight calculation logic.
- *
- * All dimension inputs are in mm; length L is in m.
- * Cross-section area A is computed in m² for direct use with density ρ [kg/m³].
- */
+import { kgToKN } from './beams/units';
 
-// ─── Shape types ────────────────────────────────────────────────────────────
-
-export type SteelShape = 'plate' | 'roundBar' | 'flatBar' | 'roundPipe' | 'rectPipe';
+export type SteelShape =
+  | 'plate'
+  | 'roundBar'
+  | 'flatBar'
+  | 'roundPipe'
+  | 'rectPipe'
+  | 'hBeam'
+  | 'channel'
+  | 'squareTube';
 
 export interface ShapeDef {
   shape: SteelShape;
@@ -27,9 +28,7 @@ export const SHAPE_DEFS: ShapeDef[] = [
   {
     shape: 'roundBar',
     label: '丸棒',
-    params: [
-      { key: 'd', label: '直径 d', unit: 'mm', placeholder: '20' },
-    ],
+    params: [{ key: 'd', label: '直径 d', unit: 'mm', placeholder: '20' }],
   },
   {
     shape: 'flatBar',
@@ -56,85 +55,114 @@ export const SHAPE_DEFS: ShapeDef[] = [
       { key: 't', label: '肉厚 t', unit: 'mm', placeholder: '3.2' },
     ],
   },
+  {
+    shape: 'hBeam',
+    label: 'H形鋼',
+    params: [
+      { key: 'H', label: '断面高さ H', unit: 'mm', placeholder: '200' },
+      { key: 'B', label: 'フランジ幅 B', unit: 'mm', placeholder: '100' },
+      { key: 'tw', label: 'ウェブ厚 tw', unit: 'mm', placeholder: '5.5' },
+      { key: 'tf', label: 'フランジ厚 tf', unit: 'mm', placeholder: '8' },
+    ],
+  },
+  {
+    shape: 'channel',
+    label: 'Cチャンネル',
+    params: [
+      { key: 'H', label: '断面高さ H', unit: 'mm', placeholder: '150' },
+      { key: 'B', label: 'フランジ幅 B', unit: 'mm', placeholder: '65' },
+      { key: 'tw', label: 'ウェブ厚 tw', unit: 'mm', placeholder: '6.5' },
+      { key: 'tf', label: 'フランジ厚 tf', unit: 'mm', placeholder: '10' },
+    ],
+  },
+  {
+    shape: 'squareTube',
+    label: '角形鋼管',
+    params: [
+      { key: 'B', label: '外寸 B', unit: 'mm', placeholder: '100' },
+      { key: 't', label: '肉厚 t', unit: 'mm', placeholder: '4.5' },
+    ],
+  },
 ];
-
-// ─── Cross-section area (returns m²) ────────────────────────────────────────
 
 export function calcArea_m2(shape: SteelShape, dims: Record<string, number>): number | null {
   const mm2m = 1 / 1000;
 
   switch (shape) {
-    case 'plate': {
-      const { b, t } = dims;
-      if (!b || !t || b <= 0 || t <= 0) return null;
-      return (b * mm2m) * (t * mm2m);
-    }
-    case 'roundBar': {
-      const { d } = dims;
-      if (!d || d <= 0) return null;
-      return Math.PI * (d * mm2m) ** 2 / 4;
-    }
-    case 'flatBar': {
-      const { a, b } = dims;
-      if (!a || !b || a <= 0 || b <= 0) return null;
-      return (a * mm2m) * (b * mm2m);
-    }
+    case 'plate':
+      return validRect(dims.b, dims.t) ? dims.b * mm2m * dims.t * mm2m : null;
+    case 'roundBar':
+      return dims.d > 0 ? Math.PI * (dims.d * mm2m) ** 2 / 4 : null;
+    case 'flatBar':
+      return validRect(dims.a, dims.b) ? dims.a * mm2m * dims.b * mm2m : null;
     case 'roundPipe': {
       const { D, t } = dims;
-      if (!D || !t || D <= 0 || t <= 0) return null;
-      if (D <= 2 * t) return null; // hollow check
+      if (!validPositive(D, t) || D <= 2 * t) return null;
       const Do = D * mm2m;
       const Di = (D - 2 * t) * mm2m;
       return Math.PI * (Do ** 2 - Di ** 2) / 4;
     }
     case 'rectPipe': {
       const { B, H, t } = dims;
-      if (!B || !H || !t || B <= 0 || H <= 0 || t <= 0) return null;
-      if (B <= 2 * t || H <= 2 * t) return null; // hollow check
+      if (!validPositive(B, H, t) || B <= 2 * t || H <= 2 * t) return null;
       const Bo = B * mm2m;
       const Ho = H * mm2m;
       const Bi = (B - 2 * t) * mm2m;
       const Hi = (H - 2 * t) * mm2m;
       return Bo * Ho - Bi * Hi;
     }
+    case 'squareTube': {
+      const { B, t } = dims;
+      if (!validPositive(B, t) || B <= 2 * t) return null;
+      const Bo = B * mm2m;
+      const Bi = (B - 2 * t) * mm2m;
+      return Bo ** 2 - Bi ** 2;
+    }
+    case 'hBeam': {
+      const { H, B, tw, tf } = dims;
+      if (!validPositive(H, B, tw, tf) || H <= 2 * tf || B <= tw) return null;
+      return ((2 * B * tf) + tw * (H - 2 * tf)) / 1_000_000;
+    }
+    case 'channel': {
+      const { H, B, tw, tf } = dims;
+      if (!validPositive(H, B, tw, tf) || H <= 2 * tf || B <= tw) return null;
+      return (tw * (H - 2 * tf) + 2 * B * tf) / 1_000_000;
+    }
     default:
       return null;
   }
 }
 
-// ─── Validation ─────────────────────────────────────────────────────────────
-
 export function validateDims(shape: SteelShape, dims: Record<string, number>): string[] {
   const errors: string[] = [];
-  const def = SHAPE_DEFS.find((d) => d.shape === shape);
+  const def = SHAPE_DEFS.find((definition) => definition.shape === shape);
   if (!def) return ['不明な形状です'];
 
-  for (const p of def.params) {
-    const v = dims[p.key];
-    if (v === undefined || isNaN(v)) continue; // skip empty
-    if (v <= 0) errors.push(`${p.label} は正の値を入力してください`);
+  for (const param of def.params) {
+    const value = dims[param.key];
+    if (value === undefined || isNaN(value)) continue;
+    if (value <= 0) errors.push(`${param.label} は正の値を入力してください`);
   }
 
-  if (shape === 'roundPipe') {
-    const { D, t } = dims;
-    if (D > 0 && t > 0 && D <= 2 * t) {
-      errors.push('外径 D は肉厚 t の2倍より大きくしてください');
-    }
+  if (shape === 'roundPipe' && dims.D > 0 && dims.t > 0 && dims.D <= 2 * dims.t) {
+    errors.push('外径 D は肉厚 t の2倍より大きくしてください');
   }
   if (shape === 'rectPipe') {
-    const { B, H, t } = dims;
-    if (B > 0 && t > 0 && B <= 2 * t) {
-      errors.push('外寸 B は肉厚 t の2倍より大きくしてください');
-    }
-    if (H > 0 && t > 0 && H <= 2 * t) {
-      errors.push('外寸 H は肉厚 t の2倍より大きくしてください');
-    }
+    if (dims.B > 0 && dims.t > 0 && dims.B <= 2 * dims.t) errors.push('外寸 B は肉厚 t の2倍より大きくしてください');
+    if (dims.H > 0 && dims.t > 0 && dims.H <= 2 * dims.t) errors.push('外寸 H は肉厚 t の2倍より大きくしてください');
+  }
+  if (shape === 'squareTube' && dims.B > 0 && dims.t > 0 && dims.B <= 2 * dims.t) {
+    errors.push('外寸 B は肉厚 t の2倍より大きくしてください');
+  }
+  if ((shape === 'hBeam' || shape === 'channel') && dims.H > 0 && dims.tf > 0 && dims.H <= 2 * dims.tf) {
+    errors.push('断面高さ H はフランジ厚 tf の2倍より大きくしてください');
+  }
+  if ((shape === 'hBeam' || shape === 'channel') && dims.B > 0 && dims.tw > 0 && dims.B <= dims.tw) {
+    errors.push('フランジ幅 B はウェブ厚 tw より大きくしてください');
   }
 
   return errors;
 }
-
-// ─── Item model ─────────────────────────────────────────────────────────────
 
 export interface SteelWeightItem {
   id: string;
@@ -147,6 +175,11 @@ export interface SteelWeightItem {
   area_m2: number;
   w_kgm: number;
   W_kg: number;
+  W_kN: number;
+}
+
+function weightKgToKN(weightKg: number): number {
+  return kgToKN(weightKg);
 }
 
 export function buildItem(
@@ -159,7 +192,7 @@ export function buildItem(
 ): SteelWeightItem | null {
   const area = calcArea_m2(shape, dims);
   if (area === null || Lm <= 0 || n <= 0 || rho <= 0) return null;
-  const w = rho * area; // kg/m
+  const w = rho * area;
   const W = w * Lm * n;
   return {
     id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
@@ -172,6 +205,7 @@ export function buildItem(
     area_m2: area,
     w_kgm: w,
     W_kg: W,
+    W_kN: weightKgToKN(W),
   };
 }
 
@@ -179,18 +213,15 @@ export function recalcItem(item: SteelWeightItem): SteelWeightItem {
   const area = calcArea_m2(item.shape, item.dims);
   if (area === null) return item;
   const w = item.rho * area;
-  return { ...item, area_m2: area, w_kgm: w, W_kg: w * item.Lm * item.n };
+  const W = w * item.Lm * item.n;
+  return { ...item, area_m2: area, w_kgm: w, W_kg: W, W_kN: weightKgToKN(W) };
 }
-
-// ─── Dimension summary string ───────────────────────────────────────────────
 
 export function dimSummary(shape: SteelShape, dims: Record<string, number>): string {
-  const def = SHAPE_DEFS.find((d) => d.shape === shape);
+  const def = SHAPE_DEFS.find((definition) => definition.shape === shape);
   if (!def) return '';
-  return def.params.map((p) => `${p.key}=${dims[p.key] ?? '?'}`).join(', ');
+  return def.params.map((param) => `${param.key}=${dims[param.key] ?? '?'}`).join(', ');
 }
-
-// ─── localStorage persistence ───────────────────────────────────────────────
 
 const STORAGE_KEY = 'calcnavi_steel_weight_items';
 
@@ -199,7 +230,10 @@ export function loadItems(): SteelWeightItem[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return [];
-    return JSON.parse(raw) as SteelWeightItem[];
+    return (JSON.parse(raw) as SteelWeightItem[]).map((item) => ({
+      ...item,
+      W_kN: weightKgToKN(item.W_kg),
+    }));
   } catch {
     return [];
   }
@@ -212,4 +246,12 @@ export function saveItems(items: SteelWeightItem[]): void {
   } catch {
     // ignore quota errors
   }
+}
+
+function validRect(a?: number, b?: number): a is number {
+  return validPositive(a, b);
+}
+
+function validPositive(...values: Array<number | undefined>): boolean {
+  return values.every((value) => typeof value === 'number' && Number.isFinite(value) && value > 0);
 }

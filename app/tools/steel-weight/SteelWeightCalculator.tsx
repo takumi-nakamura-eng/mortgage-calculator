@@ -18,6 +18,7 @@ import { printEngReport } from '@/lib/printReport';
 import { DENSITY_PRESETS, resolveDensity } from '@/lib/materialPresets';
 import AdSenseBlock from '@/app/components/AdSenseBlock';
 import ToolWorkbenchHeader from '@/app/components/ToolWorkbenchHeader';
+import { SteelWeightSvg } from '@/lib/diagrams/tools/steel-weight';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -135,6 +136,7 @@ export default function SteelWeightCalculator() {
 
   // ── Totals ──
   const totalW = useMemo(() => items.reduce((s, i) => s + i.W_kg, 0), [items]);
+  const totalLoad = useMemo(() => items.reduce((s, i) => s + i.W_kN, 0), [items]);
   const totalCount = items.length;
 
   function buildSnapshotData(snapshotItems: SteelWeightItem[]): Omit<EngHistoryEntry, 'id' | 'timestamp'> | null {
@@ -157,6 +159,7 @@ export default function SteelWeightCalculator() {
       },
       results: {
         totalWeight_kg: snapshotItems.reduce((sum, item) => sum + item.W_kg, 0),
+        totalLoad_kN: snapshotItems.reduce((sum, item) => sum + item.W_kN, 0),
         itemCount: snapshotItems.length,
       },
       formulaSteps: [],
@@ -263,7 +266,7 @@ export default function SteelWeightCalculator() {
   }
 
   function handleCopyTSV() {
-    const header = ['No', '形状', '寸法', 'L [m]', 'n', '単位重量 [kg/m]', '重量 [kg]', '備考'].join('\t');
+    const header = ['No', '形状', '寸法', 'L [m]', 'n', '単位重量 [kg/m]', '重量 [kg]', '荷重 [kN]', '備考'].join('\t');
     const rows = items.map((item, i) => [
       i + 1,
       shapeLabel(item.shape),
@@ -272,9 +275,10 @@ export default function SteelWeightCalculator() {
       item.n,
       fmtNum(item.w_kgm, 3),
       fmtNum(item.W_kg, 2),
+      fmtNum(item.W_kN, 3),
       item.note,
     ].join('\t'));
-    const footer = `\t\t\t\t\t合計\t${fmtNum(totalW, 2)}`;
+    const footer = `\t\t\t\t\t合計\t${fmtNum(totalW, 2)}\t${fmtNum(totalLoad, 3)}`;
     const tsv = [header, ...rows, footer].join('\n');
     navigator.clipboard.writeText(tsv).catch(() => {
       // fallback: do nothing
@@ -289,38 +293,62 @@ export default function SteelWeightCalculator() {
         <div className="tool-workbench__section">
           <ToolWorkbenchHeader title="入力条件" />
           <div className="beam-section">
-            <h2 className="beam-section-title">鋼材を追加</h2>
+            <h2 className="beam-section-title">① 断面形状を選択</h2>
 
-            <div className="form-group" style={{ marginBottom: '0.75rem' }}>
-              <label htmlFor="sw-shape">形状</label>
-              <select
-                id="sw-shape"
-                value={selectedShape}
-                onChange={(e) => handleShapeChange(e.target.value as SteelShape)}
-              >
-                {SHAPE_DEFS.map((d) => (
-                  <option key={d.shape} value={d.shape}>{d.label}</option>
-                ))}
-              </select>
-            </div>
-
-            <div className="beam-row" style={{ marginBottom: '0.75rem' }}>
-              {currentDef.params.map((p) => (
-                <div key={p.key} className="form-group" style={{ flex: '1 1 120px' }}>
-                  <label htmlFor={`sw-${p.key}`}>
-                    {p.label} <span className="unit-label">[{p.unit}]</span>
-                  </label>
-                  <input
-                    id={`sw-${p.key}`}
-                    type="number"
-                    min="0.001"
-                    step="any"
-                    placeholder={p.placeholder}
-                    value={shapeDims[p.key] ?? ''}
-                    onChange={(e) => setShapeDims((prev) => ({ ...prev, [p.key]: e.target.value }))}
-                  />
-                </div>
+            <div className="section-shape-tabs">
+              {SHAPE_DEFS.map((d) => (
+                <button
+                  key={d.shape}
+                  type="button"
+                  onClick={() => handleShapeChange(d.shape)}
+                  className={`section-shape-tab${selectedShape === d.shape ? ' section-shape-tab--active' : ''}`}
+                >
+                  {d.label}
+                </button>
               ))}
+            </div>
+            <p className="beam-note" style={{ marginTop: '0.5rem' }}>
+              寸法ラベルは図の記号に合わせています。断面寸法を入力して、長さと本数から重量と荷重を集計します。
+            </p>
+          </div>
+
+          <div className="beam-section">
+            <h2 className="beam-section-title">② 断面寸法を入力</h2>
+            <div className="section-main-row">
+              <div className="section-diagram-box">
+                <SteelWeightSvg shape={selectedShape} maxWidth={280} />
+                <p className="section-diagram-caption">
+                  寸法記号は入力欄と対応します。長さ L と本数 n は次のセクションで入力します。
+                </p>
+              </div>
+
+              <div className="section-inputs-box section-properties-form">
+                {currentDef.params.map((p) => (
+                  <div key={p.key} className="form-group section-properties-form__field">
+                    <label htmlFor={`sw-${p.key}`}>
+                      {p.label} <span className="unit-label">[{p.unit}]</span>
+                    </label>
+                    <input
+                      id={`sw-${p.key}`}
+                      type="number"
+                      min="0.001"
+                      step="any"
+                      placeholder={p.placeholder}
+                      value={shapeDims[p.key] ?? ''}
+                      onChange={(e) => setShapeDims((prev) => ({ ...prev, [p.key]: e.target.value }))}
+                    />
+                  </div>
+                ))}
+                {addErrors.map((err, i) => (
+                  <p key={i} className="error-message">{err}</p>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="beam-section">
+            <h2 className="beam-section-title">③ 長さ・本数・密度</h2>
+            <div className="beam-row" style={{ marginBottom: '0.75rem' }}>
               <div className="form-group" style={{ flex: '1 1 100px' }}>
                 <label htmlFor="sw-L">長さ L <span className="unit-label">[m]</span></label>
                 <input
@@ -389,10 +417,6 @@ export default function SteelWeightCalculator() {
               </div>
             </div>
 
-            {addErrors.map((err, i) => (
-              <p key={i} className="error-message">{err}</p>
-            ))}
-
             <div className="form-submit-row">
               <button
                 type="button"
@@ -451,6 +475,7 @@ export default function SteelWeightCalculator() {
                   <th>n</th>
                   <th>単位重量 [kg/m]</th>
                   <th>重量 [kg]</th>
+                  <th>荷重 [kN]</th>
                   <th>備考</th>
                   <th>操作</th>
                 </tr>
@@ -489,6 +514,7 @@ export default function SteelWeightCalculator() {
                       <td>{item.n}</td>
                       <td>{fmtNum(item.w_kgm, 3)}</td>
                       <td className="sw-weight-cell">{fmtNum(item.W_kg, 2)}</td>
+                      <td className="sw-weight-cell">{fmtNum(item.W_kN, 3)}</td>
                       <td className="sw-note-cell">{item.note}</td>
                       <td>
                         <div style={{ display: 'flex', gap: '0.25rem' }}>
@@ -520,6 +546,9 @@ export default function SteelWeightCalculator() {
                   <td style={{ fontWeight: 700, fontSize: '1.05rem' }}>
                     {fmtNum(totalW, 2)} kg
                   </td>
+                  <td style={{ fontWeight: 700, fontSize: '1.05rem' }}>
+                    {fmtNum(totalLoad, 3)} kN
+                  </td>
                   <td colSpan={2} />
                 </tr>
               </tfoot>
@@ -533,6 +562,12 @@ export default function SteelWeightCalculator() {
         <div className="sw-total-summary">
           <span className="sw-total-label">総重量</span>
           <span className="sw-total-value">{fmtNum(totalW, 2)} <span className="sw-total-unit">kg</span></span>
+        </div>
+      )}
+      {items.length > 0 && (
+        <div className="sw-total-summary" style={{ marginTop: '0.75rem' }}>
+          <span className="sw-total-label">総荷重</span>
+          <span className="sw-total-value">{fmtNum(totalLoad, 3)} <span className="sw-total-unit">kN</span></span>
         </div>
       )}
       {items.length > 0 && (
@@ -596,7 +631,7 @@ function EditRow({
   return (
     <tr className="sw-edit-row">
       <td>{idx + 1}</td>
-      <td colSpan={7}>
+      <td colSpan={8}>
         <div className="sw-edit-fields">
           <div className="form-group" style={{ flex: '0 0 130px' }}>
             <label>形状</label>

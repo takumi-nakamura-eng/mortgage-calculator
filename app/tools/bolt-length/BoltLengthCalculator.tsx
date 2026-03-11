@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useState } from 'react';
 import { addEngHistoryEntry, type EngHistoryEntry, type FormulaStep } from '@/lib/engHistory';
 import { printEngReport } from '@/lib/printReport';
@@ -262,6 +263,9 @@ export default function BoltLengthCalculator() {
                 </div>
               ))}
             </div>
+            <p className="beam-note" style={{ marginTop: '1rem' }}>
+              ねじ山のかみ合い余裕を別で確認する場合は <Link href="/tools/bolt-effective-thread-length">ボルト有効ねじ長さチェック</Link> を使ってください。
+            </p>
           </div>
         </div>
       ) : null}

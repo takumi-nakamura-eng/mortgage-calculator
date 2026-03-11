@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import CantileverCalculator from './CantileverCalculator';
+import Link from 'next/link';
 import Breadcrumbs from '@/app/components/Breadcrumbs';
 import RelatedArticles from '@/app/components/RelatedArticles';
 import ToolDisclaimer from '@/app/components/ToolDisclaimer';
@@ -7,15 +7,27 @@ import ToolHero from '@/app/components/ToolHero';
 import { formatContentDate } from '@/lib/contentDates';
 import { getAllArticles } from '@/lib/content/articles';
 import { getToolById } from '@/lib/data/tools';
-import { SITE_NAME, SITE_URL } from '@/lib/site';
 import { buildMetadata } from '@/lib/seo';
 
 export const metadata: Metadata = buildMetadata({
-  title: '片持ち梁（カンチレバー）計算',
+  title: '片持ち梁ツール一覧',
   description:
-    '片持ち梁（固定端・自由端）の曲げ応力とたわみを計算します。先端集中荷重・等分布荷重に対応。OK/NG判定つき。',
+    '片持ち梁の先端集中荷重計算と等分布荷重計算を荷重条件別に選べる一覧ページです。',
   path: '/tools/beams/cantilever',
 });
+
+const TOOLS = [
+  {
+    href: '/tools/beams/cantilever-point-load',
+    title: '先端集中荷重',
+    desc: '片持ち梁の先端荷重に限定して、固定端反力・最大曲げモーメント・最大たわみ・曲げ応力を確認します。',
+  },
+  {
+    href: '/tools/beams/cantilever-uniform-load',
+    title: '等分布荷重',
+    desc: '片持ち梁の等分布荷重に限定して、固定端反力・最大曲げモーメント・最大たわみ・曲げ応力を確認します。',
+  },
+] as const;
 
 export default async function CantileverPage() {
   const tool = getToolById('cantilever');
@@ -24,52 +36,38 @@ export default async function CantileverPage() {
     tool?.relatedArticleSlugs.includes(article.slug),
   );
 
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'SoftwareApplication',
-    name: '片持ち梁（カンチレバー）計算',
-    operatingSystem: 'Web',
-    applicationCategory: 'EngineeringApplication',
-    description:
-      '片持ち梁の先端集中荷重・等分布荷重に対する曲げ応力と最大たわみを計算する無料ツール。',
-    offers: {
-      '@type': 'Offer',
-      price: '0',
-      priceCurrency: 'JPY',
-    },
-    url: `${SITE_URL}/tools/beams/cantilever`,
-    publisher: {
-      '@type': 'Organization',
-      name: SITE_NAME,
-    },
-  };
   return (
     <main className="container">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-
       <Breadcrumbs
         items={[
           { name: 'ホーム', href: '/' },
           { name: '計算ツール', href: '/tools' },
           { name: '梁計算ツール', href: '/tools/beams' },
-          { name: '片持ち梁（カンチレバー）計算' },
+          { name: '片持ち梁ツール一覧' },
         ]}
       />
 
       <ToolHero
-        title="片持ち梁（カンチレバー）計算"
-        description="固定端・自由端の片持ち梁について、先端集中荷重・等分布荷重の曲げ応力と最大たわみを計算できるツールです。OK/NGの一次確認と寸法検討に使えます。"
+        title="片持ち梁ツール一覧"
+        description="片持ち梁は先端集中荷重と等分布荷重で固定端反力とたわみ式が異なるため、荷重条件ごとに分けています。対象荷重に合わせて選んでください。"
         labels={[
-          { label: '荷重条件', value: '集中 / 等分布' },
-          { label: '用途', value: '一次確認' },
-          { label: '種別', value: '梁 / 片持ち / たわみ' },
+          { label: '荷重条件', value: '2種類' },
+          { label: '入力', value: 'I / Z 直接入力' },
+          { label: '種別', value: '梁 / 片持ち' },
         ]}
         publishedLabel={formatContentDate(tool?.publishedAt ?? '2026-03-04')}
         updatedLabel={formatContentDate(tool?.updatedAt ?? '2026-03-11')}
         diagramKey="cantilever"
         diagramMaxWidth={220}
       />
-      <CantileverCalculator />
+      <div className="portal-cards">
+        {TOOLS.map((entry) => (
+          <Link key={entry.href} href={entry.href} className="portal-card">
+            <span className="portal-card-title">{entry.title}</span>
+            <span className="portal-card-desc">{entry.desc}</span>
+          </Link>
+        ))}
+      </div>
       <ToolDisclaimer />
       <RelatedArticles
         source="tool:cantilever"

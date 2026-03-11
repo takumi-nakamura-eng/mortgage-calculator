@@ -1,4 +1,4 @@
-import { createElement, type CSSProperties, type ComponentType } from 'react';
+import type { CSSProperties, ComponentType } from 'react';
 import { AllowableStressBasicsSvg } from './articles/allowable-stress-basics';
 import { AllowableShearStressBasicsSvg } from './articles/allowable-shear-stress-basics';
 import { AnchorBoltSelectionBasicsSvg } from './articles/anchor-bolt-selection-basics';
@@ -34,7 +34,11 @@ import { UniformLoadBasicsSvg } from './articles/uniform-load-basics';
 import { WasherRoleSvg } from './articles/washer-role';
 import { YoungsModulusBasicsSvg } from './articles/youngs-modulus-basics';
 import { AnchorSvg } from './tools/anchor';
+import { CantileverPointLoadSvg } from './tools/cantilever-point-load';
+import { CantileverUniformLoadSvg } from './tools/cantilever-uniform-load';
 import { SimpleSupportedSvg } from './tools/simple-supported';
+import { SimpleSupportedPointLoadSvg } from './tools/simple-supported-point-load';
+import { SimpleSupportedUniformLoadSvg } from './tools/simple-supported-uniform-load';
 import { BoltLengthSvg, type BoltLengthSvgProps } from './tools/bolt-length';
 import { BoltStrengthSvg } from './tools/bolt-strength';
 import { CantileverSvg } from './tools/cantilever';
@@ -172,7 +176,11 @@ function GenericSketch({
 const TOOL_DIAGRAMS: Record<string, DiagramComponent> = {
   'bolt-length': BoltLengthSvg,
   'simple-supported': SimpleSupportedSvg,
+  'simple-supported-point-load': SimpleSupportedPointLoadSvg,
+  'simple-supported-uniform-load': SimpleSupportedUniformLoadSvg,
   cantilever: CantileverSvg,
+  'cantilever-point-load': CantileverPointLoadSvg,
+  'cantilever-uniform-load': CantileverUniformLoadSvg,
   'section-properties': SectionPropertiesSvg,
   'bolt-strength': BoltStrengthSvg,
   'steel-weight': SteelWeightSvg,
@@ -240,6 +248,25 @@ export function getDiagramComponent(kind: 'article' | 'tool', diagramKey: string
 }
 
 export function DiagramRenderer({ diagramKey, kind = 'article', ...props }: DiagramProps) {
-  const renderDiagram = getDiagramComponent(kind, diagramKey);
-  return createElement(renderDiagram, props);
+  const key = diagramKey.toLowerCase();
+
+  if (kind === 'tool') {
+    if (diagramKey in TOOL_DIAGRAMS) {
+      const Diagram = TOOL_DIAGRAMS[diagramKey];
+      return <Diagram {...props} />;
+    }
+    if (key.includes('bolt')) return <BoltLengthSvg {...props} />;
+    if (key.includes('beam') || key.includes('cantilever') || key.includes('deflection')) return <BeamSketch {...props} />;
+    if (key.includes('section') || key.includes('steel') || key.includes('tube')) return <SectionSketch {...props} />;
+    return <GenericSketch {...props} />;
+  }
+
+  if (diagramKey in ARTICLE_DIAGRAMS) {
+    const Diagram = ARTICLE_DIAGRAMS[diagramKey];
+    return <Diagram {...props} />;
+  }
+
+  if (key.includes('beam') || key.includes('deflection') || key.includes('cantilever')) return <BeamSketch {...props} />;
+  if (key.includes('section') || key.includes('modulus') || key.includes('inertia') || key.includes('tube')) return <SectionSketch {...props} />;
+  return <GenericSketch {...props} />;
 }

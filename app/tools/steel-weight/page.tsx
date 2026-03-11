@@ -13,7 +13,7 @@ import { buildMetadata } from '@/lib/seo';
 export const metadata: Metadata = buildMetadata({
   title: '鋼材重量計算ツール',
   description:
-    '平板・丸棒・角棒・丸パイプ・角パイプの重量を計算し、明細表で積み上げ管理。鋼材の自重計算・材料拾いに。',
+    '平板・丸棒・角棒・丸パイプ・角パイプ・H形鋼・Cチャンネル・角形鋼管の重量と kN 換算荷重を計算し、明細表で積み上げ管理します。',
   path: '/tools/steel-weight',
 });
 
@@ -31,7 +31,7 @@ export default async function SteelWeightPage() {
     operatingSystem: 'Web',
     applicationCategory: 'EngineeringApplication',
     description:
-      '鋼材の形状・寸法から重量を計算し、明細テーブルで合計重量を管理できる無料ツール。',
+      '鋼材の形状・寸法から重量と kN 換算荷重を計算し、明細テーブルで合計値を管理できる無料ツール。',
     offers: {
       '@type': 'Offer',
       price: '0',
@@ -61,9 +61,9 @@ export default async function SteelWeightPage() {
 
       <ToolHero
         title="鋼材重量計算"
-        description="平板・丸棒・角棒・丸パイプ・角パイプの寸法と長さから重量を計算し、明細表で合計重量を集計できるツールです。材料拾い、重量見積もり、一次確認に使えます。"
+        description="平板・丸棒・角棒・丸パイプ・角パイプ・H形鋼・Cチャンネル・角形鋼管の寸法と長さから重量を計算し、明細表で合計重量と合計荷重を集計できるツールです。"
         labels={[
-          { label: '対応形状', value: '5形状' },
+          { label: '対応形状', value: '8形状' },
           { label: '用途', value: '拾い出し' },
           { label: '種別', value: '鋼材 / 重量 / 集計' },
         ]}
