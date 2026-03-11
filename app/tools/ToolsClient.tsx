@@ -2,20 +2,22 @@
 
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
-import { TOOLS } from '@/lib/data/tools';
+import type { ToolItem } from '@/lib/data/tools';
 import CardDiagram from '@/app/components/CardDiagram';
 
-export default function ToolsClient() {
-  const searchParams = useSearchParams();
-  const initialQuery = searchParams.get('q') ?? '';
+export default function ToolsClient({
+  initialTools,
+  initialQuery = '',
+}: {
+  initialTools: ToolItem[];
+  initialQuery?: string;
+}) {
   const [query, setQuery] = useState(initialQuery);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
 
-    return TOOLS.filter((t) => {
-      if (!t.available) return false;
+    return initialTools.filter((t) => {
       if (!q) return true;
 
       return (
@@ -25,7 +27,7 @@ export default function ToolsClient() {
         t.keywords.some((keyword) => keyword.toLowerCase().includes(q))
       );
     });
-  }, [query]);
+  }, [initialTools, query]);
 
   return (
     <>

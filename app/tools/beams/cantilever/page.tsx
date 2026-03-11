@@ -1,7 +1,12 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import Breadcrumbs from '@/app/components/Breadcrumbs';
+import RelatedArticles from '@/app/components/RelatedArticles';
+import ToolDisclaimer from '@/app/components/ToolDisclaimer';
 import ToolHero from '@/app/components/ToolHero';
+import { formatContentDate } from '@/lib/contentDates';
+import { getAllArticles } from '@/lib/content/articles';
+import { getToolById } from '@/lib/data/tools';
 import { buildMetadata } from '@/lib/seo';
 
 export const metadata: Metadata = buildMetadata({
@@ -24,7 +29,13 @@ const TOOLS = [
   },
 ] as const;
 
-export default function CantileverPage() {
+export default async function CantileverPage() {
+  const tool = getToolById('cantilever');
+  const allArticles = await getAllArticles();
+  const relatedArticles = allArticles.filter((article) =>
+    tool?.relatedArticleSlugs.includes(article.slug),
+  );
+
   return (
     <main className="container">
       <Breadcrumbs
@@ -44,17 +55,30 @@ export default function CantileverPage() {
           { label: '入力', value: 'I / Z 直接入力' },
           { label: '種別', value: '梁 / 片持ち' },
         ]}
+        publishedLabel={formatContentDate(tool?.publishedAt ?? '2026-03-04')}
+        updatedLabel={formatContentDate(tool?.updatedAt ?? '2026-03-11')}
         diagramKey="cantilever"
         diagramMaxWidth={220}
       />
       <div className="portal-cards">
-        {TOOLS.map((tool) => (
-          <Link key={tool.href} href={tool.href} className="portal-card">
-            <span className="portal-card-title">{tool.title}</span>
-            <span className="portal-card-desc">{tool.desc}</span>
+        {TOOLS.map((entry) => (
+          <Link key={entry.href} href={entry.href} className="portal-card">
+            <span className="portal-card-title">{entry.title}</span>
+            <span className="portal-card-desc">{entry.desc}</span>
           </Link>
         ))}
       </div>
+      <ToolDisclaimer />
+      <RelatedArticles
+        source="tool:cantilever"
+        items={relatedArticles.map((article) => ({
+          slug: article.slug,
+          title: article.title,
+          description: article.description,
+          href: article.href,
+          diagramKey: article.diagramKey,
+        }))}
+      />
     </main>
   );
 }

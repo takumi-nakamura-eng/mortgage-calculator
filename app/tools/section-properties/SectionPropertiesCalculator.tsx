@@ -17,6 +17,7 @@ import {
 } from '@/lib/engHistory';
 import { printEngReport } from '@/lib/printReport';
 import { trackToolCalculate } from '@/lib/analytics/events';
+import AdSenseBlock from '@/app/components/AdSenseBlock';
 import ToolWorkbenchHeader from '@/app/components/ToolWorkbenchHeader';
 import { SectionDiagram } from './SectionDiagram';
 
@@ -262,6 +263,12 @@ export default function SectionPropertiesCalculator() {
             <p className="beam-note" style={{ marginTop: '1rem' }}>
               <Link href="/tools/steel-weight">鋼材重量計算ツールへ</Link>
             </p>
+
+            <AdSenseBlock
+              slot={process.env.NEXT_PUBLIC_ADSENSE_SLOT_TOOL}
+              className="tool-ad tool-ad--inline"
+              pageType="tool"
+            />
           </div>
 
           {/* Formula steps */}

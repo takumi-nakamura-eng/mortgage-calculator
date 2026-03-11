@@ -26,6 +26,16 @@ export function trackToolCalculate(payload: {
   });
 }
 
+export function trackPdfExport(payload: {
+  toolId: string;
+  toolName: string;
+}) {
+  safeSend('pdf_export', {
+    tool_id: payload.toolId,
+    tool_name: payload.toolName,
+  });
+}
+
 export function trackArticleOpen(payload: {
   slug: string;
   category: string;

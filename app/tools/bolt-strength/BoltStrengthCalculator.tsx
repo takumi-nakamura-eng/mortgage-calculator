@@ -17,6 +17,7 @@ import {
 } from '@/lib/bolts/strength';
 import { trackToolCalculate } from '@/lib/analytics/events';
 import { printEngReport } from '@/lib/printReport';
+import AdSenseBlock from '@/app/components/AdSenseBlock';
 import ToolWorkbenchHeader from '@/app/components/ToolWorkbenchHeader';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -353,6 +354,12 @@ export default function BoltStrengthCalculator() {
               <span>γt = {gammaT}　γv = {gammaV}　kv = {fmt(parseFloat(kvStr), 5)}</span>
             </div>
           </div>
+
+          <AdSenseBlock
+            slot={process.env.NEXT_PUBLIC_ADSENSE_SLOT_TOOL}
+            className="tool-ad tool-ad--inline"
+            pageType="tool"
+          />
 
           <div className="formula-steps-section" style={{ marginTop: '1rem' }}>
             <h3 className="formula-steps-title">計算式・途中経過</h3>

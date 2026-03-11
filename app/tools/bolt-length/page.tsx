@@ -4,7 +4,7 @@ import Breadcrumbs from '@/app/components/Breadcrumbs';
 import RelatedArticles from '@/app/components/RelatedArticles';
 import ToolDisclaimer from '@/app/components/ToolDisclaimer';
 import ToolHero from '@/app/components/ToolHero';
-import AdSlot from '@/app/components/ads/AdSlot';
+import { formatContentDate } from '@/lib/contentDates';
 import { getAllArticles } from '@/lib/content/articles';
 import { getToolById } from '@/lib/data/tools';
 import { SITE_NAME, SITE_URL } from '@/lib/site';
@@ -92,12 +92,12 @@ export default async function BoltLengthPage() {
           { label: '用途', value: '一次確認' },
           { label: '種別', value: '締結 / ボルト / 長さ算定' },
         ]}
+        publishedLabel={formatContentDate(tool?.publishedAt ?? '2026-03-07')}
+        updatedLabel={formatContentDate(tool?.updatedAt ?? '2026-03-11')}
         diagramKey="bolt-length"
       />
       <BoltLengthCalculator />
       <ToolDisclaimer />
-
-      <AdSlot slot={process.env.NEXT_PUBLIC_ADSENSE_SLOT_TOOL} className="tool-ad" pageType="tool" />
 
       <RelatedArticles
         source="tool:bolt-length"

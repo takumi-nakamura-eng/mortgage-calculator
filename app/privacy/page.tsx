@@ -24,8 +24,8 @@ export default function PrivacyPage() {
             IPアドレス・閲覧ページ・滞在時間・ブラウザ情報など。個人を特定するものではありません。
           </li>
           <li>
-            <strong>広告配信（Google AdSense）</strong>：
-            Cookieを用いた閲覧履歴・属性情報。ユーザーの興味に合わせた広告を表示するために使用されます。
+            <strong>広告配信（Google AdSense など）</strong>：
+            第三者広告サービスの利用時に、ユーザーの興味に応じた広告表示のためCookie等が使用されることがあります。
           </li>
           <li>
             <strong>お問い合わせ</strong>：
@@ -64,16 +64,13 @@ export default function PrivacyPage() {
         <h2>3. 広告について（Google AdSense）</h2>
         <ul>
           <li>
-            当サイトはGoogle AdSense を使用しており、Googleおよびそのパートナーが広告を配信することがあります。
+            当サイトは、Google AdSense などの第三者広告サービスを利用する場合があります。
           </li>
           <li>
-            広告は主に記事詳細ページとツール詳細ページに表示し、トップページ・一覧ページには原則として表示しません。
+            広告配信事業者は、ユーザーの興味に応じた広告を表示するため、Cookie 等を使用することがあります。
           </li>
           <li>
-            広告配信には、過去の閲覧情報に基づくリマーケティング広告が含まれる場合があります。
-          </li>
-          <li>
-            パーソナライズ広告の設定変更・オプトアウトは
+            パーソナライズ広告の設定変更やオプトアウトは
             <a
               href="https://adssettings.google.com"
               target="_blank"

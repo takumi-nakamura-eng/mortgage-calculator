@@ -7,6 +7,7 @@ import { printEngReport } from '@/lib/printReport';
 import { trackToolCalculate } from '@/lib/analytics/events';
 import { calcBoltLength } from '@/lib/bolts/length';
 import { BOLT_CALC_SPECS, type Diameter } from '@/lib/bolts/specs';
+import AdSenseBlock from '@/app/components/AdSenseBlock';
 import ToolWorkbenchHeader from '@/app/components/ToolWorkbenchHeader';
 
 function parseIntegerInRange(
@@ -246,6 +247,12 @@ export default function BoltLengthCalculator() {
                 <p className="result-value">{result.lRequired.toFixed(2)} mm</p>
               </div>
             </div>
+
+            <AdSenseBlock
+              slot={process.env.NEXT_PUBLIC_ADSENSE_SLOT_TOOL}
+              className="tool-ad tool-ad--inline"
+              pageType="tool"
+            />
 
             <div className="formula-steps-section bolt-length-results__panel">
               <h3 className="formula-steps-title">計算式・途中経過</h3>

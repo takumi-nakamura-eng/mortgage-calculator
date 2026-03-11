@@ -16,6 +16,7 @@ import {
 import { trackToolCalculate } from '@/lib/analytics/events';
 import { printEngReport } from '@/lib/printReport';
 import { DENSITY_PRESETS, resolveDensity } from '@/lib/materialPresets';
+import AdSenseBlock from '@/app/components/AdSenseBlock';
 import ToolWorkbenchHeader from '@/app/components/ToolWorkbenchHeader';
 import { SteelWeightSvg } from '@/lib/diagrams/tools/steel-weight';
 
@@ -568,6 +569,13 @@ export default function SteelWeightCalculator() {
           <span className="sw-total-label">総荷重</span>
           <span className="sw-total-value">{fmtNum(totalLoad, 3)} <span className="sw-total-unit">kN</span></span>
         </div>
+      )}
+      {items.length > 0 && (
+        <AdSenseBlock
+          slot={process.env.NEXT_PUBLIC_ADSENSE_SLOT_TOOL}
+          className="tool-ad tool-ad--inline"
+          pageType="tool"
+        />
       )}
         </div>
       </section>

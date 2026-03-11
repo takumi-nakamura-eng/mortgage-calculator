@@ -7,6 +7,7 @@ import { fmt } from '@/lib/beams/units';
 import { SECTION_DEFS, type SectionShape } from '@/lib/beams/sections';
 import type { BeamResult } from '@/lib/beams/simpleBeam';
 import type { EngHistoryEntry, FormulaStep } from '@/lib/engHistory';
+import AdSenseBlock from '@/app/components/AdSenseBlock';
 import ToolWorkbenchHeader from '@/app/components/ToolWorkbenchHeader';
 import type { BeamFormActions, BeamFormState, IUnit, LoadUnit, SectionMode, ZUnit } from './useBeamForm';
 
@@ -561,6 +562,12 @@ function ResultSection({
           </span>
         </div>
       )}
+
+      <AdSenseBlock
+        slot={process.env.NEXT_PUBLIC_ADSENSE_SLOT_TOOL}
+        className="tool-ad tool-ad--inline"
+        pageType="tool"
+      />
 
       {formulaSteps.length > 0 && (
         <div className="formula-steps-section" style={{ marginTop: '1rem' }}>

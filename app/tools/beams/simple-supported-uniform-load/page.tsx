@@ -5,6 +5,7 @@ import RelatedArticles from '@/app/components/RelatedArticles';
 import ToolDisclaimer from '@/app/components/ToolDisclaimer';
 import ToolHero from '@/app/components/ToolHero';
 import BeamCaseCalculator from '@/app/tools/beams/BeamCaseCalculator';
+import { formatContentDate } from '@/lib/contentDates';
 import { getAllArticles } from '@/lib/content/articles';
 import { getToolById } from '@/lib/data/tools';
 import { SITE_NAME, SITE_URL } from '@/lib/site';
@@ -55,6 +56,8 @@ export default async function SimpleSupportedUniformLoadPage() {
           { label: '荷重条件', value: '等分布荷重' },
           { label: '入力', value: 'I / Z 直接入力' },
         ]}
+        publishedLabel={formatContentDate(tool?.publishedAt ?? '2026-03-11')}
+        updatedLabel={formatContentDate(tool?.updatedAt ?? '2026-03-11')}
         diagramKey="simple-supported-uniform-load"
         diagramMaxWidth={220}
       />

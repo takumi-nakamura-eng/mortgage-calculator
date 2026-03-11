@@ -1,8 +1,19 @@
 import type { EngHistoryEntry } from './engHistory';
+import { trackPdfExport } from './analytics/events';
 import { fmt } from './beams/units';
 import { getSectionSVGString } from './beams/sectionSVG';
 import type { SectionShape } from './beams/sections';
 import { getBoltLengthSvgString } from './diagrams/tools/bolt-length';
+
+const BRAND_LOGO_DATA_URI = `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(
+  `<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" fill="none">
+    <rect width="96" height="96" rx="24" fill="#0f4c81"/>
+    <path d="M28 28h18c12.15 0 22 9.85 22 22S58.15 72 46 72H28V28Z" fill="#ffffff"/>
+    <path d="M43 40h3.5c5.8 0 10.5 4.7 10.5 10.5S52.3 61 46.5 61H43V40Z" fill="#0f4c81"/>
+  </svg>`,
+)}`;
+const PDF_FOOTER_NOTE =
+  '計算結果は参考値です。最終設計・発注判断は適用規格、仕様書、メーカー資料を優先してください。';
 
 function fmtDate(ts: number): string {
   return new Date(ts).toLocaleString('ja-JP', {
@@ -24,16 +35,24 @@ function baseStyle(title: string): string {
 @page { size: A4 portrait; margin: 16mm 14mm; }
 * { box-sizing: border-box; }
 body { font-family: 'Helvetica Neue', Arial, 'Noto Sans JP', sans-serif; font-size: 10pt; color: #111; line-height: 1.55; }
-h1 { font-size: 16pt; margin: 0; color: #1e3a5f; }
-h2 { font-size: 11pt; margin: 16px 0 8px; border-left: 3px solid #2563eb; padding-left: 8px; }
-.meta { font-size: 8.5pt; color: #555; margin-top: 4px; }
-table { width: 100%; border-collapse: collapse; font-size: 9.25pt; }
-th, td { border: 1px solid #d5d5d5; padding: 5px 8px; text-align: left; vertical-align: top; }
-th { background: #f3f6ff; }
+h1 { font-size: 16pt; margin: 0; color: #163b63; letter-spacing: 0.01em; }
+h2 { font-size: 11pt; margin: 16px 0 8px; border-left: 4px solid #1d4ed8; padding-left: 8px; color: #163b63; }
+.report-shell { border: 1px solid #d7e3f2; border-radius: 14px; padding: 14px 16px 12px; background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%); }
+.brand-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-bottom: 10px; margin-bottom: 12px; border-bottom: 1px solid #d7e3f2; }
+.brand-bar__title { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.brand-bar__logo { width: 28px; height: 28px; flex: 0 0 auto; }
+.brand-bar__name { font-size: 8pt; letter-spacing: 0.12em; color: #54708e; text-transform: uppercase; }
+.brand-bar__site { font-size: 8pt; color: #54708e; text-align: right; }
+.meta { font-size: 8.5pt; color: #506174; margin-top: 4px; }
+table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 9.25pt; border: 1px solid #d9e3ef; border-radius: 10px; overflow: hidden; }
+th, td { border-bottom: 1px solid #d9e3ef; padding: 6px 8px; text-align: left; vertical-align: top; }
+th { width: 42%; background: #edf4ff; color: #27445d; font-weight: 700; }
+td { background: #ffffff; }
+tr:last-child th, tr:last-child td { border-bottom: 0; }
 .val { text-align: right; font-variant-numeric: tabular-nums; }
 .formula-step { margin-bottom: 6px; }
 .formula-step-label { font-weight: 700; font-size: 8.5pt; color: #374151; }
-.formula-step-expr { margin: 2px 0 0; padding: 5px 7px; background: #f6f7f9; border-left: 3px solid #93c5fd; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; white-space: pre-wrap; font-size: 7.8pt; line-height: 1.35; }
+.formula-step-expr { margin: 2px 0 0; padding: 6px 8px; background: #f7fbff; border: 1px solid #d9e7f5; border-left: 3px solid #93c5fd; border-radius: 8px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; white-space: pre-wrap; font-size: 7.8pt; line-height: 1.35; }
 .compact-grid { display: grid; grid-template-columns: 190px 1fr; gap: 12px; align-items: start; }
 .compact-grid > div { min-width: 0; }
 .compact-panel { break-inside: avoid; page-break-inside: avoid; }
@@ -42,9 +61,9 @@ th { background: #f3f6ff; }
 .report-table--fixed th, .report-table--fixed td { word-break: break-word; }
 .report-table--fixed td.val { text-align: right; }
 .compact-note { font-size: 8pt; color: #4b5563; margin-top: 6px; }
-.disclaimer { margin-top: 12px; font-size: 8pt; color: #78350f; background: #fffbeb; border: 1px solid #f59e0b; border-radius: 4px; padding: 8px 10px; }
-.footer { margin-top: 12px; border-top: 1px solid #ddd; padding-top: 6px; font-size: 7.5pt; color: #777; }
-.footer a { color: inherit; text-decoration: underline; }
+.disclaimer { margin-top: 12px; font-size: 8pt; color: #78350f; background: #fffbeb; border: 1px solid #f59e0b; border-radius: 8px; padding: 8px 10px; }
+.footer { margin-top: 12px; border-top: 1px solid #d7e3f2; padding-top: 8px; display: flex; justify-content: space-between; gap: 12px; font-size: 7.5pt; color: #687789; }
+.footer a { color: #35506a; text-decoration: underline; }
 </style>
 </head>
 <body>`;
@@ -90,8 +109,18 @@ function buildCommonCompactReport(options: {
   } = options;
 
   return `${baseStyle(title)}
-<h1>${title}</h1>
-<div class="meta">計算日時: ${fmtDate(timestamp)} / 用途: ${metaPurpose ?? '-'}</div>
+<div class="report-shell">
+<div class="brand-bar">
+  <div class="brand-bar__title">
+    <img src="${BRAND_LOGO_DATA_URI}" alt="calcnavi" class="brand-bar__logo" />
+    <div>
+      <div class="brand-bar__name">calcnavi engineering report</div>
+      <h1>${title}</h1>
+      <div class="meta">計算日時: ${fmtDate(timestamp)} / 用途: ${metaPurpose ?? '-'}</div>
+    </div>
+  </div>
+  <div class="brand-bar__site">https://www.calcnavi.com</div>
+</div>
 <div class="compact-grid">
   <div class="compact-panel">
     <h2>① 図解</h2>
@@ -114,7 +143,11 @@ function buildCommonCompactReport(options: {
   ${steps}
 </div>
 <div class="disclaimer">${disclaimer}</div>
-<div class="footer"><a href="${toolUrl}">${toolUrl}</a></div>
+<div class="footer">
+  <a href="${toolUrl}">${toolUrl}</a>
+  <span>${PDF_FOOTER_NOTE}</span>
+</div>
+</div>
 </body></html>`;
 }
 
@@ -311,6 +344,11 @@ export function printEngReport(entry: EngHistoryEntry): void {
     alert('このツールのPDF出力はまだ準備中です。');
     return;
   }
+
+  trackPdfExport({
+    toolId: entry.toolId,
+    toolName: entry.toolName,
+  });
 
   const win = window.open('', '_blank', 'width=900,height=1100');
   if (!win) {

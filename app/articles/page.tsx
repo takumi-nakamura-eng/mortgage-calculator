@@ -12,7 +12,16 @@ export const metadata: Metadata = buildMetadata({
 
 export const revalidate = 3600;
 
-export default async function ArticlesPage() {
+function normalizeQueryParam(value: string | string[] | undefined): string {
+  return Array.isArray(value) ? value[0] ?? '' : value ?? '';
+}
+
+export default async function ArticlesPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ q?: string | string[] }>;
+}) {
+  const params = (await searchParams) ?? {};
   const articles = await getAllArticles();
 
   return (
@@ -24,7 +33,7 @@ export default async function ArticlesPage() {
           計算ツールに関連する基礎知識・解説記事をまとめています。
         </p>
       </div>
-      <ArticlesClient initialArticles={articles} />
+      <ArticlesClient initialArticles={articles} initialQuery={normalizeQueryParam(params.q)} />
     </div>
   );
 }

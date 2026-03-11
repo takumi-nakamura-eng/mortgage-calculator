@@ -11,7 +11,7 @@ import MdxOutboundLink from '@/app/components/MdxOutboundLink';
 import Quote from '@/app/components/mdx/Quote';
 import RelatedArticles from '@/app/components/RelatedArticles';
 import RelatedTools from '@/app/components/RelatedTools';
-import AdSlot from '@/app/components/ads/AdSlot';
+import AdSenseBlock from '@/app/components/AdSenseBlock';
 import { TOOLS } from '@/lib/data/tools';
 import {
   getAllArticles,
@@ -19,6 +19,7 @@ import {
   getArticleComponent,
   getRelatedArticles,
 } from '@/lib/content/articles';
+import { formatContentDate } from '@/lib/contentDates';
 import { SITE_NAME, SITE_URL } from '@/lib/site';
 import { buildMetadata } from '@/lib/seo';
 
@@ -56,14 +57,6 @@ export async function generateMetadata({
     description: article.meta.description,
     path: article.meta.href,
     type: 'article',
-  });
-}
-
-function formatDate(dateString: string): string {
-  return new Date(dateString).toLocaleDateString('ja-JP', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
   });
 }
 
@@ -178,9 +171,8 @@ export default async function ArticleDetailPage({
         <ArticleHero
           title={article.meta.title}
           description={showHeaderDescription ? article.meta.description : undefined}
-          category={article.meta.category}
-          publishedLabel={formatDate(article.meta.publishedAt)}
-          updatedLabel={formatDate(article.meta.updatedAt)}
+          publishedLabel={formatContentDate(article.meta.publishedAt)}
+          updatedLabel={formatContentDate(article.meta.updatedAt)}
           readingMinutes={article.meta.readingMinutes}
           diagramKey={article.meta.diagramKey}
         />
@@ -194,12 +186,17 @@ export default async function ArticleDetailPage({
               <p className="page-description">{article.meta.description}</p>
             ) : null}
             <div className="article-meta">
-              <span>公開日: {formatDate(article.meta.publishedAt)}</span>
-              <span>更新日: {formatDate(article.meta.updatedAt)}</span>
+              <span>公開日: {formatContentDate(article.meta.publishedAt)}</span>
+              <span>更新日: {formatContentDate(article.meta.updatedAt)}</span>
               <span>カテゴリ: {article.meta.category}</span>
             </div>
           </header>
         ) : null}
+        <AdSenseBlock
+          slot={process.env.NEXT_PUBLIC_ADSENSE_SLOT_ARTICLE}
+          className="article-ad article-ad--inline"
+          pageType="article"
+        />
         <MDXContent
           components={{
             a: (props: React.ComponentProps<'a'>) => (
@@ -232,8 +229,6 @@ export default async function ArticleDetailPage({
           ))}
         </ul>
       </section>
-
-      <AdSlot slot={process.env.NEXT_PUBLIC_ADSENSE_SLOT_ARTICLE} className="article-ad" pageType="article" />
 
       <RelatedTools
         source={`article:${article.meta.slug}`}

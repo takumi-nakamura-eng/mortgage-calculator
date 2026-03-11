@@ -7,10 +7,12 @@ import CardDiagram from '@/app/components/CardDiagram';
 
 export default function ArticlesClient({
   initialArticles,
+  initialQuery = '',
 }: {
   initialArticles: ArticleMeta[];
+  initialQuery?: string;
 }) {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState(initialQuery);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();

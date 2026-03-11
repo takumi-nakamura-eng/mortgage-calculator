@@ -9,6 +9,8 @@ interface ToolHeroProps {
   title: string;
   description: string;
   labels: ToolHeroLabel[];
+  publishedLabel: string;
+  updatedLabel: string;
   diagramKey: string;
   diagramMaxWidth?: number;
 }
@@ -17,6 +19,8 @@ export default function ToolHero({
   title,
   description,
   labels,
+  publishedLabel,
+  updatedLabel,
   diagramKey,
   diagramMaxWidth = 180,
 }: ToolHeroProps) {
@@ -26,6 +30,10 @@ export default function ToolHero({
         <div className="tool-hero__content-inner">
           <h1 className="page-title tool-hero__title">{title}</h1>
           <p className="page-description tool-hero__description">{description}</p>
+          <div className="tool-hero__meta" aria-label="ツール更新情報">
+            <span className="tool-hero__meta-item">公開日: {publishedLabel}</span>
+            <span className="tool-hero__meta-item">更新日: {updatedLabel}</span>
+          </div>
           <div className="tool-hero__labels" aria-label="ツール補助情報">
             {labels.map((item) => (
               <span key={`${item.label}:${item.value}`} className="tool-hero__label">

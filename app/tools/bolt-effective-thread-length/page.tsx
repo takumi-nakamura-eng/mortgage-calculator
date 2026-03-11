@@ -5,6 +5,7 @@ import RelatedArticles from '@/app/components/RelatedArticles';
 import ToolDisclaimer from '@/app/components/ToolDisclaimer';
 import ToolHero from '@/app/components/ToolHero';
 import BoltEffectiveThreadLengthCalculator from './BoltEffectiveThreadLengthCalculator';
+import { formatContentDate } from '@/lib/contentDates';
 import { getAllArticles } from '@/lib/content/articles';
 import { getToolById } from '@/lib/data/tools';
 import { SITE_NAME, SITE_URL } from '@/lib/site';
@@ -53,6 +54,8 @@ export default async function BoltEffectiveThreadLengthPage() {
           { label: '用途', value: '一次確認' },
           { label: '種別', value: '締結 / ねじ長さ / かみ合い' },
         ]}
+        publishedLabel={formatContentDate(tool?.publishedAt ?? '2026-03-11')}
+        updatedLabel={formatContentDate(tool?.updatedAt ?? '2026-03-11')}
         diagramKey="bolt-length"
       />
       <BoltEffectiveThreadLengthCalculator />

@@ -3,7 +3,6 @@ import Diagram from './Diagram';
 interface ArticleHeroProps {
   title: string;
   description?: string;
-  category: string;
   publishedLabel: string;
   updatedLabel: string;
   readingMinutes: number;
@@ -13,7 +12,6 @@ interface ArticleHeroProps {
 export default function ArticleHero({
   title,
   description,
-  category: _category,
   publishedLabel,
   updatedLabel,
   readingMinutes,

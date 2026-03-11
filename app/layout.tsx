@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Script from 'next/script';
 import Nav from './components/Nav';
 import Footer from './components/Footer';
 import { GoogleAnalytics } from '@next/third-parties/google';
@@ -49,13 +50,27 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const gaId = process.env.NEXT_PUBLIC_GA_ID ?? 'G-Q6PTFR8RMG';
+  const adsenseClient = process.env.NEXT_PUBLIC_ADSENSE_CLIENT;
+  const adsenseEnabled =
+    process.env.NEXT_PUBLIC_ENABLE_ADSENSE === 'true' && Boolean(adsenseClient);
+
   return (
     <html lang="ja">
       <body>
         <Nav />
         {children}
         <Footer />
-        <GoogleAnalytics gaId="G-Q6PTFR8RMG" />
+        {adsenseEnabled ? (
+          <Script
+            id="adsense-script"
+            strategy="afterInteractive"
+            async
+            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseClient}`}
+            crossOrigin="anonymous"
+          />
+        ) : null}
+        <GoogleAnalytics gaId={gaId} />
       </body>
     </html>
   );
