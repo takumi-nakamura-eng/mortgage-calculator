@@ -1,9 +1,12 @@
 import type { Metadata } from 'next';
+import Script from 'next/script';
 import Nav from './components/Nav';
 import Footer from './components/Footer';
 import { GoogleAnalytics } from '@next/third-parties/google';
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from '@/lib/site';
 import './globals.css';
+
+const adsenseClient = process.env.NEXT_PUBLIC_ADSENSE_CLIENT;
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -51,6 +54,15 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ja">
+      {adsenseClient ? (
+        <Script
+          id="adsense-script"
+          strategy="beforeInteractive"
+          async
+          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseClient}`}
+          crossOrigin="anonymous"
+        />
+      ) : null}
       <body>
         <Nav />
         {children}
