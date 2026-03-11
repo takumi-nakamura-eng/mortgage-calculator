@@ -17,6 +17,7 @@ import { trackToolCalculate } from '@/lib/analytics/events';
 import { printEngReport } from '@/lib/printReport';
 import { DENSITY_PRESETS, resolveDensity } from '@/lib/materialPresets';
 import ToolWorkbenchHeader from '@/app/components/ToolWorkbenchHeader';
+import { SteelWeightSvg } from '@/lib/diagrams/tools/steel-weight';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -291,38 +292,62 @@ export default function SteelWeightCalculator() {
         <div className="tool-workbench__section">
           <ToolWorkbenchHeader title="入力条件" />
           <div className="beam-section">
-            <h2 className="beam-section-title">鋼材を追加</h2>
+            <h2 className="beam-section-title">① 断面形状を選択</h2>
 
-            <div className="form-group" style={{ marginBottom: '0.75rem' }}>
-              <label htmlFor="sw-shape">形状</label>
-              <select
-                id="sw-shape"
-                value={selectedShape}
-                onChange={(e) => handleShapeChange(e.target.value as SteelShape)}
-              >
-                {SHAPE_DEFS.map((d) => (
-                  <option key={d.shape} value={d.shape}>{d.label}</option>
-                ))}
-              </select>
-            </div>
-
-            <div className="beam-row" style={{ marginBottom: '0.75rem' }}>
-              {currentDef.params.map((p) => (
-                <div key={p.key} className="form-group" style={{ flex: '1 1 120px' }}>
-                  <label htmlFor={`sw-${p.key}`}>
-                    {p.label} <span className="unit-label">[{p.unit}]</span>
-                  </label>
-                  <input
-                    id={`sw-${p.key}`}
-                    type="number"
-                    min="0.001"
-                    step="any"
-                    placeholder={p.placeholder}
-                    value={shapeDims[p.key] ?? ''}
-                    onChange={(e) => setShapeDims((prev) => ({ ...prev, [p.key]: e.target.value }))}
-                  />
-                </div>
+            <div className="section-shape-tabs">
+              {SHAPE_DEFS.map((d) => (
+                <button
+                  key={d.shape}
+                  type="button"
+                  onClick={() => handleShapeChange(d.shape)}
+                  className={`section-shape-tab${selectedShape === d.shape ? ' section-shape-tab--active' : ''}`}
+                >
+                  {d.label}
+                </button>
               ))}
+            </div>
+            <p className="beam-note" style={{ marginTop: '0.5rem' }}>
+              寸法ラベルは図の記号に合わせています。断面寸法を入力して、長さと本数から重量と荷重を集計します。
+            </p>
+          </div>
+
+          <div className="beam-section">
+            <h2 className="beam-section-title">② 断面寸法を入力</h2>
+            <div className="section-main-row">
+              <div className="section-diagram-box">
+                <SteelWeightSvg shape={selectedShape} maxWidth={280} />
+                <p className="section-diagram-caption">
+                  寸法記号は入力欄と対応します。長さ L と本数 n は次のセクションで入力します。
+                </p>
+              </div>
+
+              <div className="section-inputs-box section-properties-form">
+                {currentDef.params.map((p) => (
+                  <div key={p.key} className="form-group section-properties-form__field">
+                    <label htmlFor={`sw-${p.key}`}>
+                      {p.label} <span className="unit-label">[{p.unit}]</span>
+                    </label>
+                    <input
+                      id={`sw-${p.key}`}
+                      type="number"
+                      min="0.001"
+                      step="any"
+                      placeholder={p.placeholder}
+                      value={shapeDims[p.key] ?? ''}
+                      onChange={(e) => setShapeDims((prev) => ({ ...prev, [p.key]: e.target.value }))}
+                    />
+                  </div>
+                ))}
+                {addErrors.map((err, i) => (
+                  <p key={i} className="error-message">{err}</p>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="beam-section">
+            <h2 className="beam-section-title">③ 長さ・本数・密度</h2>
+            <div className="beam-row" style={{ marginBottom: '0.75rem' }}>
               <div className="form-group" style={{ flex: '1 1 100px' }}>
                 <label htmlFor="sw-L">長さ L <span className="unit-label">[m]</span></label>
                 <input
@@ -390,10 +415,6 @@ export default function SteelWeightCalculator() {
                 />
               </div>
             </div>
-
-            {addErrors.map((err, i) => (
-              <p key={i} className="error-message">{err}</p>
-            ))}
 
             <div className="form-submit-row">
               <button
