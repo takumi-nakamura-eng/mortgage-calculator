@@ -41,10 +41,15 @@ import { SimpleSupportedPointLoadSvg } from './tools/simple-supported-point-load
 import { SimpleSupportedUniformLoadSvg } from './tools/simple-supported-uniform-load';
 import { BoltLengthSvg, type BoltLengthSvgProps } from './tools/bolt-length';
 import { BoltStrengthSvg } from './tools/bolt-strength';
+import { BoltTorqueSvg } from './tools/bolt-torque';
+import { BeamSelfWeightSvg } from './tools/beam-self-weight';
 import { CantileverSvg } from './tools/cantilever';
+import { PipeWallThicknessSvg } from './tools/pipe-wall-thickness';
 import { SectionPropertiesSvg } from './tools/section-properties';
+import { SectionComparisonSvg } from './tools/section-comparison';
 import { SteelWeightSvg } from './tools/steel-weight';
 import { UnitSvg } from './tools/unit';
+import { WeldStrengthSvg } from './tools/weld-strength';
 
 export interface DiagramProps extends BoltLengthSvgProps {
   diagramKey: string;
@@ -183,7 +188,12 @@ const TOOL_DIAGRAMS: Record<string, DiagramComponent> = {
   'cantilever-uniform-load': CantileverUniformLoadSvg,
   'section-properties': SectionPropertiesSvg,
   'bolt-strength': BoltStrengthSvg,
+  'bolt-torque': BoltTorqueSvg,
   'steel-weight': SteelWeightSvg,
+  'beam-self-weight': BeamSelfWeightSvg,
+  'pipe-wall-thickness': PipeWallThicknessSvg,
+  'section-comparison': SectionComparisonSvg,
+  'weld-strength': WeldStrengthSvg,
   anchor: AnchorSvg,
   unit: UnitSvg,
 };

@@ -15,7 +15,12 @@ export type EngToolId =
   | 'bolt-length'
   | 'bolt-effective-thread-length'
   | 'steel-weight'
-  | 'bolt-strength';
+  | 'bolt-strength'
+  | 'weld-strength'
+  | 'pipe-wall-thickness'
+  | 'bolt-torque'
+  | 'beam-self-weight'
+  | 'section-comparison';
 
 export interface FormulaStep {
   label: string;
@@ -45,6 +50,7 @@ export interface EngInputSnapshot {
   boltPreset?: string;
   diameter?: string;
   itemRows?: string[];
+  mode?: string;
 }
 
 export interface EngResultSnapshot {
@@ -79,6 +85,30 @@ export interface EngResultSnapshot {
   itemCount?: number;
   totalLoad_kN?: number;
   reactionSummary?: string[];
+
+  requiredLength_mm?: number;
+  allowableLoad_kN?: number;
+  actualStress_MPa?: number;
+  safetyFactor?: number;
+  effectiveArea_mm2?: number;
+
+  requiredThickness_mm?: number;
+  nominalThickness_mm?: number;
+  thicknessRatio?: number;
+  pressure_kPa?: number;
+
+  torque_Nm?: number;
+  preload_kN?: number;
+  nutFactor?: number;
+  tensileStress_MPa?: number;
+  proofStressRatio?: number;
+  bearingStress_MPa?: number;
+
+  unitWeight_kg_m?: number;
+  selfWeight_kN_m?: number;
+  totalWeight_kN?: number;
+
+  comparisonSummary?: string[];
 }
 
 export interface EngHistoryEntry {
