@@ -321,6 +321,127 @@ function buildSteelWeightReport(entry: EngHistoryEntry): string {
   });
 }
 
+function buildWeldStrengthReport(entry: EngHistoryEntry): string {
+  const result = entry.results;
+  const inputRows = Object.entries(entry.inputs.dims)
+    .map(([key, value]) => `<tr><th>${key}</th><td class="val">${value}</td></tr>`)
+    .join('');
+  const resultRows = [
+    result.requiredLength_mm !== undefined ? `<tr><th>必要溶接長さ</th><td class="val">${fmt(result.requiredLength_mm, 2)} mm</td></tr>` : '',
+    result.allowableLoad_kN !== undefined ? `<tr><th>許容荷重</th><td class="val">${fmt(result.allowableLoad_kN, 3)} kN</td></tr>` : '',
+    `<tr><th>有効断面積</th><td class="val">${fmt(result.effectiveArea_mm2 ?? 0, 2)} mm²</td></tr>`,
+    `<tr><th>実効応力</th><td class="val">${fmt(result.actualStress_MPa ?? 0, 2)} MPa</td></tr>`,
+    `<tr><th>安全率</th><td class="val">${fmt(result.safetyFactor ?? 0, 3)}</td></tr>`,
+  ].join('');
+  return buildCommonCompactReport({
+    title: '溶接強度計算書',
+    toolUrl: 'https://calcnavi.com/tools/weld-strength',
+    timestamp: entry.timestamp,
+    metaPurpose: entry.inputs.purpose,
+    figureNote: '必要溶接長さまたは許容荷重の一次確認用計算書です。',
+    inputRows,
+    resultRows,
+    steps: buildFormulaSteps(entry),
+    disclaimer: '本計算書は参考値です。最終設計では適用規格、溶接姿勢、欠陥率、破壊モードを確認してください。',
+  });
+}
+
+function buildPipeWallThicknessReport(entry: EngHistoryEntry): string {
+  const result = entry.results;
+  const inputRows = Object.entries(entry.inputs.dims)
+    .map(([key, value]) => `<tr><th>${key}</th><td class="val">${value}</td></tr>`)
+    .join('');
+  const resultRows = [
+    `<tr><th>必要肉厚</th><td class="val">${fmt(result.requiredThickness_mm ?? 0, 3)} mm</td></tr>`,
+    `<tr><th>名目肉厚</th><td class="val">${fmt(result.nominalThickness_mm ?? 0, 3)} mm</td></tr>`,
+    `<tr><th>肉厚比 t/D</th><td class="val">${fmt(result.thicknessRatio ?? 0, 5)}</td></tr>`,
+    `<tr><th>安全率</th><td class="val">${fmt(result.safetyFactor ?? 0, 3)}</td></tr>`,
+  ].join('');
+  return buildCommonCompactReport({
+    title: '配管肉厚計算書',
+    toolUrl: 'https://calcnavi.com/tools/pipe-wall-thickness',
+    timestamp: entry.timestamp,
+    metaPurpose: entry.inputs.purpose,
+    figureNote: '必要肉厚と名目肉厚の一次確認用計算書です。',
+    inputRows,
+    resultRows,
+    steps: buildFormulaSteps(entry),
+    disclaimer: '本計算書は参考値です。最終判断では適用規格、スケジュール、温度条件、腐食条件を確認してください。',
+  });
+}
+
+function buildBoltTorqueReport(entry: EngHistoryEntry): string {
+  const result = entry.results;
+  const inputRows = Object.entries(entry.inputs.dims)
+    .map(([key, value]) => `<tr><th>${key}</th><td class="val">${value}</td></tr>`)
+    .join('');
+  const resultRows = [
+    result.torque_Nm !== undefined ? `<tr><th>締付けトルク</th><td class="val">${fmt(result.torque_Nm, 2)} N·m</td></tr>` : '',
+    result.preload_kN !== undefined ? `<tr><th>軸力</th><td class="val">${fmt(result.preload_kN, 3)} kN</td></tr>` : '',
+    `<tr><th>工具係数 K</th><td class="val">${fmt(result.nutFactor ?? 0, 3)} N·m/kN</td></tr>`,
+    `<tr><th>軸応力</th><td class="val">${fmt(result.tensileStress_MPa ?? 0, 1)} MPa</td></tr>`,
+    `<tr><th>面圧</th><td class="val">${fmt(result.bearingStress_MPa ?? 0, 1)} MPa</td></tr>`,
+    `<tr><th>耐力比</th><td class="val">${fmt(result.proofStressRatio ?? 0, 3)}</td></tr>`,
+  ].join('');
+  return buildCommonCompactReport({
+    title: 'ボルトトルク計算書',
+    toolUrl: 'https://calcnavi.com/tools/bolt-torque',
+    timestamp: entry.timestamp,
+    metaPurpose: entry.inputs.purpose,
+    figureNote: '締付けトルクと軸力の一次確認用計算書です。',
+    inputRows,
+    resultRows,
+    steps: buildFormulaSteps(entry),
+    disclaimer: '本計算書は参考値です。締付け条件、潤滑状態、工具誤差を考慮して最終判断してください。',
+  });
+}
+
+function buildBeamSelfWeightReport(entry: EngHistoryEntry): string {
+  const result = entry.results;
+  const inputRows = [
+    `<tr><th>断面形状</th><td class="val">${entry.inputs.shapeName}</td></tr>`,
+    ...Object.entries(entry.inputs.dims).map(([key, value]) => `<tr><th>${key}</th><td class="val">${value}</td></tr>`),
+  ].join('');
+  const resultRows = [
+    `<tr><th>断面積</th><td class="val">${fmt(result.area_mm2 ?? 0, 2)} mm²</td></tr>`,
+    `<tr><th>単位重量</th><td class="val">${fmt(result.unitWeight_kg_m ?? 0, 3)} kg/m</td></tr>`,
+    `<tr><th>梁自重</th><td class="val">${fmt(result.selfWeight_kN_m ?? 0, 4)} kN/m</td></tr>`,
+    `<tr><th>総重量</th><td class="val">${fmt(result.totalWeight_kN ?? 0, 4)} kN</td></tr>`,
+  ].join('');
+  return buildCommonCompactReport({
+    title: '梁自重計算書',
+    toolUrl: 'https://calcnavi.com/tools/beam-self-weight',
+    timestamp: entry.timestamp,
+    metaPurpose: entry.inputs.purpose,
+    figureNote: '断面寸法から梁自重を求める一次確認用計算書です。',
+    inputRows,
+    resultRows,
+    steps: buildFormulaSteps(entry),
+    disclaimer: '本計算書は参考値です。実断面のフィレット半径、密度差、付属材重量は別途確認してください。',
+  });
+}
+
+function buildSectionComparisonReport(entry: EngHistoryEntry): string {
+  const inputRows = (entry.inputs.itemRows ?? [])
+    .map((row, index) => `<tr><th>比較断面 ${index + 1}</th><td>${row}</td></tr>`)
+    .join('');
+  const resultRows = [
+    `<tr><th>比較断面数</th><td class="val">${entry.results.itemCount ?? 0}</td></tr>`,
+    ...((entry.results.comparisonSummary ?? []).map((row, index) => `<tr><th>比較結果 ${index + 1}</th><td>${row}</td></tr>`)),
+  ].join('');
+  return buildCommonCompactReport({
+    title: '断面比較計算書',
+    toolUrl: 'https://calcnavi.com/tools/section-comparison',
+    timestamp: entry.timestamp,
+    metaPurpose: entry.inputs.purpose,
+    figureNote: '複数断面の効率比較用計算書です。',
+    inputRows,
+    resultRows,
+    steps: buildFormulaSteps(entry),
+    disclaimer: '本計算書は参考値です。最終選定では座屈、たわみ、接合条件、調達性も確認してください。',
+  });
+}
+
 export function printEngReport(entry: EngHistoryEntry): void {
   let html = '';
 
@@ -338,6 +459,16 @@ export function printEngReport(entry: EngHistoryEntry): void {
     html = buildBoltStrengthReport(entry);
   } else if (entry.toolId === 'steel-weight') {
     html = buildSteelWeightReport(entry);
+  } else if (entry.toolId === 'weld-strength') {
+    html = buildWeldStrengthReport(entry);
+  } else if (entry.toolId === 'pipe-wall-thickness') {
+    html = buildPipeWallThicknessReport(entry);
+  } else if (entry.toolId === 'bolt-torque') {
+    html = buildBoltTorqueReport(entry);
+  } else if (entry.toolId === 'beam-self-weight') {
+    html = buildBeamSelfWeightReport(entry);
+  } else if (entry.toolId === 'section-comparison') {
+    html = buildSectionComparisonReport(entry);
   }
 
   if (!html) {
